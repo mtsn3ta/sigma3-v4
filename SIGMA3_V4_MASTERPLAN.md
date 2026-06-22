@@ -270,7 +270,7 @@ Output:
 ### Implementation
 
 - [x] Roles Seeder
-- [ ] Permission Seeder
+- [x] Permission Seeder
 
 ### Testing
 
