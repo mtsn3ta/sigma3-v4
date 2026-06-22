@@ -131,8 +131,6 @@ tanggal_lahir DATE
 
 alamat TEXT
 
-email VARCHAR(150) NULL
-
 foto VARCHAR(255) NULL
 
 ttd_digital VARCHAR(255) NULL

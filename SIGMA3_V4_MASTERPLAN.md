@@ -271,14 +271,15 @@ Output:
 
 - [x] Roles Seeder
 - [x] Permission Seeder
+- [x] Role Permission Seeder
 
 ### Testing
 
-- [ ] Permission Testing
+- [x] Permission Testing
 
 Status:
 
-🟨 DALAM PROSES
+🟩 SELESAI
 
 ---
 
@@ -294,12 +295,12 @@ Membangun seluruh data induk sistem.
 
 Urutan:
 
-- [ ] Migration
-- [ ] Model
-- [ ] Factory
-- [ ] Seeder
-- [ ] Resource
-- [ ] Policy
+- [x] Migration
+- [x] Model
+- [x] Factory
+- [x] Seeder
+- [x] Resource
+- [x] Policy
 - [ ] Testing
 - [ ] Commit
 

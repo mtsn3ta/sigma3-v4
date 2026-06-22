@@ -698,3 +698,47 @@ Dilarang membuat Resource sebelum Migration final.
 
 Status:
 ✅ Final
+
+## D-032 — Auto Create User Account
+
+Status:
+✅ Final
+
+Saat Pegawai dibuat:
+
+Sistem otomatis membuat akun users.
+
+username = nik_nip
+password = mtsn3ta123
+must_change_password = true
+status = aktif
+
+pegawai.user_id otomatis terhubung ke akun tersebut.
+
+## D-033 — Default Role Assignment
+
+Status:
+✅ Final
+
+Pegawai Internal
+→ otomatis role guru
+
+Pegawai Eksternal
+→ otomatis role pelatih
+
+Role tambahan diberikan kemudian oleh Super Admin.
+
+## D-034 — User Status Synchronization
+
+Status:
+✅ Final
+
+pegawai.status = nonaktif
+↓
+users.status = nonaktif
+
+pegawai.status = aktif
+↓
+users.status = aktif
+
+Status akun login selalu mengikuti status pegawai.
