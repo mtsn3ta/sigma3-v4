@@ -338,11 +338,11 @@ Urutan:
 
 Urutan:
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Policy
-- [ ] Testing
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Policy
+- [x] Testing
 - [ ] Commit
 
 ---

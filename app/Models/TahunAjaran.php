@@ -19,4 +19,8 @@ class TahunAjaran extends Model
     protected $casts = [
         'aktif' => 'boolean',
     ];
+    public function kelasSiswa()
+    {
+        return $this->hasMany(KelasSiswa::class);
+    }
 }
