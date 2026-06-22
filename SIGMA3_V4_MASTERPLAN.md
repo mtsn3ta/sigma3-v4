@@ -301,8 +301,8 @@ Urutan:
 - [x] Seeder
 - [x] Resource
 - [x] Policy
-- [ ] Testing
-- [ ] Commit
+- [x] Testing
+- [x] Commit
 
 ---
 
@@ -310,14 +310,14 @@ Urutan:
 
 Urutan:
 
-- [ ] Migration
-- [ ] Model
-- [ ] Factory
-- [ ] Seeder
-- [ ] Resource
-- [ ] Policy
-- [ ] Testing
-- [ ] Commit
+- [x] Migration
+- [x] Model
+- [x] Factory
+- [x] Seeder
+- [x] Resource
+- [x] Policy
+- [x] Testing
+- [x] Commit
 
 ---
 
