@@ -193,6 +193,17 @@ Tidak memiliki role guru.
 
 ---
 
+## Izin Keluar
+
+| Permission         | Super | Kepala | BK  | Piket |
+| ------------------ | ----- | ------ | --- | ----- |
+| izin_keluar.view   | ✅    | 👁     | ✅  | ✅    |
+| izin_keluar.create | ✅    | ❌     | ✅  | ✅    |
+| izin_keluar.edit   | ✅    | ❌     | ✅  | ✅    |
+| izin_keluar.print  | ✅    | ❌     | ✅  | ✅    |
+
+---
+
 # EKSTRAKURIKULER
 
 ## Ekstrakurikuler
@@ -348,53 +359,123 @@ Tidak dapat mengubah data akademik.
 
 ## Kepala Madrasah
 
-Dashboard monitoring:
+Dashboard Monitoring & Approval:
+
+- Statistik Madrasah
+- Kehadiran Sekolah
+- Kehadiran Ibadah
+- BK
+- Ekstrakurikuler
+- Prestasi
+
+Approval:
+
+- Proposal Kegiatan
+- Laporan Bulanan Ekskul
+
+---
+
+## Waka Kesiswaan
+
+Dashboard Kesiswaan & Approval:
+
+Monitoring:
 
 - Kehadiran Sekolah
 - Kehadiran Ibadah
 - BK
-- Ekskul
+- Ekstrakurikuler
 - Prestasi
-- Statistik Madrasah
+
+Approval:
+
+- Proposal Kegiatan
+- Laporan Bulanan Ekskul
+
+## Waka Kurikulum
+
+Dashboard Kurikulum:
+
+- Tahun Ajaran
+- Kelas
+- Jurnal Mengajar
 
 ---
 
-## Waka
+## Waka Humas
 
-Dashboard sesuai bidang.
+Dashboard Humas:
+
+- Pengumuman
+- Galeri
+- Prestasi
+
+---
+
+## Waka Sarpras
+
+Dashboard Sarpras:
+
+Monitoring sesuai kebutuhan sarana prasarana.
 
 ---
 
 ## Guru
 
-Dashboard mengajar.
+Dashboard aktivitas mengajar:
+
+- Jurnal Mengajar
+- Tugas Guru Berhalangan
 
 ---
 
 ## BK
 
-Dashboard BK.
+Dashboard BK:
+
+- Konseling
+- Permasalahan Siswa
+- Monitoring Kehadiran
+- Izin Keluar
 
 ---
 
 ## Piket
 
-Dashboard Kehadiran.
+Dashboard Kehadiran:
+
+- Monitoring Kehadiran
+- Kehadiran Manual
+- Distribusi Tugas Guru
+- Izin Keluar
 
 ---
 
 ## Pembina
 
-Dashboard Monitoring Ekskul.
+Dashboard Monitoring Ekstrakurikuler:
+
+- Anggota
+- Kehadiran
+- Laporan Bulanan
 
 ---
 
 ## Pelatih
 
-Dashboard Operasional Ekskul.
+Dashboard Operasional Ekstrakurikuler:
+
+- Sesi Kegiatan
+- Kehadiran Ekskul
+- Laporan Bulanan
 
 ---
 
 ## Siswa
 
-Dashboard Siswa.
+Dashboard Siswa:
+
+- Profil
+- Kehadiran
+- Prestasi
+- Pengumuman

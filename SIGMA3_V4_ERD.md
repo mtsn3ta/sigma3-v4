@@ -243,7 +243,10 @@ Saat naik kelas akan dibuat record baru pada tahun ajaran berikutnya.
 
 - id
 
+- nomor_izin
+
 - siswa_id
+- pegawai_id
 
 - tanggal
 
@@ -255,8 +258,27 @@ Saat naik kelas akan dibuat record baru pada tahun ajaran berikutnya.
 
 - status_proses
 
+- printed_at
+
 - created_at
 - updated_at
+
+### Status
+
+- keluar
+- kembali
+- pulang
+
+### Keterangan
+
+pegawai_id adalah petugas yang membuat izin keluar.
+
+Petugas dapat berupa:
+
+- BK
+- Piket
+
+Dokumen izin keluar dapat dicetak menggunakan printer termal.
 
 ### Status
 

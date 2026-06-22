@@ -618,3 +618,57 @@ Dilarang membuat Resource sebelum Migration final.
 Status:
 
 ✅ Final
+
+## Decision #13 — Izin Keluar Siswa
+
+Status:
+✅ Disetujui
+
+Izin Keluar tidak menjadi bagian modul BK.
+
+Izin Keluar merupakan layanan siswa yang dapat diakses oleh:
+
+- BK
+- Piket
+
+Workflow:
+
+Siswa
+↓
+BK / Piket
+↓
+Input Izin Keluar
+↓
+Cetak Printer Termal
+↓
+Siswa Keluar
+
+Tabel izin_keluar menyimpan:
+
+- nomor_izin
+- pegawai_id pembuat
+- waktu cetak
+
+Tujuan:
+
+- Audit petugas
+- Riwayat izin keluar
+- Dukungan printer termal
+
+## Decision #14 — Kepala dan Waka Memiliki Approval Workflow
+
+Kepala Madrasah tidak hanya monitoring.
+
+Kepala Madrasah menjadi approver final untuk:
+
+- Proposal Kegiatan
+- Laporan Bulanan Ekstrakurikuler
+
+Waka Kesiswaan menjadi approver tingkat menengah untuk:
+
+- Proposal Kegiatan
+- Laporan Bulanan Ekstrakurikuler
+
+Alasan:
+
+Mengikuti workflow Sigma3 Lama yang sudah berjalan.
