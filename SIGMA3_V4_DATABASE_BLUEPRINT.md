@@ -68,6 +68,8 @@ email VARCHAR(150) NULLABLE
 
 password VARCHAR(255)
 
+must_change_password BOOLEAN DEFAULT TRUE
+
 email_verified_at TIMESTAMP NULL
 
 remember_token VARCHAR(100) NULL
@@ -93,7 +95,7 @@ email
 
 id BIGINT PK
 
-user_id FK NULLABLE
+user_id FK UNIQUE
 
 nama VARCHAR(150)
 
@@ -106,7 +108,7 @@ jenis_pegawai ENUM
 
 no_hp VARCHAR(30)
 
-rfid_uid VARCHAR(100) NULLABLE
+rfid_uid VARCHAR(100) NULLABLE UNIQUE
 
 jenis_kelamin ENUM
 
@@ -119,7 +121,7 @@ tanggal_lahir DATE
 
 alamat TEXT
 
-email VARCHAR(150)
+email VARCHAR(150) NULLABLE
 
 foto VARCHAR(255) NULL
 
@@ -147,9 +149,7 @@ rfid_uid
 
 id BIGINT PK
 
-user_id FK NULLABLE
-
-nis VARCHAR(30)
+user_id FK UNIQUE
 
 nisn VARCHAR(30) UNIQUE
 
@@ -168,7 +168,7 @@ alamat TEXT
 
 no_hp VARCHAR(30)
 
-foto VARCHAR(255)
+foto VARCHAR(255) NULL
 
 nama_ayah VARCHAR(150)
 nama_ibu VARCHAR(150)
@@ -191,7 +191,8 @@ anak_ke INTEGER
 
 sekolah_asal VARCHAR(150)
 
-rfid_uid VARCHAR(100)
+rfid_uid VARCHAR(100) NULLABLE
+UNIQUE
 
 status ENUM
 

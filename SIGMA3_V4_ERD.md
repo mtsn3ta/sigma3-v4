@@ -20,15 +20,19 @@ users
 
 ---
 
-## users
+id
+username
+email
+password
 
-- id
-- username
-- email
-- password
-- email_verified_at
-- remember_token
-- status
+must_change_password
+true
+false
+
+status
+
+created_at
+updated_at
 
 ### Status
 

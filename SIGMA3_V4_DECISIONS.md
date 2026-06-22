@@ -672,3 +672,72 @@ Waka Kesiswaan menjadi approver tingkat menengah untuk:
 Alasan:
 
 Mengikuti workflow Sigma3 Lama yang sudah berjalan.
+
+## Decision #16 — User Architecture
+
+Semua pengguna sistem memiliki akun login.
+
+Kategori pengguna:
+
+- Pegawai Internal
+- Pelatih Eksternal
+- Siswa
+
+Saat data dibuat atau dimigrasikan, sistem otomatis membuat akun pada tabel users.
+
+Username:
+
+- Pegawai Internal = NIP/NIK
+- Pelatih Eksternal = NIK
+- Siswa = NISN
+
+Password awal:
+
+- Password default yang ditentukan sistem
+
+Setelah login pertama, pengguna dapat mengganti password sendiri melalui halaman profil.
+
+Relasi:
+
+users
+│
+├── pegawai (1:1)
+│
+└── siswa (1:1)
+
+Field user_id pada tabel pegawai dan siswa bersifat wajib (required).
+
+Tidak menggunakan akun opsional.
+
+Role dikelola menggunakan Spatie Permission.
+Akun baru
+↓
+must_change_password = true
+↓
+Login pertama
+↓
+dipaksa ganti password
+↓
+must_change_password = false
+
+## Decision #17 — Authentication Strategy
+
+Login menggunakan username, bukan email.
+
+Username:
+
+- Pegawai Internal = NIP/NIK
+- Pelatih Eksternal = NIK
+- Siswa = NISN
+
+Semua akun dibuat otomatis saat data dibuat atau dimigrasikan.
+
+Password awal:
+
+mtsn3ta123
+
+Saat login pertama pengguna wajib mengganti password.
+
+Field users.must_change_password digunakan untuk mengontrol proses tersebut.
+
+Reset password hanya dapat dilakukan oleh Super Admin.
