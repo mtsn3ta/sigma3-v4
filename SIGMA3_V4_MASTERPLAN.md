@@ -325,12 +325,12 @@ Urutan:
 
 Urutan:
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Policy
-- [ ] Testing
-- [ ] Commit
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Policy
+- [x] Testing
+- [x] Commit
 
 ---
 
