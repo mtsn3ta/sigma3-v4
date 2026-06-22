@@ -1,102 +1,102 @@
-# SIGMA3 V4 PERMISSION MATRIX
+# SIGMA3_V4_PERMISSION_MATRIX.md
 
 Status:
-🟩 Final v1
+🟩 Final v2
+
+---
+
+# TUJUAN
+
+Dokumen ini mendefinisikan seluruh hak akses (permission) pada SIGMA3 V4.
+
+Dokumen ini menjadi dasar untuk:
+
+- Spatie Permission
+- PermissionSeeder.php
+- RolePermissionSeeder.php
+- Filament Authorization
+- Dashboard Authorization
+- Approval Workflow
+
+Dokumen ini harus selalu konsisten dengan:
+
+- SIGMA3_V4_DATABASE_BLUEPRINT.md
+- SIGMA3_V4_ROLES.md
 
 ---
 
 # ROLE STRUCTURE
 
+```text
 Super Admin
 
 Kepala Madrasah
 
-Waka
-├─ Waka Kesiswaan
-├─ Waka Kurikulum
-├─ Waka Humas
-└─ Waka Sarpras
-
 Guru
-├─ BK
-├─ Piket
-├─ Pembina
-└─ Pelatih
+
+Waka Kesiswaan
+Waka Kurikulum
+Waka Humas
+Waka Sarpras
+
+BK
+Piket
+
+Pembina
+Pelatih
 
 Siswa
+```
 
 ---
 
-# ROLE RULES
+# ACCESS LEGEND
 
-## Kepala Madrasah
-
-Hanya monitoring.
-
-Tidak menjadi:
-
-- Guru
-- BK
-- Piket
-- Pembina
-- Pelatih
-
----
-
-## Waka
-
-Wajib memiliki role:
-
-- guru
-
-Tambahan:
-
-- waka_kesiswaan
-- waka_kurikulum
-- waka_humas
-- waka_sarpras
-
-Tidak dapat menjadi:
-
-- pembina
-- pelatih
-
----
-
-## Guru
-
-Role dasar pegawai pengajar.
-
-Dapat ditambah:
-
-- bk
-- piket
-- pembina
-- pelatih
-
----
-
-## Pelatih Eksternal
-
-Hanya:
-
-- pelatih
-
-Tidak memiliki role guru.
+| Simbol | Keterangan         |
+| ------ | ------------------ |
+| ✅     | Full Access        |
+| 👁     | View Only          |
+| Own    | Data Milik Sendiri |
+| Self   | Data Diri Sendiri  |
+| ❌     | Tidak Memiliki Hak |
 
 ---
 
 # MASTER DATA
 
-| Permission     | Super | Kepala | Waka | Guru | BK  | Piket | Pembina | Pelatih | Siswa |
-| -------------- | ----- | ------ | ---- | ---- | --- | ----- | ------- | ------- | ----- |
-| users.view     | ✅    | 👁     | ❌   | ❌   | ❌  | ❌    | ❌      | ❌      | ❌    |
-| users.manage   | ✅    | ❌     | ❌   | ❌   | ❌  | ❌    | ❌      | ❌      | ❌    |
-| roles.manage   | ✅    | ❌     | ❌   | ❌   | ❌  | ❌    | ❌      | ❌      | ❌    |
-| pegawai.view   | ✅    | 👁     | 👁   | ❌   | ❌  | ❌    | ❌      | ❌      | ❌    |
-| pegawai.manage | ✅    | ❌     | ❌   | ❌   | ❌  | ❌    | ❌      | ❌      | ❌    |
-| siswa.view     | ✅    | 👁     | 👁   | 👁   | 👁  | 👁    | 👁      | 👁      | Self  |
-| siswa.manage   | ✅    | ❌     | ❌   | ❌   | ❌  | ❌    | ❌      | ❌      | ❌    |
+## Users
+
+| Permission   | Super | Kepala | Lainnya |
+| ------------ | ----- | ------ | ------- |
+| users.view   | ✅    | 👁     | ❌      |
+| users.manage | ✅    | ❌     | ❌      |
+
+---
+
+## Roles
+
+| Permission   | Super |
+| ------------ | ----- |
+| roles.view   | ✅    |
+| roles.manage | ✅    |
+
+---
+
+## Pegawai
+
+| Permission     | Super | Kepala | Waka |
+| -------------- | ----- | ------ | ---- |
+| pegawai.view   | ✅    | 👁     | 👁   |
+| pegawai.manage | ✅    | ❌     | ❌   |
+
+---
+
+## Siswa
+
+| Permission   | Super | Kepala | Waka | Guru | BK  | Piket | Pembina | Pelatih | Siswa |
+| ------------ | ----- | ------ | ---- | ---- | --- | ----- | ------- | ------- | ----- |
+| siswa.view   | ✅    | 👁     | 👁   | 👁   | 👁  | 👁    | 👁      | 👁      | Self  |
+| siswa.manage | ✅    | ❌     | ❌   | ❌   | ❌  | ❌    | ❌      | ❌      | ❌    |
 
 ---
 
@@ -107,7 +107,7 @@ Tidak memiliki role guru.
 | Permission          | Super | Kepala | Waka Kurikulum |
 | ------------------- | ----- | ------ | -------------- |
 | tahun_ajaran.view   | ✅    | 👁     | 👁             |
-| tahun_ajaran.manage | ✅    | ❌     | ✅             |
+| tahun_ajaran.manage | ✅    | ❌     | ❌             |
 
 ---
 
@@ -116,7 +116,16 @@ Tidak memiliki role guru.
 | Permission   | Super | Kepala | Waka Kurikulum |
 | ------------ | ----- | ------ | -------------- |
 | kelas.view   | ✅    | 👁     | 👁             |
-| kelas.manage | ✅    | ❌     | ✅             |
+| kelas.manage | ✅    | ❌     | ❌             |
+
+---
+
+## Kelas Siswa
+
+| Permission         | Super | Kepala | Waka Kurikulum |
+| ------------------ | ----- | ------ | -------------- |
+| kelas_siswa.view   | ✅    | 👁     | 👁             |
+| kelas_siswa.manage | ✅    | ❌     | ❌             |
 
 ---
 
@@ -129,6 +138,7 @@ Tidak memiliki role guru.
 | jurnal.view   | ✅    | 👁     | 👁             | Own  |
 | jurnal.create | ✅    | ❌     | ❌             | ✅   |
 | jurnal.edit   | ✅    | ❌     | ❌             | Own  |
+| jurnal.delete | ✅    | ❌     | ❌             | ❌   |
 
 ---
 
@@ -138,99 +148,30 @@ Tidak memiliki role guru.
 | --------------------- | ----- | ------ | -------------- | ---- | ----- |
 | tugas_izin.view       | ✅    | 👁     | 👁             | Own  | ✅    |
 | tugas_izin.create     | ✅    | ❌     | ❌             | ✅   | ❌    |
+| tugas_izin.edit       | ✅    | ❌     | ❌             | Own  | ❌    |
 | tugas_izin.distribute | ✅    | ❌     | ❌             | ❌   | ✅    |
 
 ---
 
-# KEHADIRAN SEKOLAH
+# MONITORING KEHADIRAN
 
 ## Kehadiran Sekolah
 
-| Permission       | Super | Kepala | BK  | Piket |
-| ---------------- | ----- | ------ | --- | ----- |
-| kehadiran.view   | ✅    | 👁     | 👁  | 👁    |
-| kehadiran.manual | ✅    | ❌     | ❌  | ✅    |
-| kehadiran.export | ✅    | 👁     | 👁  | 👁    |
+| Permission               | Super | Kepala | Waka Kesiswaan | BK  | Piket |
+| ------------------------ | ----- | ------ | -------------- | --- | ----- |
+| kehadiran_sekolah.view   | ✅    | 👁     | 👁             | 👁  | 👁    |
+| kehadiran_sekolah.manual | ✅    | ❌     | ❌             | ❌  | ✅    |
+| kehadiran_sekolah.export | ✅    | 👁     | 👁             | 👁  | 👁    |
 
 ---
 
 ## Kehadiran Ibadah
 
-| Permission    | Super | Kepala | BK  | Piket |
-| ------------- | ----- | ------ | --- | ----- |
-| ibadah.view   | ✅    | 👁     | 👁  | 👁    |
-| ibadah.manual | ✅    | ❌     | ❌  | ✅    |
-
----
-
-# BK
-
-## Konseling
-
-| Permission       | Super | Kepala | BK  |
-| ---------------- | ----- | ------ | --- |
-| konseling.view   | ✅    | 👁     | ✅  |
-| konseling.create | ✅    | ❌     | ✅  |
-| konseling.edit   | ✅    | ❌     | ✅  |
-
----
-
-## Permasalahan
-
-| Permission     | Super | Kepala | BK  |
-| -------------- | ----- | ------ | --- |
-| masalah.view   | ✅    | 👁     | ✅  |
-| masalah.create | ✅    | ❌     | ✅  |
-| masalah.edit   | ✅    | ❌     | ✅  |
-
----
-
-## Dashboard BK
-
-| Permission        | Super | Kepala | BK  |
-| ----------------- | ----- | ------ | --- |
-| dashboard_bk.view | ✅    | 👁     | ✅  |
-
----
-
-## Izin Keluar
-
-| Permission         | Super | Kepala | BK  | Piket |
-| ------------------ | ----- | ------ | --- | ----- |
-| izin_keluar.view   | ✅    | 👁     | ✅  | ✅    |
-| izin_keluar.create | ✅    | ❌     | ✅  | ✅    |
-| izin_keluar.edit   | ✅    | ❌     | ✅  | ✅    |
-| izin_keluar.print  | ✅    | ❌     | ✅  | ✅    |
-
----
-
-# EKSTRAKURIKULER
-
-## Ekstrakurikuler
-
-| Permission    | Super | Kepala | Waka Kesiswaan | Pembina | Pelatih |
-| ------------- | ----- | ------ | -------------- | ------- | ------- |
-| ekskul.view   | ✅    | 👁     | 👁             | 👁      | 👁      |
-| ekskul.manage | ✅    | ❌     | ✅             | ❌      | ❌      |
-
----
-
-## Anggota Ekskul
-
-| Permission     | Super | Kepala | Waka Kesiswaan | Pembina | Pelatih |
-| -------------- | ----- | ------ | -------------- | ------- | ------- |
-| anggota.view   | ✅    | 👁     | 👁             | 👁      | 👁      |
-| anggota.manage | ✅    | ❌     | ✅             | ❌      | ❌      |
-
----
-
-## Sesi Kegiatan
-
-| Permission  | Super | Kepala | Pembina | Pelatih |
-| ----------- | ----- | ------ | ------- | ------- |
-| sesi.view   | ✅    | 👁     | 👁      | 👁      |
-| sesi.create | ✅    | ❌     | ❌      | ✅      |
-| sesi.edit   | ✅    | ❌     | ❌      | ✅      |
+| Permission              | Super | Kepala | Waka Kesiswaan | BK  | Piket |
+| ----------------------- | ----- | ------ | -------------- | --- | ----- |
+| kehadiran_ibadah.view   | ✅    | 👁     | 👁             | 👁  | 👁    |
+| kehadiran_ibadah.manual | ✅    | ❌     | ❌             | ❌  | ✅    |
+| kehadiran_ibadah.export | ✅    | 👁     | 👁             | 👁  | 👁    |
 
 ---
 
@@ -238,74 +179,162 @@ Tidak memiliki role guru.
 
 | Permission              | Super | Kepala | Pembina | Pelatih |
 | ----------------------- | ----- | ------ | ------- | ------- |
-| kehadiran_ekskul.view   | ✅    | 👁     | 👁      | 👁      |
-| kehadiran_ekskul.manage | ✅    | ❌     | ❌      | ✅      |
+| kehadiran_ekskul.view   | ✅    | 👁     | ✅      | ✅      |
+| kehadiran_ekskul.manage | ✅    | ❌     | ✅      | ✅      |
 
 ---
 
-## Laporan Bulanan
+## Rekap Kehadiran
 
-Workflow:
-
-Pelatih
-↓
-Pembina
-↓
-Waka Kesiswaan
-↓
-Kepala Madrasah
-
-### Pelatih
-
-- Create
-- Edit draft
-- Submit
-
-### Pembina
-
-- Review
-- Approve
-- Reject
-
-### Waka Kesiswaan
-
-- Review
-- Approve
-- Reject
-
-### Kepala Madrasah
-
-- Final Approve
-- Final Reject
+| Permission             | Super | Kepala | Waka Kesiswaan | BK  | Piket |
+| ---------------------- | ----- | ------ | -------------- | --- | ----- |
+| rekap_kehadiran.view   | ✅    | 👁     | 👁             | 👁  | 👁    |
+| rekap_kehadiran.export | ✅    | 👁     | 👁             | 👁  | 👁    |
 
 ---
 
-## Proposal Kegiatan
+# BK
 
-Workflow:
+## Konseling
+
+| Permission       | Super | Kepala | Waka Kesiswaan | BK  |
+| ---------------- | ----- | ------ | -------------- | --- |
+| konseling.view   | ✅    | 👁     | 👁             | ✅  |
+| konseling.create | ✅    | ❌     | ❌             | ✅  |
+| konseling.edit   | ✅    | ❌     | ❌             | ✅  |
+| konseling.delete | ✅    | ❌     | ❌             | ❌  |
+
+---
+
+## Permasalahan
+
+| Permission     | Super | Kepala | Waka Kesiswaan | BK  |
+| -------------- | ----- | ------ | -------------- | --- |
+| masalah.view   | ✅    | 👁     | 👁             | ✅  |
+| masalah.create | ✅    | ❌     | ❌             | ✅  |
+| masalah.edit   | ✅    | ❌     | ❌             | ✅  |
+| masalah.delete | ✅    | ❌     | ❌             | ❌  |
+
+---
+
+## Izin Keluar
+
+| Permission         | Super | Kepala | Waka Kesiswaan | BK  | Piket |
+| ------------------ | ----- | ------ | -------------- | --- | ----- |
+| izin_keluar.view   | ✅    | 👁     | 👁             | ✅  | ✅    |
+| izin_keluar.create | ✅    | ❌     | ❌             | ✅  | ✅    |
+| izin_keluar.edit   | ✅    | ❌     | ❌             | ✅  | ✅    |
+| izin_keluar.print  | ✅    | ❌     | ❌             | ✅  | ✅    |
+
+---
+
+# EKSTRAKURIKULER
+
+## Ekstrakurikuler
+
+| Permission    | Super | Waka Kesiswaan | Pembina | Pelatih |
+| ------------- | ----- | -------------- | ------- | ------- |
+| ekskul.view   | ✅    | 👁             | 👁      | 👁      |
+| ekskul.manage | ✅    | ✅             | ❌      | ❌      |
+
+---
+
+## Pengampu
+
+| Permission      | Super | Waka Kesiswaan | Pembina |
+| --------------- | ----- | -------------- | ------- |
+| pengampu.view   | ✅    | 👁             | 👁      |
+| pengampu.manage | ✅    | ✅             | ❌      |
+
+---
+
+## Anggota Ekskul
+
+| Permission       | Super | Kepala | Waka Kesiswaan | Pembina | Pelatih |
+| ---------------- | ----- | ------ | -------------- | ------- | ------- |
+| anggota.view     | ✅    | 👁     | 👁             | ✅      | ✅      |
+| anggota.create   | ✅    | ❌     | ❌             | ✅      | ✅      |
+| anggota.edit     | ✅    | ❌     | ❌             | ✅      | ✅      |
+| anggota.nonaktif | ✅    | ❌     | ❌             | ✅      | ✅      |
+
+---
+
+## Sesi Kegiatan
+
+| Permission  | Super | Kepala | Pembina | Pelatih |
+| ----------- | ----- | ------ | ------- | ------- |
+| sesi.view   | ✅    | 👁     | ✅      | ✅      |
+| sesi.create | ✅    | ❌     | ❌      | ✅      |
+| sesi.edit   | ✅    | ❌     | ❌      | ✅      |
+| sesi.delete | ✅    | ❌     | ❌      | ✅      |
+
+---
+
+# PROPOSAL KEGIATAN
+
+## Workflow
+
+```text
+Pelatih / Pembina
+↓
+Submit
 
 Pembina
 ↓
+Approve / Reject
+
 Waka Kesiswaan
 ↓
+Approve / Reject
+
 Kepala Madrasah
+↓
+Final Approve / Reject
+```
 
-### Pembina
+| Permission          | Super | Kepala | Waka Kesiswaan | Pembina | Pelatih |
+| ------------------- | ----- | ------ | -------------- | ------- | ------- |
+| proposal.view       | ✅    | 👁     | 👁             | 👁      | 👁      |
+| proposal.create     | ✅    | ❌     | ❌             | ✅      | ✅      |
+| proposal.edit_draft | ✅    | ❌     | ❌             | ✅      | ✅      |
+| proposal.submit     | ✅    | ❌     | ❌             | ✅      | ✅      |
+| proposal.review     | ✅    | ❌     | ✅             | ✅      | ❌      |
+| proposal.approve    | ✅    | ✅     | ✅             | ✅      | ❌      |
+| proposal.reject     | ✅    | ✅     | ✅             | ✅      | ❌      |
 
-- Create
-- Edit Draft
-- Submit
+---
 
-### Waka Kesiswaan
+# LAPORAN BULANAN
 
-- Review
-- Approve
-- Reject
+## Workflow
 
-### Kepala Madrasah
+```text
+Pelatih / Pembina
+↓
+Submit
 
-- Final Approve
-- Final Reject
+Pembina
+↓
+Approve / Reject
+
+Waka Kesiswaan
+↓
+Approve / Reject
+
+Kepala Madrasah
+↓
+Final Approve / Reject
+```
+
+| Permission         | Super | Kepala | Waka Kesiswaan | Pembina | Pelatih |
+| ------------------ | ----- | ------ | -------------- | ------- | ------- |
+| laporan.view       | ✅    | 👁     | 👁             | 👁      | 👁      |
+| laporan.create     | ✅    | ❌     | ❌             | ✅      | ✅      |
+| laporan.edit_draft | ✅    | ❌     | ❌             | ✅      | ✅      |
+| laporan.submit     | ✅    | ❌     | ❌             | ✅      | ✅      |
+| laporan.review     | ✅    | ❌     | ✅             | ✅      | ❌      |
+| laporan.approve    | ✅    | ✅     | ✅             | ✅      | ❌      |
+| laporan.reject     | ✅    | ✅     | ✅             | ✅      | ❌      |
 
 ---
 
@@ -313,28 +342,70 @@ Kepala Madrasah
 
 ## Prestasi
 
-| Permission      | Super | Kepala | Waka Kesiswaan |
-| --------------- | ----- | ------ | -------------- |
-| prestasi.view   | ✅    | 👁     | 👁             |
-| prestasi.manage | ✅    | ❌     | ✅             |
+| Permission      | Super | Waka Humas | Pembina | Pelatih |
+| --------------- | ----- | ---------- | ------- | ------- |
+| prestasi.view   | ✅    | 👁         | 👁      | 👁      |
+| prestasi.create | ✅    | ✅         | ✅      | ✅      |
+| prestasi.edit   | ✅    | Own        | Own     | Own     |
+| prestasi.delete | ✅    | ❌         | ❌      | ❌      |
 
 ---
 
 ## Pengumuman
 
-| Permission        | Super | Kepala | Waka |
-| ----------------- | ----- | ------ | ---- |
-| pengumuman.view   | ✅    | 👁     | 👁   |
-| pengumuman.manage | ✅    | ❌     | ✅   |
+| Permission        | Super | Semua Waka | Pembina | Pelatih |
+| ----------------- | ----- | ---------- | ------- | ------- |
+| pengumuman.view   | ✅    | 👁         | 👁      | 👁      |
+| pengumuman.create | ✅    | ✅         | ✅      | ✅      |
+| pengumuman.edit   | ✅    | Own        | Own     | Own     |
+| pengumuman.delete | ✅    | ❌         | ❌      | ❌      |
 
 ---
 
 ## Galeri
 
-| Permission    | Super | Kepala | Waka |
-| ------------- | ----- | ------ | ---- |
-| galeri.view   | ✅    | 👁     | 👁   |
-| galeri.manage | ✅    | ❌     | ✅   |
+| Permission    | Super | Waka Humas | Pembina | Pelatih |
+| ------------- | ----- | ---------- | ------- | ------- |
+| galeri.view   | ✅    | 👁         | 👁      | 👁      |
+| galeri.create | ✅    | ✅         | ✅      | ✅      |
+| galeri.edit   | ✅    | Own        | Own     | Own     |
+| galeri.delete | ✅    | ❌         | ❌      | ❌      |
+
+---
+
+# SYSTEM
+
+## Settings
+
+| Permission      | Super | Kepala | Waka |
+| --------------- | ----- | ------ | ---- |
+| settings.view   | ✅    | 👁     | 👁   |
+| settings.manage | ✅    | ❌     | ❌   |
+
+---
+
+## Activity Logs
+
+| Permission         | Super | Kepala |
+| ------------------ | ----- | ------ |
+| activity_logs.view | ✅    | 👁     |
+
+---
+
+## Approval Logs
+
+| Permission         | Super | Kepala | Waka |
+| ------------------ | ----- | ------ | ---- |
+| approval_logs.view | ✅    | 👁     | 👁   |
+
+---
+
+# SYSTEM NAVIGATION
+
+System
+├── Settings
+├── Activity Logs
+└── Approval Logs
 
 ---
 
@@ -345,9 +416,9 @@ Kepala Madrasah
 Dapat melihat:
 
 - Profil
-- Riwayat Kehadiran Sekolah
-- Riwayat Ibadah
-- Riwayat Ekskul
+- Kehadiran Sekolah
+- Kehadiran Ibadah
+- Kehadiran Ekskul
 - Prestasi
 - Pengumuman
 
@@ -355,127 +426,24 @@ Tidak dapat mengubah data akademik.
 
 ---
 
-# DASHBOARD
+# STATUS
 
-## Kepala Madrasah
+Database Blueprint Sync
+🟩 Final
 
-Dashboard Monitoring & Approval:
+Roles Sync
+🟩 Final
 
-- Statistik Madrasah
-- Kehadiran Sekolah
-- Kehadiran Ibadah
-- BK
-- Ekstrakurikuler
-- Prestasi
+Workflow Sync
+🟩 Final
 
-Approval:
+Permission Architecture
+🟩 Final
 
-- Proposal Kegiatan
-- Laporan Bulanan Ekskul
+Siap digunakan untuk:
 
----
-
-## Waka Kesiswaan
-
-Dashboard Kesiswaan & Approval:
-
-Monitoring:
-
-- Kehadiran Sekolah
-- Kehadiran Ibadah
-- BK
-- Ekstrakurikuler
-- Prestasi
-
-Approval:
-
-- Proposal Kegiatan
-- Laporan Bulanan Ekskul
-
-## Waka Kurikulum
-
-Dashboard Kurikulum:
-
-- Tahun Ajaran
-- Kelas
-- Jurnal Mengajar
-
----
-
-## Waka Humas
-
-Dashboard Humas:
-
-- Pengumuman
-- Galeri
-- Prestasi
-
----
-
-## Waka Sarpras
-
-Dashboard Sarpras:
-
-Monitoring sesuai kebutuhan sarana prasarana.
-
----
-
-## Guru
-
-Dashboard aktivitas mengajar:
-
-- Jurnal Mengajar
-- Tugas Guru Berhalangan
-
----
-
-## BK
-
-Dashboard BK:
-
-- Konseling
-- Permasalahan Siswa
-- Monitoring Kehadiran
-- Izin Keluar
-
----
-
-## Piket
-
-Dashboard Kehadiran:
-
-- Monitoring Kehadiran
-- Kehadiran Manual
-- Distribusi Tugas Guru
-- Izin Keluar
-
----
-
-## Pembina
-
-Dashboard Monitoring Ekstrakurikuler:
-
-- Anggota
-- Kehadiran
-- Laporan Bulanan
-
----
-
-## Pelatih
-
-Dashboard Operasional Ekstrakurikuler:
-
-- Sesi Kegiatan
-- Kehadiran Ekskul
-- Laporan Bulanan
-
----
-
-## Siswa
-
-Dashboard Siswa:
-
-- Profil
-- Kehadiran
-- Prestasi
-- Pengumuman
+- PermissionSeeder.php
+- RolePermissionSeeder.php
+- Policies
+- Filament Authorization
+- Dashboard Authorization

@@ -1,43 +1,81 @@
-# SIGMA3 V4 ERD
+# SIGMA3_V4_ERD.md
 
-Status: 🟨 Draft v1
+Status:
+🟩 Final
+
+Last Updated:
+2026-06-23
+
+---
+
+# TUJUAN
+
+Dokumen ini mendefinisikan Entity Relationship Diagram (ERD) final SIGMA3 V4.
+
+Dokumen ini harus selalu konsisten dengan:
+
+- SIGMA3_V4_DECISIONS.md
+- SIGMA3_V4_DATABASE_BLUEPRINT.md
+- SIGMA3_V4_ROLES.md
+- SIGMA3_V4_PERMISSION_MATRIX.md
 
 ---
 
 # AUTHENTICATION
 
-## Struktur
+## Struktur User
 
+```text
 users
 │
 ├── pegawai
 │
 └── siswa
+```
 
+Role menggunakan:
+
+```text
+Spatie Permission
+```
+
+```text
 users
 │
-└── roles (Spatie Permission)
+├── model_has_roles
+│
+├── model_has_permissions
+│
+└── roles
+```
 
 ---
 
-id
-username
-email
-password
+## users
 
-must_change_password
-true
-false
-
-status
-
-created_at
-updated_at
+- id
+- username
+- email
+- password
+- must_change_password
+- email_verified_at
+- remember_token
+- status
+- created_at
+- updated_at
 
 ### Status
 
 - aktif
 - nonaktif
+
+### Keterangan
+
+- Semua pengguna wajib memiliki akun.
+- Username pegawai menggunakan NIK/NIP.
+- Username pelatih eksternal menggunakan NIK.
+- Username siswa menggunakan NISN.
+- Login pertama wajib mengganti password.
 
 ---
 
@@ -46,43 +84,51 @@ updated_at
 ## pegawai
 
 - id
-- user_id (nullable)
-
+- user_id
 - nama
 - nik_nip
-
 - jenis_pegawai
-
 - no_hp
-- email
-
 - rfid_uid
-
 - jenis_kelamin
 - tempat_lahir
 - tanggal_lahir
 - alamat
-
+- email
 - foto
 - ttd_digital
-
 - status
+- created_at
+- updated_at
 
 ### Jenis Pegawai
 
 - internal
 - eksternal
 
-### Keterangan
+### Status
 
-Admin hanya mengisi data dasar:
+- aktif
+- nonaktif
 
-- Nama
-- NIP/NIK
-- No HP
-- RFID
+### Relasi
 
-Data lainnya dapat dilengkapi sendiri oleh pegawai setelah login.
+```text
+pegawai
+belongsTo users
+
+pegawai
+hasMany jurnal_mengajar
+
+pegawai
+hasMany tugas_guru_izin
+
+pegawai
+hasMany permasalahan_siswa
+
+pegawai
+hasMany konseling_siswa
+```
 
 ---
 
@@ -91,19 +137,14 @@ Data lainnya dapat dilengkapi sendiri oleh pegawai setelah login.
 ## siswa
 
 - id
-- user_id (nullable)
-
-- nis
+- user_id
+- nisn
 - nama
-
 - jenis_kelamin
-
 - tempat_lahir
 - tanggal_lahir
-
 - alamat
 - no_hp
-
 - foto
 
 - nama_ayah
@@ -130,6 +171,22 @@ Data lainnya dapat dilengkapi sendiri oleh pegawai setelah login.
 
 - status
 
+- created_at
+- updated_at
+
+### Status
+
+- aktif
+- mutasi
+- lulus
+
+### Relasi
+
+```text
+siswa
+belongsTo users
+```
+
 ---
 
 # AKADEMIK
@@ -138,12 +195,9 @@ Data lainnya dapat dilengkapi sendiri oleh pegawai setelah login.
 
 - id
 - tahun
-- status
-
-### Contoh
-
-- 2025/2026
-- 2026/2027
+- aktif
+- created_at
+- updated_at
 
 ### Keterangan
 
@@ -157,25 +211,25 @@ Hanya satu tahun ajaran yang aktif.
 - nama_kelas
 - tingkat
 - status
+- created_at
+- updated_at
 
-### Contoh
+### Status
 
-- 7A
-- 7B
-- 8A
-- 9G
+- aktif
+- nonaktif
 
 ---
 
 ## kelas_siswa
 
 - id
-
 - siswa_id
 - kelas_id
 - tahun_ajaran_id
-
 - status
+- created_at
+- updated_at
 
 ### Status
 
@@ -183,112 +237,22 @@ Hanya satu tahun ajaran yang aktif.
 - naik
 - lulus
 
-### Keterangan
+### Relasi
 
-Riwayat kelas siswa tidak pernah dihapus.
+```text
+siswa
+hasMany kelas_siswa
 
-Saat naik kelas akan dibuat record baru pada tahun ajaran berikutnya.
+kelas
+hasMany kelas_siswa
 
----
-
-# MODUL GURU
-
-## jurnal_mengajar
-
-- id
-
-- pegawai_id
-- kelas_id
-
-- tanggal
-- jam_ke
-
-- mapel
-- materi
-
-- siswa_tidak_hadir
-- siswa_bolos
-
-- catatan
-
-- created_at
-- updated_at
-
----
-
-## tugas_guru_izin
-
-- id
-
-- pegawai_id
-- kelas_id
-
-- tanggal
-
-- mapel
-- jam_ke
-
-- isi_tugas
-
-- status
-
-- created_at
-- updated_at
-
-### Status
-
-- baru
-- disampaikan
-- selesai
-
----
-
-## izin_keluar
-
-- id
-
-- nomor_izin
-
-- siswa_id
-- pegawai_id
-
-- tanggal
-
-- jam_keluar
-- jam_kembali
-
-- keperluan
-- tujuan
-
-- status_proses
-
-- printed_at
-
-- created_at
-- updated_at
-
-### Status
-
-- keluar
-- kembali
-- pulang
+tahun_ajaran
+hasMany kelas_siswa
+```
 
 ### Keterangan
 
-pegawai_id adalah petugas yang membuat izin keluar.
-
-Petugas dapat berupa:
-
-- BK
-- Piket
-
-Dokumen izin keluar dapat dicetak menggunakan printer termal.
-
-### Status
-
-- keluar
-- kembali
-- pulang
+Riwayat kelas tidak pernah dihapus.
 
 ---
 
@@ -297,14 +261,13 @@ Dokumen izin keluar dapat dicetak menggunakan printer termal.
 ## ekstrakurikuler
 
 - id
-
 - nama
 - deskripsi
-
 - jadwal
 - kuota
-
 - status
+- created_at
+- updated_at
 
 ### Status
 
@@ -315,19 +278,27 @@ Dokumen izin keluar dapat dicetak menggunakan printer termal.
 
 ## ekstrakurikuler_pengampu
 
-Menghubungkan pegawai dengan ekstrakurikuler.
-
 - id
-
 - ekstrakurikuler_id
 - pegawai_id
-
 - role
+- created_at
+- updated_at
 
 ### Role
 
 - pembina
 - pelatih
+
+### Relasi
+
+```text
+ekstrakurikuler
+belongsToMany pegawai
+
+pegawai
+belongsToMany ekstrakurikuler
+```
 
 ### Keterangan
 
@@ -340,13 +311,13 @@ Menghubungkan pegawai dengan ekstrakurikuler.
 ## anggota_ekskul
 
 - id
-
 - siswa_id
 - ekstrakurikuler_id
 - tahun_ajaran_id
-
 - tanggal_daftar
 - status
+- created_at
+- updated_at
 
 ### Status
 
@@ -355,23 +326,21 @@ Menghubungkan pegawai dengan ekstrakurikuler.
 
 ### Keterangan
 
-Keanggotaan ekskul disimpan per tahun ajaran.
+Keanggotaan disimpan per tahun ajaran.
 
 ---
 
 ## sesi_kegiatan
 
 - id
-
 - ekstrakurikuler_id
 - pelatih_id
-
 - tanggal
-
 - waktu_mulai
 - waktu_selesai
-
 - status
+- created_at
+- updated_at
 
 ### Status
 
@@ -379,25 +348,19 @@ Keanggotaan ekskul disimpan per tahun ajaran.
 - selesai
 - batal
 
-### Keterangan
-
-Pelatih yang memimpin sesi dicatat pada tabel ini.
-
 ---
 
 ## kehadiran_ekskul
 
 - id
-
 - sesi_kegiatan_id
 - siswa_id
-
 - status
 - sumber
-
-- petugas_id (nullable)
-
+- petugas_id
 - waktu_scan
+- created_at
+- updated_at
 
 ### Status
 
@@ -416,17 +379,14 @@ Pelatih yang memimpin sesi dicatat pada tabel ini.
 ## laporan_bulanan
 
 - id
-
 - ekstrakurikuler_id
 - tahun_ajaran_id
-
 - bulan
 - tahun
 
 - tujuan
 - pencapaian
 - evaluasi
-
 - kendala
 - solusi
 
@@ -436,6 +396,11 @@ Pelatih yang memimpin sesi dicatat pada tabel ini.
 - rata_kehadiran
 
 - status
+
+- submitted_at
+- approved_at
+
+- created_by_id
 
 - created_at
 - updated_at
@@ -449,12 +414,23 @@ Pelatih yang memimpin sesi dicatat pada tabel ini.
 - approved
 - rejected
 
+### Workflow
+
+```text
+Pembina / Pelatih
+↓
+Pembina
+↓
+Waka Kesiswaan
+↓
+Kepala Madrasah
+```
+
 ---
 
 ## proposal_kegiatan
 
 - id
-
 - ekstrakurikuler_id
 
 - nama_kegiatan
@@ -472,16 +448,34 @@ Pelatih yang memimpin sesi dicatat pada tabel ini.
 
 - status
 
+- submitted_at
+- approved_at
+
+- created_by_id
+
 - created_at
 - updated_at
 
 ### Status
 
 - draft
+- pending_pembina
 - pending_waka
 - pending_kepala
 - approved
 - rejected
+
+### Workflow
+
+```text
+Pembina / Pelatih
+↓
+Pembina
+↓
+Waka Kesiswaan
+↓
+Kepala Madrasah
+```
 
 ---
 
@@ -490,18 +484,15 @@ Pelatih yang memimpin sesi dicatat pada tabel ini.
 ## kehadiran_sekolah
 
 - id
-
 - siswa_id
-
 - tanggal
 - jenis
-
 - status
 - sumber
-
 - keterangan
-
 - waktu_scan
+- created_at
+- updated_at
 
 ### Jenis
 
@@ -526,18 +517,15 @@ Pelatih yang memimpin sesi dicatat pada tabel ini.
 ## kehadiran_ibadah
 
 - id
-
 - siswa_id
-
 - tanggal
 - jenis
-
 - status
 - sumber
-
-- petugas_id (nullable)
-
+- petugas_id
 - waktu_scan
+- created_at
+- updated_at
 
 ### Jenis
 
@@ -556,50 +544,104 @@ Pelatih yang memimpin sesi dicatat pada tabel ini.
 
 ---
 
-# BK (BIMBINGAN KONSELING)
+# MODUL GURU
+
+## jurnal_mengajar
+
+- id
+- pegawai_id
+- kelas_id
+- tanggal
+- jam_ke
+- mapel
+- materi
+- siswa_tidak_hadir
+- siswa_bolos
+- catatan
+- created_at
+- updated_at
+
+---
+
+## tugas_guru_izin
+
+- id
+- pegawai_id
+- kelas_id
+- tanggal
+- mapel
+- jam_ke
+- isi_tugas
+- status
+- created_at
+- updated_at
+
+### Status
+
+- baru
+- disampaikan
+- selesai
+
+---
+
+## izin_keluar
+
+- id
+- nomor_izin
+- siswa_id
+- pegawai_id
+- tanggal
+- jam_keluar
+- jam_kembali
+- keperluan
+- tujuan
+- status_proses
+- waktu_cetak
+- created_at
+- updated_at
+
+### Status
+
+- keluar
+- kembali
+- pulang
+
+### Keterangan
+
+Petugas:
+
+- BK
+- Piket
+
+---
+
+# BK
 
 ## permasalahan_siswa
 
 - id
-
 - siswa_id
 - pegawai_id
-
 - tanggal
-
 - permasalahan
 - penyelesaian
-
 - poin
-
 - created_at
 - updated_at
-
-### Keterangan
-
-BK menulis permasalahan dan poin secara manual sesuai kejadian.
 
 ---
 
 ## konseling_siswa
 
 - id
-
 - siswa_id
 - pegawai_id
-
 - tanggal
-
 - permasalahan
 - hasil_konseling
 - tindak_lanjut
-
 - created_at
 - updated_at
-
-### Keterangan
-
-Riwayat konseling tidak boleh dihapus.
 
 ---
 
@@ -608,22 +650,15 @@ Riwayat konseling tidak boleh dihapus.
 ## prestasi
 
 - id
-
-- ekstrakurikuler_id (nullable)
-
+- ekstrakurikuler_id
 - nama_prestasi
 - nama_lomba
-
 - jenis
 - tingkat
-
 - tanggal
-
 - keterangan
 - foto
-
 - created_by_id
-
 - created_at
 - updated_at
 
@@ -632,53 +667,33 @@ Riwayat konseling tidak boleh dihapus.
 - individu
 - tim
 
-### Keterangan
-
-Prestasi dapat berasal dari:
-
-- Individu
-- Tim
-
 ---
 
 ## prestasi_siswa
 
 - id
-
 - prestasi_id
 - siswa_id
 
-### Keterangan
+### Relasi
 
-Satu prestasi dapat dimiliki banyak siswa.
-
-Contoh:
-
-- Futsal
-- Pramuka
-- Hadrah
-- PBB
-
-Menggunakan relasi many-to-many.
+```text
+prestasi
+belongsToMany siswa
+```
 
 ---
 
 ## pengumuman
 
 - id
-
 - judul
 - isi
-
 - lampiran
-
 - tanggal_mulai
 - tanggal_selesai
-
 - status
-
 - created_by_id
-
 - created_at
 - updated_at
 
@@ -693,18 +708,12 @@ Menggunakan relasi many-to-many.
 ## galeri
 
 - id
-
 - judul
 - deskripsi
-
 - foto
-
 - tanggal
-
 - kategori
-
 - created_by_id
-
 - created_at
 - updated_at
 
@@ -714,3 +723,110 @@ Menggunakan relasi many-to-many.
 - ekstrakurikuler
 - prestasi
 - kegiatan
+
+---
+
+# SYSTEM
+
+## activity_logs
+
+- id
+- user_id
+- aksi
+- deskripsi
+- ip_address
+- user_agent
+- created_at
+
+---
+
+## approval_logs
+
+- id
+- modul
+- record_id
+- pegawai_id
+- aksi
+- catatan
+- created_at
+
+---
+
+## settings
+
+- id
+
+- nama_madrasah
+- alamat
+- telepon
+- email
+
+- logo
+- favicon
+
+- kepala_aktif_id
+- tahun_ajaran_aktif_id
+
+- created_at
+- updated_at
+
+### Keterangan
+
+Hanya terdapat satu record aktif.
+
+Dikelola oleh:
+
+- Super Admin
+
+---
+
+# RELATION SUMMARY
+
+```text
+users
+├── pegawai (1:1)
+└── siswa (1:1)
+
+pegawai
+├── jurnal_mengajar
+├── tugas_guru_izin
+├── konseling_siswa
+├── permasalahan_siswa
+└── ekstrakurikuler_pengampu
+
+siswa
+├── kelas_siswa
+├── anggota_ekskul
+├── kehadiran_sekolah
+├── kehadiran_ibadah
+├── kehadiran_ekskul
+├── konseling_siswa
+├── permasalahan_siswa
+└── prestasi_siswa
+
+ekstrakurikuler
+├── pengampu
+├── anggota
+├── sesi_kegiatan
+├── laporan_bulanan
+└── proposal_kegiatan
+```
+
+---
+
+# STATUS
+
+Database Sync
+🟩 Final
+
+Roles Sync
+🟩 Final
+
+Permission Matrix Sync
+🟩 Final
+
+Decision Sync
+🟩 Final
+
+Ready For Migration
+🟩 Yes

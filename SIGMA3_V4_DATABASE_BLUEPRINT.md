@@ -1,7 +1,7 @@
 # SIGMA3 V4 DATABASE BLUEPRINT
 
 Status:
-🟩 Final Blueprint v1
+🟩 Final Blueprint v3
 
 ---
 
@@ -14,44 +14,54 @@ Status:
 5. Semua FK menggunakan cascade sesuai kebutuhan
 6. Mendukung migrasi Sigma3 Lama
 7. Mendukung multi role pegawai
+8. Seluruh pegawai dan siswa memiliki akun login
+9. Login menggunakan:
+    - NIK/NIP (Pegawai)
+    - NISN (Siswa)
+10. RFID digunakan untuk:
+    - Kehadiran Sekolah
+    - Kehadiran Ibadah
+    - Kehadiran Ekstrakurikuler
 
 ---
 
 # MIGRATION ORDER
 
-01_users
+01_users  
 02_permissions
-03_pegawai
+
+03_pegawai  
 04_siswa
-05_tahun_ajaran
-06_kelas
+
+05_tahun_ajaran  
+06_kelas  
 07_kelas_siswa
 
-08_ekstrakurikuler
-09_ekstrakurikuler_pengampu
-10_anggota_ekskul
-11_sesi_kegiatan
-12_kehadiran_ekskul
-13_laporan_bulanan
+08_ekstrakurikuler  
+09_ekstrakurikuler_pengampu  
+10_anggota_ekskul  
+11_sesi_kegiatan  
+12_kehadiran_ekskul  
+13_laporan_bulanan  
 14_proposal_kegiatan
 
-15_kehadiran_sekolah
+15_kehadiran_sekolah  
 16_kehadiran_ibadah
 
-17_jurnal_mengajar
-18_tugas_guru_izin
+17_jurnal_mengajar  
+18_tugas_guru_izin  
 19_izin_keluar
 
-20_permasalahan_siswa
+20_permasalahan_siswa  
 21_konseling_siswa
 
-22_prestasi
-23_prestasi_siswa
-24_pengumuman
+22_prestasi  
+23_prestasi_siswa  
+24_pengumuman  
 25_galeri
 
-26_activity_logs
-27_approval_logs
+26_activity_logs  
+27_approval_logs  
 28_settings
 
 ---
@@ -84,8 +94,8 @@ updated_at
 
 INDEX
 
-username
-email
+- username
+- email
 
 ---
 
@@ -95,7 +105,7 @@ email
 
 id BIGINT PK
 
-user_id FK UNIQUE
+user_id FK UNIQUE NOT NULL
 
 nama VARCHAR(150)
 
@@ -108,7 +118,7 @@ jenis_pegawai ENUM
 
 no_hp VARCHAR(30)
 
-rfid_uid VARCHAR(100) NULLABLE UNIQUE
+rfid_uid VARCHAR(100) NULL UNIQUE
 
 jenis_kelamin ENUM
 
@@ -121,7 +131,7 @@ tanggal_lahir DATE
 
 alamat TEXT
 
-email VARCHAR(150) NULLABLE
+email VARCHAR(150) NULL
 
 foto VARCHAR(255) NULL
 
@@ -137,9 +147,9 @@ updated_at
 
 INDEX
 
-user_id
-nik_nip
-rfid_uid
+- user_id
+- nik_nip
+- rfid_uid
 
 ---
 
@@ -149,7 +159,7 @@ rfid_uid
 
 id BIGINT PK
 
-user_id FK UNIQUE
+user_id FK UNIQUE NOT NULL
 
 nisn VARCHAR(30) UNIQUE
 
@@ -171,28 +181,34 @@ no_hp VARCHAR(30)
 foto VARCHAR(255) NULL
 
 nama_ayah VARCHAR(150)
+
 nama_ibu VARCHAR(150)
 
 pekerjaan_ayah VARCHAR(150)
+
 pekerjaan_ibu VARCHAR(150)
 
 nik_ayah VARCHAR(50)
+
 nik_ibu VARCHAR(50)
 
 alamat_ortu TEXT
+
 telpon_ortu VARCHAR(30)
 
-nama_wali VARCHAR(150)
-pekerjaan_wali VARCHAR(150)
-alamat_wali TEXT
-telpon_wali VARCHAR(30)
+nama_wali VARCHAR(150) NULL
+
+pekerjaan_wali VARCHAR(150) NULL
+
+alamat_wali TEXT NULL
+
+telpon_wali VARCHAR(30) NULL
 
 anak_ke INTEGER
 
 sekolah_asal VARCHAR(150)
 
-rfid_uid VARCHAR(100) NULLABLE
-UNIQUE
+rfid_uid VARCHAR(100) NULL UNIQUE
 
 status ENUM
 
@@ -205,8 +221,8 @@ updated_at
 
 INDEX
 
-nisn
-rfid_uid
+- nisn
+- rfid_uid
 
 ---
 
@@ -218,7 +234,7 @@ id BIGINT PK
 
 tahun VARCHAR(20)
 
-aktif BOOLEAN
+aktif BOOLEAN DEFAULT FALSE
 
 created_at
 updated_at
@@ -264,13 +280,14 @@ updated_at
 
 INDEX
 
-siswa_id
-kelas_id
-tahun_ajaran_id
+- siswa_id
+- kelas_id
+- tahun_ajaran_id
 
 UNIQUE
 
-siswa_id + tahun_ajaran_id
+- siswa_id
+- tahun_ajaran_id
 
 ---
 
@@ -316,8 +333,21 @@ updated_at
 
 INDEX
 
-pegawai_id
-ekstrakurikuler_id
+- ekstrakurikuler_id
+- pegawai_id
+
+UNIQUE
+
+- ekstrakurikuler_id
+- pegawai_id
+- role
+
+Keterangan:
+
+- Satu pembina dapat mengampu banyak ekskul
+- Satu pelatih dapat mengampu banyak ekskul
+- Satu ekskul dapat memiliki banyak pembina
+- Satu ekskul dapat memiliki banyak pelatih
 
 ---
 
@@ -340,6 +370,18 @@ status ENUM
 
 created_at
 updated_at
+
+INDEX
+
+- siswa_id
+- ekstrakurikuler_id
+- tahun_ajaran_id
+
+UNIQUE
+
+- siswa_id
+- ekstrakurikuler_id
+- tahun_ajaran_id
 
 ---
 
@@ -395,6 +437,16 @@ waktu_scan DATETIME NULL
 created_at
 updated_at
 
+INDEX
+
+- sesi_kegiatan_id
+- siswa_id
+
+UNIQUE
+
+- sesi_kegiatan_id
+- siswa_id
+
 ---
 
 ## laporan_bulanan
@@ -404,6 +456,8 @@ id BIGINT PK
 ekstrakurikuler_id FK
 
 tahun_ajaran_id FK
+
+created_by_id FK
 
 bulan INTEGER
 
@@ -449,6 +503,8 @@ id BIGINT PK
 
 ekstrakurikuler_id FK
 
+created_by_id FK
+
 nama_kegiatan VARCHAR(150)
 
 jenis_kegiatan VARCHAR(150)
@@ -468,6 +524,7 @@ deskripsi LONGTEXT
 status ENUM
 
 - draft
+- pending_pembina
 - pending_waka
 - pending_kepala
 - approved
@@ -517,6 +574,17 @@ waktu_scan DATETIME NULL
 created_at
 updated_at
 
+INDEX
+
+- siswa_id
+- tanggal
+
+UNIQUE
+
+- siswa_id
+- tanggal
+- jenis
+
 ---
 
 ## kehadiran_ibadah
@@ -548,6 +616,17 @@ waktu_scan DATETIME NULL
 
 created_at
 updated_at
+
+INDEX
+
+- siswa_id
+- tanggal
+
+UNIQUE
+
+- siswa_id
+- tanggal
+- jenis
 
 ---
 
@@ -618,6 +697,10 @@ tanggal DATE
 jam_keluar TIME
 
 jam_kembali TIME NULL
+
+pegawai_id FK
+
+waktu_cetak DATETIME
 
 keperluan LONGTEXT
 
@@ -718,6 +801,11 @@ prestasi_id FK
 
 siswa_id FK
 
+UNIQUE
+
+- prestasi_id
+- siswa_id
+
 ---
 
 ## pengumuman
@@ -728,7 +816,7 @@ judul VARCHAR(150)
 
 isi LONGTEXT
 
-lampiran VARCHAR(255)
+lampiran VARCHAR(255) NULL
 
 tanggal_mulai DATE
 
@@ -805,6 +893,10 @@ pegawai_id FK
 
 aksi VARCHAR(100)
 
+status_lama VARCHAR(100) NULL
+
+status_baru VARCHAR(100) NULL
+
 catatan LONGTEXT
 
 created_at
@@ -815,17 +907,17 @@ created_at
 
 id BIGINT PK
 
-nama_madrasah
+nama_madrasah VARCHAR(255)
 
-alamat
+alamat LONGTEXT
 
-telepon
+telepon VARCHAR(50)
 
-email
+email VARCHAR(150)
 
-logo
+logo VARCHAR(255) NULL
 
-favicon
+favicon VARCHAR(255) NULL
 
 kepala_aktif_id FK
 
@@ -833,3 +925,57 @@ tahun_ajaran_aktif_id FK
 
 created_at
 updated_at
+
+---
+
+# WORKFLOW PROPOSAL
+
+Pelatih / Pembina
+↓
+Submit
+
+Pembina
+↓
+Approve
+
+Waka Kesiswaan
+↓
+Approve
+
+Kepala Madrasah
+↓
+Final Approve
+
+---
+
+# WORKFLOW LAPORAN
+
+Pelatih / Pembina
+↓
+Submit
+
+Pembina
+↓
+Approve
+
+Waka Kesiswaan
+↓
+Approve
+
+Kepala Madrasah
+↓
+Final Approve
+
+---
+
+# STATUS
+
+🟩 FINAL BLUEPRINT v3
+
+Siap digunakan untuk:
+
+- Migration Laravel
+- Model Laravel
+- Filament Resources
+- Roles & Permissions
+- Data Migration Sigma3 Lama

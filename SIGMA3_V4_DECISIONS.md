@@ -1,10 +1,10 @@
-# SIGMA3 V4 DECISIONS
+# SIGMA3_V4_DECISIONS.md
 
 Status:
-🟨 Active
+🟩 Final
 
 Last Updated:
-2026-06-22
+2026-06-23
 
 ---
 
@@ -14,23 +14,23 @@ Dokumen ini berisi seluruh keputusan bisnis, workflow, dan aturan sistem yang te
 
 Dokumen ini menjadi referensi utama sebelum membuat:
 
+- ERD
 - Database Blueprint
 - Migration
 - Model
 - Filament Resource
 - Permission Matrix
+- Dashboard
 
-Jika ada perubahan bisnis, dokumen ini harus diperbarui terlebih dahulu.
+Jika terdapat perubahan aturan bisnis, dokumen ini wajib diperbarui terlebih dahulu.
 
 ---
 
 # D-001
 
-## Arsitektur Authentication
+## Authentication Architecture
 
-Keputusan:
-
-Menggunakan satu tabel users sebagai identitas login utama.
+SIGMA3 V4 menggunakan satu akun untuk seluruh sistem.
 
 Struktur:
 
@@ -40,16 +40,7 @@ users
 
 Role menggunakan Spatie Permission.
 
-Alasan:
-
-- Satu sistem login
-- Mendukung multi role
-- Mendukung pelatih eksternal
-- Mudah dikelola
-- Mudah dikembangkan
-
 Status:
-
 ✅ Final
 
 ---
@@ -62,18 +53,15 @@ Satu user dapat memiliki lebih dari satu role.
 
 Contoh:
 
-Guru + BK
+- guru + bk
+- guru + piket
+- guru + pembina
+- guru + pelatih
+- guru + pembina + pelatih
 
-Guru + Piket
-
-Guru + Pembina
-
-Guru + Pelatih
-
-Guru + Pembina + Pelatih
+Permission merupakan gabungan seluruh role yang dimiliki.
 
 Status:
-
 ✅ Final
 
 ---
@@ -82,31 +70,26 @@ Status:
 
 ## Role Final Sistem
 
-Role yang digunakan:
+Role resmi:
 
 - super_admin
-
-- kepala
-
+- kepala_madrasah
+- guru
 - waka_kesiswaan
 - waka_kurikulum
 - waka_humas
 - waka_sarpras
-
-- guru
-
 - bk
-
 - piket
-
 - pembina
-
 - pelatih
-
 - siswa
 
-Status:
+Total:
 
+12 Roles
+
+Status:
 ✅ Final
 
 ---
@@ -115,25 +98,24 @@ Status:
 
 ## Kepala Madrasah
 
-Kepala Madrasah hanya berfungsi sebagai monitoring dan approval.
+Kepala Madrasah berfungsi sebagai monitoring dan approver tertinggi.
 
 Dapat:
 
 - Monitoring seluruh modul
 - Monitoring dashboard
-- Approval akhir laporan
 - Approval akhir proposal
+- Approval akhir laporan
 
 Tidak dapat:
 
-- Menjadi Guru
-- Menjadi BK
-- Menjadi Piket
-- Menjadi Pembina
-- Menjadi Pelatih
+- Guru
+- BK
+- Piket
+- Pembina
+- Pelatih
 
 Status:
-
 ✅ Final
 
 ---
@@ -142,24 +124,23 @@ Status:
 
 ## Waka
 
-Jenis Waka:
+Jenis:
 
 - Waka Kesiswaan
 - Waka Kurikulum
 - Waka Humas
 - Waka Sarpras
 
-Aturan:
+Semua Waka wajib memiliki role:
 
-Semua Waka otomatis memiliki role Guru.
+- guru
 
-Waka tidak dapat menjadi:
+Waka tidak dapat memiliki role:
 
-- Pembina
-- Pelatih
+- pembina
+- pelatih
 
 Status:
-
 ✅ Final
 
 ---
@@ -168,12 +149,12 @@ Status:
 
 ## Guru
 
+Role dasar pegawai pengajar.
+
 Hak akses:
 
 - Jurnal Mengajar
-- Tugas Saat Berhalangan
-- Monitoring Riwayat Tugas
-- Monitoring Riwayat Jurnal
+- Guru Berhalangan
 
 Role tambahan:
 
@@ -183,7 +164,6 @@ Role tambahan:
 - Pelatih
 
 Status:
-
 ✅ Final
 
 ---
@@ -192,18 +172,17 @@ Status:
 
 ## BK
 
-BK merupakan role tambahan dari Guru.
+Role tambahan Guru.
 
 Hak akses:
 
-- Monitoring Kehadiran Sekolah
-- Monitoring Kehadiran Ibadah
-- Input Permasalahan Siswa
-- Input Konseling Siswa
+- Konseling Siswa
+- Permasalahan Siswa
+- Monitoring Kehadiran
+- Izin Keluar
 - Dashboard BK
 
 Status:
-
 ✅ Final
 
 ---
@@ -212,18 +191,17 @@ Status:
 
 ## Piket
 
-Piket merupakan role tambahan dari Guru.
+Role tambahan Guru.
 
 Hak akses:
 
-- Monitoring Kehadiran Sekolah
+- Monitoring Kehadiran
 - Koreksi Kehadiran Manual
-- Menentukan status siswa
-- Mengelola Izin Keluar
-- Menyalurkan Tugas Guru Berhalangan
+- Rekap Kehadiran
+- Distribusi Tugas Guru Berhalangan
+- Izin Keluar
 
 Status:
-
 ✅ Final
 
 ---
@@ -236,21 +214,25 @@ Pembina merupakan penanggung jawab ekstrakurikuler.
 
 Hak akses:
 
-- Monitoring Anggota
-- Monitoring Kehadiran
-- Monitoring Kegiatan
-- Menentukan Pelatih
-- Verifikasi Laporan Bulanan
-- Monitoring Statistik
+- Kelola Anggota Ekskul
+- Monitoring Sesi Kegiatan
+- Monitoring Kehadiran Ekskul
+- Membuat Proposal Kegiatan
+- Membuat Laporan Bulanan
+- Review Proposal
+- Review Laporan
+- Approve Proposal
+- Approve Laporan
+- Reject Proposal
+- Reject Laporan
+- Monitoring Statistik Ekskul
 
-Tidak wajib:
+Catatan:
 
-- Membuat Sesi Kegiatan
-- Mengisi Kehadiran
-- Membuat Laporan
+- Satu pembina dapat mengampu lebih dari satu ekstrakurikuler.
+- Pembina dapat merangkap sebagai pelatih.
 
 Status:
-
 ✅ Final
 
 ---
@@ -263,13 +245,18 @@ Pelatih merupakan pelaksana operasional ekstrakurikuler.
 
 Hak akses:
 
+- Kelola Anggota Ekskul
 - Membuat Sesi Kegiatan
 - Mengelola Kehadiran Ekskul
+- Membuat Proposal Kegiatan
 - Membuat Laporan Bulanan
-- Mengelola Kegiatan Operasional
+
+Pelatih dapat berasal dari:
+
+- Pegawai Internal
+- Pegawai Eksternal
 
 Status:
-
 ✅ Final
 
 ---
@@ -278,15 +265,14 @@ Status:
 
 ## Pembina Merangkap Pelatih
 
-Jika seseorang memiliki role:
+Jika user memiliki role:
 
 - pembina
 - pelatih
 
-Maka mendapatkan seluruh hak akses keduanya.
+Maka seluruh permission kedua role digabungkan.
 
 Status:
-
 ✅ Final
 
 ---
@@ -295,7 +281,7 @@ Status:
 
 ## Pelatih Eksternal
 
-Pelatih eksternal tetap memiliki akun sendiri.
+Pelatih eksternal tetap memiliki akun login sendiri.
 
 Jenis Pegawai:
 
@@ -305,8 +291,10 @@ Jenis Pegawai:
 Pelatih eksternal:
 
 - Dapat Login
+- Dapat Kelola Anggota
 - Dapat Membuat Sesi
-- Dapat Mengisi Kehadiran
+- Dapat Mengelola Kehadiran
+- Dapat Membuat Proposal
 - Dapat Membuat Laporan
 
 Tidak dapat:
@@ -315,106 +303,70 @@ Tidak dapat:
 - Mengakses BK
 - Mengakses Modul Guru
 
-Alasan:
-
-Sigma3 Lama menggunakan sistem registrasi mandiri pelatih eksternal.
-
 Status:
-
 ✅ Final
 
 ---
 
 # D-013
 
-## Kehadiran Dipisah Menjadi Tiga Modul
+## Arsitektur Kehadiran
 
-Jenis Kehadiran:
+Kehadiran dipisah menjadi:
 
 1. Kehadiran Sekolah
 2. Kehadiran Ibadah
 3. Kehadiran Ekstrakurikuler
 
-Alasan:
-
-Setiap kehadiran memiliki tujuan monitoring berbeda.
-
 Status:
-
 ✅ Final
 
 ---
 
 # D-014
 
-## Workflow Kehadiran Sekolah
-
-Lokasi:
-
-Gerbang Madrasah
+## Kehadiran Sekolah
 
 Metode:
 
 - RFID
-- Koreksi Manual Piket
+- Manual oleh Piket
 
-Alur:
+Status yang digunakan:
 
-1. Siswa scan RFID saat datang.
-2. Sistem mencatat otomatis.
-3. Setelah batas waktu masuk:
-    - Sistem menampilkan siswa yang belum scan.
-4. Guru Piket melakukan pengecekan.
-5. Guru Piket menentukan status:
-    - Telat
-    - Izin
-    - Sakit
-    - Alpa
-6. Siswa scan RFID saat pulang.
+- hadir
+- telat
+- izin
+- sakit
+- alpa
 
 Status:
-
 ✅ Final
 
 ---
 
 # D-015
 
-## Workflow Kehadiran Ibadah
-
-Lokasi:
-
-Masjid
+## Kehadiran Ibadah
 
 Jenis:
 
-- Dhuha
-- Dzuhur
+- dhuha
+- dzuhur
 
 Metode:
 
 - RFID
 - Manual
 
-Alur:
-
-1. Siswa scan RFID.
-2. Sistem mencatat kehadiran ibadah.
-3. Petugas dapat melakukan koreksi bila diperlukan.
-
 Status:
-
 ✅ Final
 
 ---
 
 # D-016
 
-## Workflow Kehadiran Ekstrakurikuler
-
-Lokasi:
-
-Area Kegiatan Ekstrakurikuler
+## Kehadiran Ekstrakurikuler
 
 Metode:
 
@@ -423,50 +375,41 @@ Metode:
 
 Alur:
 
-1. Pelatih membuat sesi kegiatan.
-2. Siswa melakukan scan RFID.
-3. Pelatih melakukan koreksi bila diperlukan.
-4. Kehadiran masuk ke statistik dan laporan.
+Pelatih membuat sesi
+↓
+Siswa hadir
+↓
+RFID / Manual
+↓
+Statistik Kehadiran
 
 Status:
-
 ✅ Final
 
 ---
 
 # D-017
 
-## Workflow Laporan Bulanan Ekstrakurikuler
+## Workflow Laporan Bulanan
 
-Alur Approval:
+Pembuat:
 
-Pelatih
+- Pembina
+- Pelatih
+
+Workflow:
+
+Draft
 ↓
-Submit Laporan
-
-Pembina
+Pending Pembina
 ↓
-Verifikasi
-
-Waka Kesiswaan
+Pending Waka Kesiswaan
 ↓
-Verifikasi
-
-Kepala Madrasah
+Pending Kepala Madrasah
 ↓
-Final Approval
-
-Status Laporan:
-
-- draft
-- pending_pembina
-- pending_waka
-- pending_kepala
-- approved
-- rejected
+Approved / Rejected
 
 Status:
-
 ✅ Final
 
 ---
@@ -475,30 +418,24 @@ Status:
 
 ## Workflow Proposal Kegiatan
 
-Alur Approval:
+Pembuat:
 
-Pembina atau Pelatih
+- Pembina
+- Pelatih
+
+Workflow:
+
+Draft
 ↓
-Membuat Proposal
-
-Waka Kesiswaan
+Pending Pembina
 ↓
-Verifikasi
-
-Kepala Madrasah
+Pending Waka Kesiswaan
 ↓
-Final Approval
-
-Status Proposal:
-
-- draft
-- pending_waka
-- pending_kepala
-- approved
-- rejected
+Pending Kepala Madrasah
+↓
+Approved / Rejected
 
 Status:
-
 ✅ Final
 
 ---
@@ -507,25 +444,22 @@ Status:
 
 ## Dashboard BK
 
-Dashboard BK mengambil data dari:
+Data sumber:
 
 - Kehadiran Sekolah
 - Kehadiran Ibadah
-- Permasalahan Siswa
-- Konseling Siswa
+- Konseling
+- Permasalahan
 
 Menampilkan:
 
-- Ranking Poin Tertinggi
+- Ranking Pelanggaran
 - Siswa Rawan Alpa
 - Siswa Rawan Telat
-- Siswa Tidak Mengikuti Ibadah
-- Konseling Bulan Berjalan
-- Kasus Terbaru
+- Statistik Konseling
 - Statistik Pelanggaran
 
 Status:
-
 ✅ Final
 
 ---
@@ -534,24 +468,23 @@ Status:
 
 ## Data Pegawai
 
-Admin hanya menginput data dasar:
+Admin menginput:
 
 - Nama
-- NIP/NIK
+- NIK/NIP
 - No HP
 - RFID
 
-Pegawai dapat melengkapi sendiri:
+Pegawai melengkapi sendiri:
 
+- Email
 - Foto
 - Alamat
-- Email
 - Tempat Lahir
 - Tanggal Lahir
-- Tanda Tangan Digital
+- TTD Digital
 
 Status:
-
 ✅ Final
 
 ---
@@ -562,14 +495,12 @@ Status:
 
 Struktur siswa mengikuti Sigma3 Lama.
 
-Alasan:
+Tujuan:
 
-- Data sudah lengkap
 - Memudahkan migrasi
 - Meminimalkan perubahan operasional
 
 Status:
-
 ✅ Final
 
 ---
@@ -578,32 +509,182 @@ Status:
 
 ## Migrasi Data Sigma Lama
 
-Sigma3 Lama tetap menjadi sumber data utama.
-
-Migrasi dilakukan setelah seluruh modul Sigma3 V4 selesai.
-
 Tahapan:
 
 1. Struktur Final
 2. Testing
-3. Mapping Data
+3. Mapping
 4. Import
 5. Verifikasi
 6. Go Live
 
 Status:
-
 ✅ Final
 
 ---
 
 # D-023
 
+## Authentication Strategy
+
+Username:
+
+- Pegawai Internal = NIK/NIP
+- Pelatih Eksternal = NIK
+- Siswa = NISN
+
+Password Awal:
+
+mtsn3ta123
+
+Login pertama:
+
+must_change_password = true
+
+Wajib mengganti password.
+
+Status:
+✅ Final
+
+---
+
+# D-024
+
+## RFID Attendance Architecture
+
+Pencatatan RFID dilakukan melalui frontend khusus.
+
+Filament digunakan untuk:
+
+- Monitoring
+- Koreksi
+- Rekap
+- Pelaporan
+
+Status:
+✅ Final
+
+---
+
+# D-025
+
+## Izin Keluar
+
+Izin Keluar bukan bagian dari BK.
+
+Dapat diakses oleh:
+
+- BK
+- Piket
+
+Data tambahan:
+
+- pegawai_id
+- waktu_cetak
+
+Status:
+✅ Final
+
+---
+
+# D-026
+
+## Navigation Structure
+
+Menu utama:
+
+- Dashboard
+- Master Data
+- Monitoring Kehadiran
+- BK
+- Guru
+- Guru Piket
+- Ekstrakurikuler
+- Publikasi
+- System
+
+Status:
+✅ Final
+
+---
+
+# D-027
+
+## Publikasi Prestasi
+
+Dapat dikelola oleh:
+
+- Super Admin
+- Waka Humas
+- Pembina
+- Pelatih
+
+Status:
+✅ Final
+
+---
+
+# D-028
+
+## Publikasi Pengumuman
+
+Dapat dikelola oleh:
+
+- Super Admin
+- Waka Kesiswaan
+- Waka Kurikulum
+- Waka Humas
+- Waka Sarpras
+- Pembina
+- Pelatih
+
+Status:
+✅ Final
+
+---
+
+# D-029
+
+## Publikasi Galeri
+
+Dapat dikelola oleh:
+
+- Super Admin
+- Waka Humas
+- Pembina
+- Pelatih
+
+Status:
+✅ Final
+
+---
+
+# D-030
+
+## System Module
+
+Modul System terdiri dari:
+
+- Settings
+- Activity Logs
+- Approval Logs
+
+Settings hanya dapat diubah oleh:
+
+- Super Admin
+
+Status:
+✅ Final
+
+---
+
+# D-031
+
 ## Prinsip Pengembangan
 
 Urutan kerja wajib:
 
-1. Decision
+1. Decisions
 2. ERD
 3. Database Blueprint
 4. Migration
@@ -616,128 +697,4 @@ Urutan kerja wajib:
 Dilarang membuat Resource sebelum Migration final.
 
 Status:
-
 ✅ Final
-
-## Decision #13 — Izin Keluar Siswa
-
-Status:
-✅ Disetujui
-
-Izin Keluar tidak menjadi bagian modul BK.
-
-Izin Keluar merupakan layanan siswa yang dapat diakses oleh:
-
-- BK
-- Piket
-
-Workflow:
-
-Siswa
-↓
-BK / Piket
-↓
-Input Izin Keluar
-↓
-Cetak Printer Termal
-↓
-Siswa Keluar
-
-Tabel izin_keluar menyimpan:
-
-- nomor_izin
-- pegawai_id pembuat
-- waktu cetak
-
-Tujuan:
-
-- Audit petugas
-- Riwayat izin keluar
-- Dukungan printer termal
-
-## Decision #14 — Kepala dan Waka Memiliki Approval Workflow
-
-Kepala Madrasah tidak hanya monitoring.
-
-Kepala Madrasah menjadi approver final untuk:
-
-- Proposal Kegiatan
-- Laporan Bulanan Ekstrakurikuler
-
-Waka Kesiswaan menjadi approver tingkat menengah untuk:
-
-- Proposal Kegiatan
-- Laporan Bulanan Ekstrakurikuler
-
-Alasan:
-
-Mengikuti workflow Sigma3 Lama yang sudah berjalan.
-
-## Decision #16 — User Architecture
-
-Semua pengguna sistem memiliki akun login.
-
-Kategori pengguna:
-
-- Pegawai Internal
-- Pelatih Eksternal
-- Siswa
-
-Saat data dibuat atau dimigrasikan, sistem otomatis membuat akun pada tabel users.
-
-Username:
-
-- Pegawai Internal = NIP/NIK
-- Pelatih Eksternal = NIK
-- Siswa = NISN
-
-Password awal:
-
-- Password default yang ditentukan sistem
-
-Setelah login pertama, pengguna dapat mengganti password sendiri melalui halaman profil.
-
-Relasi:
-
-users
-│
-├── pegawai (1:1)
-│
-└── siswa (1:1)
-
-Field user_id pada tabel pegawai dan siswa bersifat wajib (required).
-
-Tidak menggunakan akun opsional.
-
-Role dikelola menggunakan Spatie Permission.
-Akun baru
-↓
-must_change_password = true
-↓
-Login pertama
-↓
-dipaksa ganti password
-↓
-must_change_password = false
-
-## Decision #17 — Authentication Strategy
-
-Login menggunakan username, bukan email.
-
-Username:
-
-- Pegawai Internal = NIP/NIK
-- Pelatih Eksternal = NIK
-- Siswa = NISN
-
-Semua akun dibuat otomatis saat data dibuat atau dimigrasikan.
-
-Password awal:
-
-mtsn3ta123
-
-Saat login pertama pengguna wajib mengganti password.
-
-Field users.must_change_password digunakan untuk mengontrol proses tersebut.
-
-Reset password hanya dapat dilakukan oleh Super Admin.
