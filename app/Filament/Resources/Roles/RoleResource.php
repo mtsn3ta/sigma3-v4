@@ -24,6 +24,9 @@ class RoleResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationLabel = 'Role';
+    protected static ?string $pluralModelLabel = 'Role';
+
+    protected static ?string $modelLabel = 'Role';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan';
 

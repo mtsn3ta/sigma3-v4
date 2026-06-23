@@ -364,15 +364,15 @@ Urutan:
 
 Urutan:
 
-- [ ] Role Resource
-- [ ] Permission Resource
-- [ ] Assign Role UI
-- [ ] Testing
-- [ ] Commit
+- [x] Role Resource
+- [x] Permission Resource
+- [x] Assign Role UI
+- [x] Testing
+- [x] Commit
 
 Status:
 
-⬜ BELUM DIMULAI
+🟩 SELESAI
 
 ---
 
@@ -386,37 +386,37 @@ Menyelesaikan seluruh workflow ekstrakurikuler.
 
 ## Sprint 5.1 Ekstrakurikuler
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Testing
 
 ---
 
 ## Sprint 5.2 Pengampu
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Testing
 
 ---
 
 ## Sprint 5.3 Anggota Ekskul
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Testing
 
 ---
 
 ## Sprint 5.4 Sesi Kegiatan
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Testing
 
 ---
 

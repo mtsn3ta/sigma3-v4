@@ -25,6 +25,10 @@ class PegawaiResource extends Resource
 
     protected static ?string $navigationLabel = 'Pegawai';
 
+    protected static ?string $pluralModelLabel = 'Pegawai';
+
+    protected static ?string $modelLabel = 'Pegawai';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
     protected static ?int $navigationSort = 1;

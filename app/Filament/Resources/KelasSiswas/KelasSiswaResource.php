@@ -22,6 +22,10 @@ class KelasSiswaResource extends Resource
 
     protected static ?string $navigationLabel = 'Kelas Siswa';
 
+    protected static ?string $pluralModelLabel = 'Kelas Siswa';
+
+    protected static ?string $modelLabel = 'Kelas Siswa';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
 
     protected static ?int $navigationSort = 3;

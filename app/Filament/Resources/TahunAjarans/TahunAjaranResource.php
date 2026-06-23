@@ -25,6 +25,10 @@ class TahunAjaranResource extends Resource
 
     protected static ?string $navigationLabel = 'Tahun Ajaran';
 
+    protected static ?string $pluralModelLabel = 'Tahun Ajaran';
+
+    protected static ?string $modelLabel = 'Tahun Ajaran';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
     protected static ?int $navigationSort = 3;
