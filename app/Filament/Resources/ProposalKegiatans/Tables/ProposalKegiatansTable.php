@@ -59,6 +59,7 @@ class ProposalKegiatansTable
                         'pending_pembina' => 'warning',
                         'pending_waka' => 'warning',
                         'pending_kepala' => 'warning',
+                        'revision' => 'warning',
                         'approved' => 'success',
                         'rejected' => 'danger',
                         default => 'gray',

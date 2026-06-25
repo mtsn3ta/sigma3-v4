@@ -106,15 +106,27 @@ class PermissionSeeder extends Seeder
             'proposal.review',
             'proposal.approve',
             'proposal.reject',
+            'proposal.revision',
 
-            // Laporan
-            'laporan.view',
-            'laporan.create',
-            'laporan.edit_draft',
-            'laporan.submit',
-            'laporan.review',
-            'laporan.approve',
-            'laporan.reject',
+            // Laporan Kegiatan
+            'laporan_kegiatan.view',
+            'laporan_kegiatan.create',
+            'laporan_kegiatan.edit_draft',
+            'laporan_kegiatan.submit',
+            'laporan_kegiatan.review',
+            'laporan_kegiatan.approve',
+            'laporan_kegiatan.reject',
+            'laporan_kegiatan.revision',
+
+            // Laporan Bulanan
+            'laporan_bulanan.view',
+            'laporan_bulanan.create',
+            'laporan_bulanan.edit_draft',
+            'laporan_bulanan.submit',
+            'laporan_bulanan.review',
+            'laporan_bulanan.approve',
+            'laporan_bulanan.reject',
+            'laporan_bulanan.revision',
 
             // Publikasi
             'prestasi.view',

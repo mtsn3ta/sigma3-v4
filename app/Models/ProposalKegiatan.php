@@ -64,6 +64,7 @@ class ProposalKegiatan extends Model
             'pending_pembina' => 'Menunggu Pembina',
             'pending_waka' => 'Menunggu Waka Kesiswaan',
             'pending_kepala' => 'Menunggu Kepala Madrasah',
+            'revision' => 'Perlu Revisi',
             'approved' => 'Disetujui',
             'rejected' => 'Ditolak',
             default => '-',
@@ -170,5 +171,12 @@ class ProposalKegiatan extends Model
             $pelatih &&
             $pembina &&
             $pelatih->pegawai_id === $pembina->pegawai_id;
+    }
+    public function revisionLogs()
+    {
+        return $this->morphMany(
+            RevisionLog::class,
+            'revisionable'
+        )->latest();
     }
 }

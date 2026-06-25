@@ -9,11 +9,79 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ProposalApprovalLog;
+use App\Models\RevisionLog;
 
 class EditProposalKegiatan extends EditRecord
 {
     protected static string $resource = ProposalKegiatanResource::class;
+    protected function logApproval(string $action): void
+    {
+        ProposalApprovalLog::create([
+            'proposal_kegiatan_id' => $this->record->id,
+            'user_id' => Auth::id(),
+            'action' => $action,
+        ]);
+    }
 
+    protected function updateStatus(
+        string $status,
+        bool $submitted = false,
+        bool $approved = false,
+    ): void {
+
+        $data = [
+            'status' => $status,
+        ];
+
+        if ($submitted) {
+            $data['submitted_at'] = now();
+        }
+
+        if ($approved) {
+            $data['approved_at'] = now();
+        }
+
+        $this->record->update($data);
+    }
+    protected function requestRevision(string $notes): void
+    {
+        RevisionLog::create([
+
+            'revisionable_type' => $this->record::class,
+
+            'revisionable_id' => $this->record->id,
+
+            'user_id' => Auth::id(),
+
+            'status_from' => $this->record->status,
+
+            'status_to' => 'revision',
+
+            'notes' => $notes,
+
+        ]);
+
+        $this->updateStatus('revision');
+
+        $this->logApproval('revision');
+    }
+    protected function resubmitRevision(): void
+    {
+        $revision = $this->record
+            ->revisionLogs()
+            ->latest()
+            ->first();
+
+        if (! $revision) {
+            return;
+        }
+
+        $this->updateStatus(
+            $revision->status_from
+        );
+
+        $this->logApproval('resubmit');
+    }
     protected function getHeaderActions(): array
     {
         return [
@@ -52,15 +120,12 @@ class EditProposalKegiatan extends EditRecord
                         return;
                     }
 
-                    $this->record->update([
-                        'status' => $status,
-                        'submitted_at' => now(),
-                    ]);
-                    ProposalApprovalLog::create([
-                        'proposal_kegiatan_id' => $this->record->id,
-                        'user_id' => Auth::id(),
-                        'action' => 'submit',
-                    ]);
+                    $this->updateStatus(
+                        $status,
+                        submitted: true,
+                    );
+
+                    $this->logApproval('submit');
                 }),
             Action::make('approvePembina')
                 ->label('Approve Pembina')
@@ -88,14 +153,9 @@ class EditProposalKegiatan extends EditRecord
                         return;
                     }
 
-                    $this->record->update([
-                        'status' => 'pending_waka',
-                    ]);
-                    ProposalApprovalLog::create([
-                        'proposal_kegiatan_id' => $this->record->id,
-                        'user_id' => Auth::id(),
-                        'action' => 'approve_pembina',
-                    ]);
+                    $this->updateStatus('pending_waka');
+
+                    $this->logApproval('approve_pembina');
                 }),
             Action::make('approveWaka')
                 ->label('Approve Waka')
@@ -121,14 +181,9 @@ class EditProposalKegiatan extends EditRecord
                         return;
                     }
 
-                    $this->record->update([
-                        'status' => 'pending_kepala',
-                    ]);
-                    ProposalApprovalLog::create([
-                        'proposal_kegiatan_id' => $this->record->id,
-                        'user_id' => Auth::id(),
-                        'action' => 'approve_waka',
-                    ]);
+                    $this->updateStatus('pending_kepala');
+
+                    $this->logApproval('approve_waka');
                 }),
             Action::make('approveKepala')
                 ->label('Approve Kepala')
@@ -154,15 +209,90 @@ class EditProposalKegiatan extends EditRecord
                         return;
                     }
 
-                    $this->record->update([
-                        'status' => 'approved',
-                        'approved_at' => now(),
-                    ]);
-                    ProposalApprovalLog::create([
-                        'proposal_kegiatan_id' => $this->record->id,
-                        'user_id' => Auth::id(),
-                        'action' => 'approve_kepala',
-                    ]);
+                    $this->updateStatus(
+                        'approved',
+                        approved: true,
+                    );
+
+                    $this->logApproval('approve_kepala');
+                }),
+            Action::make('revision')
+                ->label('Request Revision')
+                ->icon('heroicon-o-arrow-path')
+                ->color('warning')
+                ->requiresConfirmation()
+                ->form([
+
+                    \Filament\Forms\Components\Textarea::make('notes')
+                        ->label('Catatan Revisi')
+                        ->rows(5)
+                        ->required(),
+
+                ])
+                ->visible(function () {
+
+                    /** @var User|null $user */
+                    $user = Auth::user();
+
+                    if (! $user) {
+                        return false;
+                    }
+
+                    if (
+                        $user->isPembinaEkskul(
+                            $this->record->ekstrakurikuler_id
+                        )
+                        && $this->record->status === 'pending_pembina'
+                    ) {
+                        return true;
+                    }
+
+                    if (
+                        $user->hasRole('waka_kesiswaan')
+                        && $this->record->status === 'pending_waka'
+                    ) {
+                        return true;
+                    }
+
+                    if (
+                        $user->hasRole('kepala_madrasah')
+                        && $this->record->status === 'pending_kepala'
+                    ) {
+                        return true;
+                    }
+
+                    return false;
+                })
+                ->action(function (array $data) {
+
+                    $this->requestRevision(
+                        $data['notes']
+                    );
+                }),
+            Action::make('resubmit')
+                ->label('Resubmit')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('primary')
+                ->requiresConfirmation()
+                ->visible(function () {
+
+                    /** @var User|null $user */
+                    $user = Auth::user();
+
+                    if (! $user) {
+                        return false;
+                    }
+
+                    return
+                        $this->record->status === 'revision'
+                        && (
+                            $user->isPelatihEkskul($this->record->ekstrakurikuler_id)
+                            || $user->isPembinaEkskul($this->record->ekstrakurikuler_id)
+                        );
+                })
+                ->action(function () {
+
+                    $this->resubmitRevision();
                 }),
             Action::make('reject')
                 ->label('Reject')
@@ -216,14 +346,9 @@ class EditProposalKegiatan extends EditRecord
                         return;
                     }
 
-                    $this->record->update([
-                        'status' => 'rejected',
-                    ]);
-                    ProposalApprovalLog::create([
-                        'proposal_kegiatan_id' => $this->record->id,
-                        'user_id' => Auth::id(),
-                        'action' => 'reject',
-                    ]);
+                    $this->updateStatus('rejected');
+
+                    $this->logApproval('reject');
                 }),
             Action::make('preview')
                 ->label('Preview')

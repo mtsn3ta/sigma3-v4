@@ -46,6 +46,56 @@ class ProposalKegiatanPolicy
         return $user->can('proposal.edit_draft');
     }
 
+    /**
+     * Submit Proposal
+     */
+    public function submit(
+        User $user,
+        ProposalKegiatan $proposalKegiatan
+    ): bool {
+        return $user->can('proposal.submit');
+    }
+
+    /**
+     * Review Proposal
+     */
+    public function review(
+        User $user,
+        ProposalKegiatan $proposalKegiatan
+    ): bool {
+        return $user->can('proposal.review');
+    }
+
+    /**
+     * Approve Proposal
+     */
+    public function approve(
+        User $user,
+        ProposalKegiatan $proposalKegiatan
+    ): bool {
+        return $user->can('proposal.approve');
+    }
+
+    /**
+     * Reject Proposal
+     */
+    public function reject(
+        User $user,
+        ProposalKegiatan $proposalKegiatan
+    ): bool {
+        return $user->can('proposal.reject');
+    }
+
+    /**
+     * Request Revision
+     */
+    public function revision(
+        User $user,
+        ProposalKegiatan $proposalKegiatan
+    ): bool {
+        return $user->can('proposal.revision');
+    }
+
     public function delete(
         User $user,
         ProposalKegiatan $proposalKegiatan

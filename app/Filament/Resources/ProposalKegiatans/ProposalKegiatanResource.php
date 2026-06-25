@@ -16,6 +16,7 @@ use Filament\Tables\Table;
 use App\Filament\Resources\ProposalKegiatans\RelationManagers\PesertaRelationManager;
 use App\Filament\Resources\ProposalKegiatans\RelationManagers\RabsRelationManager;
 use App\Filament\Resources\ProposalKegiatans\RelationManagers\ApprovalLogsRelationManager;
+use App\Filament\Resources\ProposalKegiatans\RelationManagers\RevisionLogsRelationManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\ProposalKegiatans\Pages\PreviewProposalKegiatan;
@@ -60,6 +61,7 @@ class ProposalKegiatanResource extends Resource
             PesertaRelationManager::class,
             RabsRelationManager::class,
             ApprovalLogsRelationManager::class,
+            RevisionLogsRelationManager::class,
         ];
     }
     public static function getEloquentQuery(): Builder

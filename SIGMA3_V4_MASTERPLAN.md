@@ -693,6 +693,69 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 
 ---
 
+## Sprint 5.7.9 Foundation Improvement
+
+### 5.7.9.1 Permission & Policy Refactor
+
+#### Permission
+
+- [x] Refactor Proposal Permission
+- [x] Tambah Permission Laporan Kegiatan
+- [x] Tambah Permission Laporan Bulanan
+
+#### Role Permission
+
+- [x] Super Admin
+- [x] Kepala Madrasah
+- [x] Waka Kesiswaan
+- [x] Pembina
+- [x] Pelatih
+
+#### Policies
+
+- [x] ProposalKegiatanPolicy
+- [ ] LaporanKegiatanPolicy (Sprint 5.8)
+- [ ] LaporanBulananPolicy (Sprint 5.8)
+
+#### Resource Visibility
+
+- [x] Hide Menu by Permission
+- [x] Hide Action by Permission
+- [x] Hide Relation Manager by Permission
+
+---
+
+### 5.7.9.2 Revision Engine
+
+#### Foundation
+
+- [x] Migration revision_logs
+- [x] Model RevisionLog
+- [x] Proposal Morph Relation
+
+#### Workflow
+
+- [x] Status Revision
+- [x] Request Revision
+- [x] Resubmit
+
+#### Revision Notes
+
+- [x] Catatan Revisi
+- [x] Riwayat Revisi
+
+#### Approval
+
+- [x] Pembina Revision
+- [x] Waka Revision
+- [x] Kepala Revision
+
+#### Logs
+
+- [x] Timeline Revision
+
+---
+
 # Sprint 5.8 Laporan Kegiatan & Laporan Bulanan
 
 STATUS: 0%
@@ -878,13 +941,18 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 🟩 Sprint 5.4 Sesi Kegiatan
 
-🟩 Sprint 5.5 Kehadiran Ekskul
+🟩 Sprint 5.5 Kehadiran
 
 🟩 Sprint 5.6 Scope & Role Engine
 
 🟩 Sprint 5.7 Proposal Kegiatan
 
-🟨 Sprint 5.8 Laporan Bulanan
+🟨 Sprint 5.7.9 Foundation Improvement
+├── 5.7.9.1 Permission & Policy Refactor
+└── 5.7.9.2 Revision Engine
+
+⬜ Sprint 5.8 Laporan Kegiatan
+⬜ Sprint 5.9 Laporan Bulanan
 
 ---
 
