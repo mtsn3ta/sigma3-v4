@@ -693,36 +693,177 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 
 ---
 
-## Sprint 5.8 Laporan Bulanan
+# Sprint 5.8 Laporan Kegiatan & Laporan Bulanan
 
-### Core
+STATUS: 0%
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
+Tujuan:
+
+Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Proposal Kegiatan serta menghasilkan Laporan Bulanan otomatis berbasis data kegiatan, sesi latihan, dan kehadiran.
+
+---
+
+## 5.8.1 Laporan Kegiatan
+
+### Database
+
+- [ ] Migration laporan_kegiatan
+- [ ] Model LaporanKegiatan
+- [ ] Resource LaporanKegiatan
+
+### Integrasi Proposal
+
+- [ ] 1 Proposal → 1 Laporan Kegiatan
+- [ ] Auto Ambil Data Proposal
+- [ ] Auto Ambil Peserta Proposal
+- [ ] Auto Ambil RAB Proposal
+
+### Isi Laporan
+
+#### BAB I Pendahuluan
+
+- [ ] Latar Belakang
+- [ ] Tujuan
+- [ ] Identitas Kegiatan
+
+#### BAB II Pelaksanaan
+
+- [ ] Waktu Pelaksanaan
+- [ ] Tempat
+- [ ] Peserta
+- [ ] Uraian Pelaksanaan
+
+#### BAB III Hasil Kegiatan
+
+- [ ] Pencapaian
+- [ ] Prestasi
+- [ ] Evaluasi
+
+#### BAB IV Realisasi Anggaran
+
+- [ ] Auto Ambil RAB Proposal
+- [ ] Realisasi Anggaran
+- [ ] Selisih Anggaran
+
+#### BAB V Penutup
+
+- [ ] Penutup
+
+### Lampiran
+
+- [ ] Upload Dokumentasi
+- [ ] Upload Sertifikat
+- [ ] Upload Berita Acara (Opsional)
 
 ### Workflow
 
-- [ ] Submit Laporan
+- [ ] Submit
 - [ ] Approval Pembina
-- [ ] Approval Waka Kesiswaan
-- [ ] Approval Kepala Madrasah
+- [ ] Approval Waka
+- [ ] Approval Kepala
 - [ ] Reject Workflow
 
-### Statistik
+### Approval Logs
 
-- [ ] Statistik Kehadiran
-- [ ] Statistik Anggota Aktif
-- [ ] Statistik Sesi Kegiatan
-- [ ] Rekap Bulanan Otomatis
+- [ ] Auto Log Submit
+- [ ] Auto Log Approval
+- [ ] Auto Log Reject
 
-### Logs
+### Preview & PDF
 
-- [ ] Approval Logs
-- [ ] Activity Logs
+- [ ] Preview
+- [ ] Generate PDF
+- [ ] Lembar Pengesahan
 
-### Testing
+---
 
+## 5.8.2 Laporan Bulanan Ekstrakurikuler
+
+### Database
+
+- [ ] Migration laporan_bulanan
+- [ ] Model LaporanBulanan
+- [ ] Resource LaporanBulanan
+
+### Auto Generate Engine
+
+#### BAB I
+
+- [ ] Pendahuluan
+- [ ] Tujuan
+- [ ] Identitas Ekstrakurikuler
+
+#### BAB II Program Latihan
+
+- [ ] Auto Ambil Sesi Kegiatan
+- [ ] Auto Ambil Program Latihan
+- [ ] Auto Rekap Kehadiran
+
+#### BAB III Prestasi
+
+- [ ] Auto Ambil Proposal Bulan Ini
+- [ ] Auto Ambil Laporan Kegiatan
+- [ ] Auto Ambil Prestasi
+
+#### BAB IV Evaluasi
+
+- [ ] Evaluasi
+- [ ] Kendala
+- [ ] Solusi
+
+#### BAB V Penutup
+
+- [ ] Penutup
+
+### Statistik Otomatis
+
+- [ ] Jumlah Anggota Aktif
+- [ ] Jumlah Sesi
+- [ ] Persentase Kehadiran
+- [ ] Jumlah Proposal
+- [ ] Jumlah Kegiatan
+- [ ] Jumlah Prestasi
+
+### Lampiran
+
+- [ ] Dokumentasi Bulanan
+- [ ] Rekap Kehadiran
+- [ ] Daftar Program Latihan
+
+### Workflow
+
+- [ ] Submit
+- [ ] Approval Pembina
+- [ ] Approval Waka
+- [ ] Approval Kepala
+- [ ] Reject Workflow
+
+### Approval Logs
+
+- [ ] Auto Logging
+
+### Preview & PDF
+
+- [ ] Preview
+- [ ] Generate PDF
+- [ ] Lembar Pengesahan
+
+---
+
+## 5.8.3 Testing
+
+### Laporan Kegiatan
+
+- [ ] End-to-End Workflow
+- [ ] Preview
+- [ ] PDF
+
+### Laporan Bulanan
+
+- [ ] Auto Generate
+- [ ] Statistik
+- [ ] Preview
+- [ ] PDF
 - [ ] End-to-End Workflow
 
 ---
@@ -739,11 +880,11 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 
 🟩 Sprint 5.5 Kehadiran Ekskul
 
-🟨 Sprint 5.6 Scope & Role Engine
+🟩 Sprint 5.6 Scope & Role Engine
 
-⬜ Sprint 5.7 Proposal Kegiatan
+🟩 Sprint 5.7 Proposal Kegiatan
 
-⬜ Sprint 5.8 Laporan Bulanan
+🟨 Sprint 5.8 Laporan Bulanan
 
 ---
 
