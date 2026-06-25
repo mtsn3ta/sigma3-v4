@@ -20,7 +20,7 @@ Framework:
 
 Instansi:
 
-MTs Negeri 3 Tulungagung
+MTsN 3 Tulungagung
 
 ---
 
@@ -380,7 +380,7 @@ Status:
 
 Tujuan:
 
-Menyelesaikan seluruh workflow ekstrakurikuler.
+Menyelesaikan seluruh workflow ekstrakurikuler dengan akses berbasis pengampu, approval berjenjang, dan integrasi kehadiran.
 
 ---
 
@@ -422,38 +422,329 @@ Menyelesaikan seluruh workflow ekstrakurikuler.
 
 ## Sprint 5.5 Kehadiran Ekskul
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] RFID Integration
-- [ ] Testing
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Auto Session Attendance Generation
+- [-] RFID Integration (Deferred)
+- [x] Testing
 
 ---
 
-## Sprint 5.6 Proposal Kegiatan
+## Sprint 5.6 Scope & Role Engine
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Approval Workflow
-- [ ] Approval Logs
-- [ ] Testing
+Tujuan:
+
+Menyelaraskan Role Sistem dengan Pengampu Ekskul dan membatasi akses berdasarkan ekskul yang diampu.
+
+### Auto Role Synchronization
+
+- [x] Pengampu → Assign Role Pembina
+- [x] Pengampu → Assign Role Pelatih
+- [x] Auto Remove Role
+
+### Scope Engine
+
+- [x] User::isPembinaEkskul()
+- [x] User::isPelatihEkskul()
+- [x] User::managesEkstrakurikuler()
+
+### Resource Scope
+
+- [x] Scope Anggota Ekskul
+- [x] Scope Sesi Kegiatan
+- [x] Scope Kehadiran Ekskul
+- [x] Scope Proposal Kegiatan
+- [-] Scope Laporan Bulanan (Sprint 5.8)
+
+### Testing
+
+- [x] Multi Ekskul
+- [x] Multi Pengampu
+- [x] Pembina + Pelatih Bersamaan
 
 ---
 
-## Sprint 5.7 Laporan Bulanan
+## Sprint 5.7 Proposal Kegiatan
+
+STATUS: ±85% COMPLETE
+
+Tujuan:
+
+Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetujui, dicetak, dan diarsipkan secara digital.
+
+---
+
+### 5.7.1 Core Proposal
+
+#### Database
+
+[x] Redesign proposal_kegiatan
+[x] Migration Final Schema
+[x] Model ProposalKegiatan
+[x] Resource ProposalKegiatan
+
+#### Informasi Kegiatan
+
+[x] Nama Kegiatan
+[x] Jenis Kegiatan
+[x] Tempat Kegiatan
+[x] Tanggal Mulai
+[x] Tanggal Selesai
+
+#### Status Workflow
+
+[x] draft
+[x] pending_pembina
+[x] pending_waka
+[x] pending_kepala
+[x] approved
+[x] rejected
+
+#### Scope
+
+[x] Scope Proposal Kegiatan
+[x] Scope Form Proposal
+[x] Scope Peserta Proposal
+
+---
+
+### 5.7.2 Template Proposal Engine
+
+#### BAB I Pendahuluan
+
+[x] Latar Belakang
+[x] Dasar Kegiatan
+
+#### BAB II Tujuan
+
+[x] Tujuan Kegiatan
+
+#### BAB III Peserta Kegiatan
+
+##### Database
+
+[x] Migration proposal_peserta
+[x] Model ProposalPeserta
+
+##### Peserta
+
+[x] Ambil Anggota Ekskul Aktif
+[x] Pilih Peserta Kegiatan
+[x] Simpan ke proposal_peserta
+
+##### Output
+
+[x] Tabel Peserta Otomatis
+[x] Nomor Urut Peserta
+[x] Tampilkan Kelas Aktif
+
+#### BAB IV Rencana Anggaran Biaya
+
+##### Database
+
+[x] Migration proposal_rab
+[x] Model ProposalRab
+
+##### RAB
+
+[x] Relation Manager RAB
+[x] CRUD Item RAB
+[x] Auto Subtotal
+
+#### Total Anggaran
+
+[x] Auto Calculate Total
+[x] Format Rupiah
+[x] Ringkasan Anggaran
+
+#### BAB V Penutup
+
+[x] Penutup
+[x] Editable oleh Pembina/Pelatih
+
+---
+
+### 5.7.3 Template Otomatis
+
+[x] Auto Fill Latar Belakang
+[x] Auto Fill Dasar Kegiatan
+[x] Auto Fill Tujuan
+[x] Auto Fill Penutup
+[x] Dynamic Template Proposal
+
+---
+
+### 5.7.4 Workflow Approval
+
+#### Submit
+
+[x] Submit Proposal
+
+#### Approval
+
+[x] Approval Pembina
+[x] Approval Waka Kesiswaan
+[x] Approval Kepala Madrasah
+
+#### Reject
+
+[x] Reject Workflow
+
+#### Security
+
+[x] Lock Edit Setelah Approved
+[x] Lock RAB Setelah Approved
+[x] Lock Peserta Setelah Approved
+
+---
+
+### 5.7.5 Approval Logs
+
+#### Audit Trail
+
+[x] Migration proposal_approval_log
+[x] Model ProposalApprovalLog
+
+#### Auto Logging
+
+[x] Auto Log Submit
+[x] Auto Log Approve Pembina
+[x] Auto Log Approve Waka
+[x] Auto Log Approve Kepala
+[x] Auto Log Reject
+
+---
+
+### 5.7.6 Preview Proposal
+
+#### Backend
+
+[x] Proposal Preview Page
+[x] Route Preview Proposal
+[x] Tombol Preview Proposal
+
+#### Cover
+
+[ ] Logo Madrasah (Final Asset)
+[x] Nama Madrasah
+[x] Judul Proposal
+[x] Informasi Kegiatan
+
+#### Isi Proposal
+
+[x] BAB I Pendahuluan
+[x] BAB II Tujuan
+[x] BAB III Peserta
+[x] BAB IV RAB
+[x] Total Anggaran
+[x] Ringkasan Anggaran
+[x] BAB V Penutup
+
+#### Lembar Pengesahan
+
+[x] Layout Lembar Pengesahan
+[ ] Nama Pelatih Otomatis
+[ ] Nama Pembina Otomatis
+[ ] Nama Waka Kesiswaan Otomatis
+[ ] Nama Kepala Madrasah Otomatis
+
+#### UI
+
+[x] Layout A4 Portrait
+[x] Print Friendly
+
+---
+
+### 5.7.7 PDF Engine
+
+#### Output
+
+[x] Generate PDF
+[ ] Nomor Proposal
+[x] Cover Proposal
+[x] Tabel Peserta
+[x] Tabel RAB
+[x] Ringkasan Anggaran
+[x] Halaman Persetujuan
+
+---
+
+### 5.7.8 Testing
+
+#### Workflow
+
+[ ] Pelatih → Submit
+[ ] Pembina → Approve
+[ ] Waka → Approve
+[ ] Kepala → Approve
+
+#### Audit
+
+[ ] Approval Logs
+
+#### Output
+
+[x] Preview Proposal
+[x] Generate PDF
+
+#### End-to-End
+
+[ ] End-to-End Workflow
+
+---
+
+## Sprint 5.8 Laporan Bulanan
+
+### Core
 
 - [ ] Migration
 - [ ] Model
 - [ ] Resource
-- [ ] Approval Workflow
+
+### Workflow
+
+- [ ] Submit Laporan
+- [ ] Approval Pembina
+- [ ] Approval Waka Kesiswaan
+- [ ] Approval Kepala Madrasah
+- [ ] Reject Workflow
+
+### Statistik
+
+- [ ] Statistik Kehadiran
+- [ ] Statistik Anggota Aktif
+- [ ] Statistik Sesi Kegiatan
+- [ ] Rekap Bulanan Otomatis
+
+### Logs
+
 - [ ] Approval Logs
-- [ ] Statistik
-- [ ] Testing
+- [ ] Activity Logs
 
-Status:
+### Testing
 
-⬜ BELUM DIMULAI
+- [ ] End-to-End Workflow
+
+---
+
+## STATUS
+
+🟩 Sprint 5.1 Ekstrakurikuler
+
+🟩 Sprint 5.2 Pengampu
+
+🟩 Sprint 5.3 Anggota Ekskul
+
+🟩 Sprint 5.4 Sesi Kegiatan
+
+🟩 Sprint 5.5 Kehadiran Ekskul
+
+🟨 Sprint 5.6 Scope & Role Engine
+
+⬜ Sprint 5.7 Proposal Kegiatan
+
+⬜ Sprint 5.8 Laporan Bulanan
 
 ---
 

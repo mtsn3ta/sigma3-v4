@@ -72,4 +72,15 @@ class Siswa extends Model
     {
         return $this->hasMany(KehadiranEkskul::class);
     }
+    public function kelasAktif()
+    {
+        return $this->hasOne(KelasSiswa::class)
+            ->whereHas('tahunAjaran', function ($query) {
+                $query->where('aktif', true);
+            });
+    }
+    public function getNamaKelasAktifAttribute(): ?string
+    {
+        return $this->kelasAktif?->kelas?->nama_kelas;
+    }
 }

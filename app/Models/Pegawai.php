@@ -36,4 +36,10 @@ class Pegawai extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function pengampus()
+    {
+        return $this->hasMany(
+            EkstrakurikulerPengampu::class
+        );
+    }
 }

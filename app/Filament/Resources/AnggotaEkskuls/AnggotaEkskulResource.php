@@ -13,6 +13,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AnggotaEkskulResource extends Resource
 {
@@ -48,7 +51,40 @@ class AnggotaEkskulResource extends Resource
             //
         ];
     }
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
 
+        $user = Auth::user();
+        /** @var User|null $user */
+        if (! $user) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if (
+            $user->hasRole('super_admin') ||
+            $user->hasRole('waka_kesiswaan') ||
+            $user->hasRole('kepala_madrasah')
+        ) {
+            return $query;
+        }
+
+        if (
+            $user->hasRole('pembina') ||
+            $user->hasRole('pelatih')
+        ) {
+            return $query->whereIn(
+                'ekstrakurikuler_id',
+                $user->pegawai
+                    ? $user->pegawai
+                    ->pengampus()
+                    ->pluck('ekstrakurikuler_id')
+                    : []
+            );
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
     public static function getPages(): array
     {
         return [

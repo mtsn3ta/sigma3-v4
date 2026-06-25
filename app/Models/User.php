@@ -10,6 +10,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use App\Models\Siswa;
+use App\Models\EkstrakurikulerPengampu;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
@@ -54,5 +55,36 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function siswa()
     {
         return $this->hasOne(Siswa::class);
+    }
+    public function isPembinaEkskul(int $ekstrakurikulerId): bool
+    {
+        if (! $this->pegawai) {
+            return false;
+        }
+
+        return EkstrakurikulerPengampu::query()
+            ->where('pegawai_id', $this->pegawai->id)
+            ->where('ekstrakurikuler_id', $ekstrakurikulerId)
+            ->where('role', 'pembina')
+            ->exists();
+    }
+
+    public function isPelatihEkskul(int $ekstrakurikulerId): bool
+    {
+        if (! $this->pegawai) {
+            return false;
+        }
+
+        return EkstrakurikulerPengampu::query()
+            ->where('pegawai_id', $this->pegawai->id)
+            ->where('ekstrakurikuler_id', $ekstrakurikulerId)
+            ->where('role', 'pelatih')
+            ->exists();
+    }
+
+    public function managesEkstrakurikuler(int $ekstrakurikulerId): bool
+    {
+        return $this->isPembinaEkskul($ekstrakurikulerId)
+            || $this->isPelatihEkskul($ekstrakurikulerId);
     }
 }

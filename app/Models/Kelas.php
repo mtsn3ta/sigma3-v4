@@ -20,4 +20,8 @@ class Kelas extends Model
     {
         return $this->hasMany(KelasSiswa::class);
     }
+    public function getNamaAttribute(): string
+    {
+        return $this->nama_kelas;
+    }
 }

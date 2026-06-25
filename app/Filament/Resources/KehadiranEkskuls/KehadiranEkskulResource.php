@@ -12,6 +12,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class KehadiranEkskulResource extends Resource
 {
@@ -45,7 +48,48 @@ class KehadiranEkskulResource extends Resource
             //
         ];
     }
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
 
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (! $user) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if (
+            $user->hasRole('super_admin') ||
+            $user->hasRole('waka_kesiswaan') ||
+            $user->hasRole('kepala_madrasah')
+        ) {
+            return $query;
+        }
+
+        if (
+            $user->hasRole('pembina') ||
+            $user->hasRole('pelatih')
+        ) {
+
+            $ekskulIds = $user->pegawai
+                ? $user->pegawai
+                ->pengampus()
+                ->pluck('ekstrakurikuler_id')
+                : [];
+
+            return $query->whereHas(
+                'sesiKegiatan',
+                fn($q) =>
+                $q->whereIn(
+                    'ekstrakurikuler_id',
+                    $ekskulIds
+                )
+            );
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
     public static function getPages(): array
     {
         return [
