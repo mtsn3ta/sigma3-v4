@@ -467,7 +467,7 @@ Menyelaraskan Role Sistem dengan Pengampu Ekskul dan membatasi akses berdasarkan
 
 ## Sprint 5.7 Proposal Kegiatan
 
-STATUS: ±85% COMPLETE
+STATUS: ±99% COMPLETE
 
 Tujuan:
 
@@ -644,10 +644,10 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 #### Lembar Pengesahan
 
 [x] Layout Lembar Pengesahan
-[ ] Nama Pelatih Otomatis
-[ ] Nama Pembina Otomatis
-[ ] Nama Waka Kesiswaan Otomatis
-[ ] Nama Kepala Madrasah Otomatis
+[x] Nama Pelatih Otomatis
+[x] Nama Pembina Otomatis
+[x] Nama Waka Kesiswaan Otomatis
+[x] Nama Kepala Madrasah Otomatis
 
 #### UI
 
@@ -661,7 +661,6 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 #### Output
 
 [x] Generate PDF
-[ ] Nomor Proposal
 [x] Cover Proposal
 [x] Tabel Peserta
 [x] Tabel RAB
@@ -674,14 +673,14 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 
 #### Workflow
 
-[ ] Pelatih → Submit
-[ ] Pembina → Approve
-[ ] Waka → Approve
-[ ] Kepala → Approve
+[x] Pelatih → Submit
+[x] Pembina → Approve
+[x] Waka → Approve
+[x] Kepala → Approve
 
 #### Audit
 
-[ ] Approval Logs
+[x] Approval Logs
 
 #### Output
 
@@ -690,7 +689,7 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 
 #### End-to-End
 
-[ ] End-to-End Workflow
+[x] End-to-End Workflow
 
 ---
 

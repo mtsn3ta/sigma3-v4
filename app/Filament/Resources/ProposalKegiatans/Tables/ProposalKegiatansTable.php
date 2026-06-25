@@ -25,27 +25,36 @@ class ProposalKegiatansTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('jenis_kegiatan')
+                TextColumn::make('jenis_kegiatan_label')
                     ->label('Jenis')
-                    ->searchable(),
+                    ->badge()
+                    ->color('gray'),
+
+                TextColumn::make('peserta_count')
+                    ->label('Peserta')
+                    ->counts('peserta')
+                    ->badge()
+                    ->color('primary'),
+
+                TextColumn::make('total_anggaran')
+                    ->label('Anggaran')
+                    ->money('IDR', divideBy: 1)
+                    ->sortable(),
 
                 TextColumn::make('tanggal_mulai')
-                    ->label('Mulai')
+                    ->label('Tanggal')
                     ->date('d M Y')
                     ->sortable(),
 
-                TextColumn::make('tanggal_selesai')
-                    ->label('Selesai')
-                    ->date('d M Y')
-                    ->sortable(),
-
-                TextColumn::make('createdBy.username')
+                TextColumn::make('createdBy.pegawai.nama')
                     ->label('Dibuat Oleh')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
 
-                TextColumn::make('status')
+                TextColumn::make('status_label')
+                    ->label('Status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn($record) => match ($record->status) {
                         'draft' => 'gray',
                         'pending_pembina' => 'warning',
                         'pending_waka' => 'warning',
@@ -56,15 +65,15 @@ class ProposalKegiatansTable
                     }),
 
                 TextColumn::make('created_at')
-                    ->label('Tanggal Buat')
+                    ->label('Dibuat')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
 
             ])
 
-            ->filters([
-                //
-            ])
+            ->defaultSort('created_at', 'desc')
+
+            ->filters([])
 
             ->recordActions([
                 EditAction::make(),

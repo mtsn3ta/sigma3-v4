@@ -638,59 +638,61 @@
                 </div>
 
             </div>
-
-            <table
-                style="
+            @if ($record->isPelatihMerangkapPembina())
+                <table
+                    style="
             width:100%;
             border-collapse:collapse;
             text-align:center;
             font-size:15px;
         ">
 
-                <tr>
+                    <tr>
 
-                    <td width="50%">
-                        Disusun oleh,
-                        <br>
-                        Pelatih
-                    </td>
+                        <td width="50%">
+                            Disusun dan Diperiksa oleh,
+                            <br>
+                            Pelatih / Pembina Ekstrakurikuler
+                        </td>
 
-                    <td width="50%">
-                        Diperiksa oleh,
-                        <br>
-                        Pembina Ekstrakurikuler
-                    </td>
+                        <td width="50%">
+                            Disetujui oleh,
+                            <br>
+                            Wakil Kepala Madrasah
+                            <br>
+                            Bidang Kesiswaan
+                        </td>
 
-                </tr>
+                    </tr>
 
-                <tr>
+                    <tr>
 
-                    <td style="height:90px;"></td>
+                        <td style="height:90px;"></td>
 
-                    <td></td>
+                        <td></td>
 
-                </tr>
+                    </tr>
 
-                <tr>
+                    <tr>
 
-                    <td>
-                        <strong>
-                            {{ $record->createdBy?->name ?? '................................' }}
-                        </strong>
-                    </td>
+                        <td>
+                            <strong>
+                                {{ $record->pelatih()?->pegawai?->nama ?? '................................' }}
+                            </strong>
+                        </td>
 
-                    <td>
-                        <strong>
-                            ................................
-                        </strong>
-                    </td>
+                        <td>
+                            <strong>
+                                {{ $record->wakaKesiswaan()?->name ?? '................................' }}
+                            </strong>
+                        </td>
 
-                </tr>
+                    </tr>
 
-            </table>
+                </table>
 
-            <table
-                style="
+                <table
+                    style="
             width:100%;
             margin-top:70px;
             border-collapse:collapse;
@@ -698,49 +700,141 @@
             font-size:15px;
         ">
 
-                <tr>
+                    <tr>
 
-                    <td width="50%">
-                        Disetujui oleh,
-                        <br>
-                        Wakil Kepala Madrasah
-                        <br>
-                        Bidang Kesiswaan
-                    </td>
+                        <td>
 
-                    <td width="50%">
-                        Mengetahui,
-                        <br>
-                        Kepala MTsN 3 Tulungagung
-                    </td>
+                            Mengetahui,
+                            <br>
+                            Kepala MTsN 3 Tulungagung
 
-                </tr>
+                        </td>
 
-                <tr>
+                    </tr>
 
-                    <td style="height:90px;"></td>
+                    <tr>
 
-                    <td></td>
+                        <td style="height:90px;"></td>
 
-                </tr>
+                    </tr>
 
-                <tr>
+                    <tr>
 
-                    <td>
-                        <strong>
-                            ................................
-                        </strong>
-                    </td>
+                        <td>
 
-                    <td>
-                        <strong>
-                            ................................
-                        </strong>
-                    </td>
+                            <strong>
+                                {{ $record->kepalaMadrasah()?->name ?? '................................' }}
+                            </strong>
 
-                </tr>
+                        </td>
 
-            </table>
+                    </tr>
+
+                </table>
+            @else
+                <table
+                    style="
+            width:100%;
+            border-collapse:collapse;
+            text-align:center;
+            font-size:15px;
+        ">
+
+                    <tr>
+
+                        <td width="50%">
+                            Disusun oleh,
+                            <br>
+                            Pelatih
+                        </td>
+
+                        <td width="50%">
+                            Diperiksa oleh,
+                            <br>
+                            Pembina Ekstrakurikuler
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td style="height:90px;"></td>
+
+                        <td></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ $record->pelatih()?->pegawai?->nama ?? '................................' }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ $record->pembina()?->pegawai?->nama ?? '................................' }}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                </table>
+
+                <table
+                    style="
+            width:100%;
+            margin-top:70px;
+            border-collapse:collapse;
+            text-align:center;
+            font-size:15px;
+        ">
+
+                    <tr>
+
+                        <td width="50%">
+                            Disetujui oleh,
+                            <br>
+                            Wakil Kepala Madrasah
+                            <br>
+                            Bidang Kesiswaan
+                        </td>
+
+                        <td width="50%">
+                            Mengetahui,
+                            <br>
+                            Kepala MTsN 3 Tulungagung
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td style="height:90px;"></td>
+
+                        <td></td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ $record->wakaKesiswaan()?->name ?? '................................' }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ $record->kepalaMadrasah()?->name ?? '................................' }}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                </table>
+            @endif
 
         </div>
 

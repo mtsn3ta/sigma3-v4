@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EkstrakurikulerPengampu;
+use App\Models\User;
 
 class ProposalKegiatan extends Model
 {
@@ -132,5 +134,41 @@ class ProposalKegiatan extends Model
             'pending_kepala',
             'approved',
         ]);
+    }
+    public function pelatih()
+    {
+        return EkstrakurikulerPengampu::query()
+            ->with('pegawai')
+            ->where('ekstrakurikuler_id', $this->ekstrakurikuler_id)
+            ->where('role', 'pelatih')
+            ->first();
+    }
+
+    public function pembina()
+    {
+        return EkstrakurikulerPengampu::query()
+            ->with('pegawai')
+            ->where('ekstrakurikuler_id', $this->ekstrakurikuler_id)
+            ->where('role', 'pembina')
+            ->first();
+    }
+    public function wakaKesiswaan()
+    {
+        return User::role('waka_kesiswaan')->first();
+    }
+    public function kepalaMadrasah()
+    {
+        return User::role('kepala_madrasah')->first();
+    }
+
+    public function isPelatihMerangkapPembina(): bool
+    {
+        $pelatih = $this->pelatih();
+        $pembina = $this->pembina();
+
+        return
+            $pelatih &&
+            $pembina &&
+            $pelatih->pegawai_id === $pembina->pegawai_id;
     }
 }

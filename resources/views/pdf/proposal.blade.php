@@ -392,36 +392,126 @@
                 MTsN 3 Tulungagung <br> Tahun Pelajaran 2026/2027
             </div>
         </div>
+        @if ($record->isPelatihMerangkapPembina())
+            <table class="table-ttd">
 
-        <table class="table-ttd">
-            <tr>
-                <td width="50%">Disusun oleh,<br>Pelatih</td>
-                <td width="50%">Diperiksa oleh,<br>Pembina Ekstrakurikuler</td>
-            </tr>
-            <tr>
-                <td class="ttd-space"></td>
-                <td class="ttd-space"></td>
-            </tr>
-            <tr>
-                <td class="font-bold"><u>{{ $record->createdBy?->name ?? '................................' }}</u></td>
-                <td class="font-bold"><u>................................</u></td>
-            </tr>
-        </table>
+                <tr>
 
-        <table class="table-ttd">
-            <tr>
-                <td width="50%">Disetujui oleh,<br>Wakil Kepala Madrasah<br>Bidang Kesiswaan</td>
-                <td width="50%">Mengetahui,<br>Kepala MTsN 3 Tulungagung</td>
-            </tr>
-            <tr>
-                <td class="ttd-space"></td>
-                <td class="ttd-space"></td>
-            </tr>
-            <tr>
-                <td class="font-bold"><u>................................</u></td>
-                <td class="font-bold"><u>................................</u></td>
-            </tr>
-        </table>
+                    <td width="50%">
+                        Disusun dan Diperiksa oleh,<br>
+                        Pelatih / Pembina Ekstrakurikuler
+                    </td>
+
+                    <td width="50%">
+                        Disetujui oleh,<br>
+                        Wakil Kepala Madrasah<br>
+                        Bidang Kesiswaan
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td class="ttd-space"></td>
+
+                    <td class="ttd-space"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td class="font-bold">
+
+                        <u>
+                            {{ $record->pelatih()?->pegawai?->nama ?? '................................' }}
+                        </u>
+
+                    </td>
+
+                    <td class="font-bold">
+
+                        <u>
+                            {{ $record->wakaKesiswaan()?->name ?? '................................' }}
+                        </u>
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+            <table class="table-ttd">
+
+                <tr>
+
+                    <td>
+
+                        Mengetahui,<br>
+                        Kepala MTsN 3 Tulungagung
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td class="ttd-space"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td class="font-bold">
+
+                        <u>
+                            {{ $record->kepalaMadrasah()?->name ?? '................................' }}
+                        </u>
+
+                    </td>
+
+                </tr>
+
+            </table>
+        @else
+            <table class="table-ttd">
+                <tr>
+                    <td width="50%">Disusun oleh,<br>Pelatih</td>
+                    <td width="50%">Diperiksa oleh,<br>Pembina Ekstrakurikuler</td>
+                </tr>
+                <tr>
+                    <td class="ttd-space"></td>
+                    <td class="ttd-space"></td>
+                </tr>
+                <tr>
+                    <td class="font-bold">
+                        <u>{{ $record->pelatih()?->pegawai?->nama ?? '................................' }}</u>
+                    </td>
+                    <td class="font-bold">
+                        <u>{{ $record->pembina()?->pegawai?->nama ?? '................................' }}</u>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="table-ttd">
+                <tr>
+                    <td width="50%">Disetujui oleh,<br>Wakil Kepala Madrasah<br>Bidang Kesiswaan</td>
+                    <td width="50%">Mengetahui,<br>Kepala MTsN 3 Tulungagung</td>
+                </tr>
+                <tr>
+                    <td class="ttd-space"></td>
+                    <td class="ttd-space"></td>
+                </tr>
+                <tr>
+                    <td class="font-bold">
+                        <u>{{ $record->wakaKesiswaan()?->name ?? '................................' }}</u>
+                    </td>
+                    <td class="font-bold">
+                        <u>{{ $record->kepalaMadrasah()?->name ?? '................................' }}</u>
+                    </td>
+                </tr>
+            </table>
+        @endif
+
     </div>
 
 </body>
