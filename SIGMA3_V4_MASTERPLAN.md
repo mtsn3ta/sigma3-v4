@@ -770,73 +770,75 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 ### Database
 
-- [ ] Migration laporan_kegiatan
-- [ ] Model LaporanKegiatan
-- [ ] Resource LaporanKegiatan
+- [x] Migration laporan_kegiatan
+- [x] Model LaporanKegiatan
+- [x] Resource LaporanKegiatan
 
 ### Integrasi Proposal
 
-- [ ] 1 Proposal → 1 Laporan Kegiatan
-- [ ] Auto Ambil Data Proposal
-- [ ] Auto Ambil Peserta Proposal
-- [ ] Auto Ambil RAB Proposal
+- [x] 1 Proposal → 1 Laporan Kegiatan
+- [x] Auto Ambil Data Proposal
+- [x] Auto Ambil Peserta Proposal
+- [x] Auto Ambil Pendamping Proposal
+- [x] Auto Ambil RAB Proposal
 
 ### Isi Laporan
 
 #### BAB I Pendahuluan
 
-- [ ] Latar Belakang
-- [ ] Tujuan
-- [ ] Identitas Kegiatan
+- [x] Latar Belakang
+- [x] Tujuan
+- [x] Identitas Kegiatan
 
 #### BAB II Pelaksanaan
 
-- [ ] Waktu Pelaksanaan
-- [ ] Tempat
-- [ ] Peserta
-- [ ] Uraian Pelaksanaan
+- [x] Waktu Pelaksanaan
+- [x] Tempat
+- [x] Peserta
+- [x] Uraian Pelaksanaan
 
 #### BAB III Hasil Kegiatan
 
-- [ ] Pencapaian
-- [ ] Prestasi
-- [ ] Evaluasi
+- [x] Pencapaian
+- [x] Prestasi
+- [x] Evaluasi
 
 #### BAB IV Realisasi Anggaran
 
-- [ ] Auto Ambil RAB Proposal
-- [ ] Realisasi Anggaran
+- [x] Auto Ambil RAB Proposal
+- [x] Realisasi Anggaran
 - [ ] Selisih Anggaran
 
 #### BAB V Penutup
 
-- [ ] Penutup
+- [x] Penutup
 
 ### Lampiran
 
-- [ ] Upload Dokumentasi
-- [ ] Upload Sertifikat
-- [ ] Upload Berita Acara (Opsional)
+- [x] Upload Dokumentasi
+- [x] Upload Sertifikat
+- [x] Upload Berita Acara (Opsional)
 
 ### Workflow
 
-- [ ] Submit
-- [ ] Approval Pembina
-- [ ] Approval Waka
-- [ ] Approval Kepala
-- [ ] Reject Workflow
+- [x] Submit
+- [x] Approval Pembina
+- [x] Approval Waka
+- [x] Approval Kepala
+- [x] Request Revision
+- [x] Reject Workflow
 
 ### Approval Logs
 
-- [ ] Auto Log Submit
-- [ ] Auto Log Approval
-- [ ] Auto Log Reject
+- [x] Auto Log Submit
+- [x] Auto Log Approval
+- [x] Auto Log Reject
 
 ### Preview & PDF
 
-- [ ] Preview
-- [ ] Generate PDF
-- [ ] Lembar Pengesahan
+- [x] Preview
+- [x] Generate PDF
+- [x] Lembar Pengesahan
 
 ---
 

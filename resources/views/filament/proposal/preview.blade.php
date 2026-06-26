@@ -355,6 +355,80 @@
             </tbody>
 
         </table>
+        @if ($record->pendamping->count())
+
+            <h4
+                style="
+            margin-top:35px;
+            margin-bottom:15px;
+            font-size:16px;
+            font-weight:bold;
+        ">
+                Pendamping Kegiatan
+            </h4>
+
+            <table
+                style="
+            width:100%;
+            border-collapse:collapse;
+            font-size:14px;
+        ">
+
+                <thead>
+
+                    <tr style="background:#f3f4f6;">
+
+                        <th style="border:1px solid #000;padding:8px;width:50px;">
+                            No
+                        </th>
+
+                        <th style="border:1px solid #000;padding:8px;">
+                            Nama Pendamping
+                        </th>
+
+                        <th style="border:1px solid #000;padding:8px;width:180px;">
+                            Peran
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach ($record->pendamping as $pendamping)
+                        <tr>
+
+                            <td style="border:1px solid #000;padding:8px;text-align:center;">
+                                {{ $loop->iteration }}
+                            </td>
+
+                            <td style="border:1px solid #000;padding:8px;">
+                                {{ $pendamping->pegawai->nama }}
+                            </td>
+
+                            <td style="border:1px solid #000;padding:8px;text-align:center;">
+
+                                {{ match ($pendamping->peran) {
+                                    'pelatih' => 'Pelatih',
+                                    'pembina' => 'Pembina',
+                                    'guru_pendamping' => 'Guru Pendamping',
+                                    'official' => 'Official',
+                                    'medis' => 'Medis',
+                                    'transportasi' => 'Transportasi',
+                                    default => 'Lainnya',
+                                } }}
+
+                            </td>
+
+                        </tr>
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        @endif
 
     </div>
 

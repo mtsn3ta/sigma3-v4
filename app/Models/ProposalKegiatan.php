@@ -179,4 +179,21 @@ class ProposalKegiatan extends Model
             'revisionable'
         )->latest();
     }
+    public function laporanKegiatan()
+    {
+        return $this->hasOne(
+            LaporanKegiatan::class
+        );
+    }
+
+    public function hasLaporan(): bool
+    {
+        return $this->laporanKegiatan()->exists();
+    }
+    public function pendamping()
+    {
+        return $this->hasMany(
+            ProposalPendamping::class
+        );
+    }
 }

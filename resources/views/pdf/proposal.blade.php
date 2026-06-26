@@ -307,11 +307,65 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center" style="padding: 15px;">Belum ada peserta.</td>
+                        <td colspan="4" class="text-center" style="padding: 15px;">
+                            Belum ada peserta.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
+
+        @if ($record->pendamping->count())
+
+            <h4 style="margin-top:25px; margin-bottom:10px;">
+                Pendamping Kegiatan
+            </h4>
+
+            <table class="table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:50px;">No</th>
+                        <th>Nama Pendamping</th>
+                        <th style="width:180px;">Peran</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach ($record->pendamping as $pendamping)
+                        <tr>
+
+                            <td class="text-center">
+                                {{ $loop->iteration }}
+                            </td>
+
+                            <td>
+                                {{ $pendamping->pegawai->nama }}
+                            </td>
+
+                            <td class="text-center">
+
+                                {{ match ($pendamping->peran) {
+                                    'pelatih' => 'Pelatih',
+                                    'pembina' => 'Pembina',
+                                    'guru_pendamping' => 'Guru Pendamping',
+                                    'official' => 'Official',
+                                    'medis' => 'Medis',
+                                    'transportasi' => 'Transportasi',
+                                    default => 'Lainnya',
+                                } }}
+
+                            </td>
+
+                        </tr>
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        @endif
+
     </div>
 
     <div class="page-break"></div>

@@ -10,6 +10,13 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ProposalApprovalLog;
 use App\Models\RevisionLog;
+use App\Models\LaporanKegiatan;
+use App\Models\LaporanKegiatanPeserta;
+use App\Models\LaporanKegiatanPendamping;
+use App\Models\LaporanRealisasiAnggaran;
+use App\Filament\Resources\LaporanKegiatans\LaporanKegiatanResource;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 
 class EditProposalKegiatan extends EditRecord
 {
@@ -370,6 +377,105 @@ class EditProposalKegiatan extends EditRecord
                     $this->record
                 ))
                 ->openUrlInNewTab(),
+            Action::make('buatLaporan')
+                ->label('Buat Laporan')
+                ->icon('heroicon-o-document-text')
+                ->color('primary')
+                ->requiresConfirmation()
+                ->visible(
+                    fn() =>
+                    $this->record->status === 'approved'
+                        && ! $this->record->hasLaporan()
+                )
+                ->action(function () {
+
+                    try {
+
+                        $laporan = null;
+
+                        DB::transaction(function () use (&$laporan) {
+
+                            $laporan = LaporanKegiatan::create([
+                                'proposal_kegiatan_id' => $this->record->id,
+                                'created_by_id' => Auth::id(),
+                                'status' => 'draft',
+                            ]);
+
+                            foreach ($this->record->peserta as $peserta) {
+
+                                LaporanKegiatanPeserta::create([
+                                    'laporan_kegiatan_id' => $laporan->id,
+                                    'proposal_peserta_id' => $peserta->id,
+                                    'siswa_id' => $peserta->siswa_id,
+                                    'status' => 'hadir',
+                                ]);
+                            }
+
+                            foreach ($this->record->pendamping as $pendamping) {
+
+                                LaporanKegiatanPendamping::create([
+                                    'laporan_kegiatan_id' => $laporan->id,
+                                    'proposal_pendamping_id' => $pendamping->id,
+                                    'pegawai_id' => $pendamping->pegawai_id,
+                                    'peran' => $pendamping->peran,
+                                    'status' => 'hadir',
+                                ]);
+                            }
+
+                            foreach ($this->record->rabs as $rab) {
+
+                                LaporanRealisasiAnggaran::create([
+                                    'laporan_kegiatan_id' => $laporan->id,
+                                    'proposal_rab_id' => $rab->id,
+                                    'uraian' => $rab->uraian,
+                                    'qty' => $rab->qty,
+                                    'satuan' => $rab->satuan,
+                                    'harga_satuan' => $rab->harga_satuan,
+                                ]);
+                            }
+                        });
+
+                        Notification::make()
+                            ->title('Laporan kegiatan berhasil dibuat.')
+                            ->success()
+                            ->send();
+
+                        return redirect(
+                            LaporanKegiatanResource::getUrl(
+                                'edit',
+                                [
+                                    'record' => $laporan,
+                                ]
+                            )
+                        );
+                    } catch (\Throwable $e) {
+
+                        Notification::make()
+                            ->title('Gagal membuat laporan kegiatan.')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+                }),
+            Action::make('lihatLaporan')
+                ->label('Lihat Laporan')
+                ->icon('heroicon-o-eye')
+                ->color('gray')
+                ->visible(
+                    fn() =>
+                    $this->record->hasLaporan()
+                )
+                ->url(
+                    fn() =>
+                    LaporanKegiatanResource::getUrl(
+                        'edit',
+                        [
+                            'record' => $this->record->laporanKegiatan,
+                        ]
+                    )
+                ),
             DeleteAction::make()
                 ->visible(
                     fn() =>

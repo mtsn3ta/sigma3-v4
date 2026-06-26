@@ -41,4 +41,11 @@ class ProposalRab extends Model
             'proposal_kegiatan_id'
         );
     }
+    public function realisasi()
+    {
+        return $this->hasMany(
+            LaporanRealisasiAnggaran::class,
+            'proposal_rab_id'
+        );
+    }
 }

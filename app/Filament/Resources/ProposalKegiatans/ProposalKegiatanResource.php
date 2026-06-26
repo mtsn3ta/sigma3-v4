@@ -17,6 +17,7 @@ use App\Filament\Resources\ProposalKegiatans\RelationManagers\PesertaRelationMan
 use App\Filament\Resources\ProposalKegiatans\RelationManagers\RabsRelationManager;
 use App\Filament\Resources\ProposalKegiatans\RelationManagers\ApprovalLogsRelationManager;
 use App\Filament\Resources\ProposalKegiatans\RelationManagers\RevisionLogsRelationManager;
+use App\Filament\Resources\ProposalKegiatans\RelationManagers\ProposalPendampingRelationManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\ProposalKegiatans\Pages\PreviewProposalKegiatan;
@@ -59,6 +60,7 @@ class ProposalKegiatanResource extends Resource
     {
         return [
             PesertaRelationManager::class,
+            ProposalPendampingRelationManager::class,
             RabsRelationManager::class,
             ApprovalLogsRelationManager::class,
             RevisionLogsRelationManager::class,
