@@ -54,10 +54,16 @@ class LaporanKegiatan extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-
+    public function getTitleAttribute(): string
+    {
+        return $this->proposal?->nama_kegiatan ?? 'Laporan Kegiatan';
+    }
     public function proposal()
     {
-        return $this->belongsTo(ProposalKegiatan::class);
+        return $this->belongsTo(
+            ProposalKegiatan::class,
+            'proposal_kegiatan_id'
+        );
     }
 
     public function createdBy()

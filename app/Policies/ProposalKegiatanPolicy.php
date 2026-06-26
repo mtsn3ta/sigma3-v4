@@ -28,21 +28,6 @@ class ProposalKegiatanPolicy
         User $user,
         ProposalKegiatan $proposalKegiatan
     ): bool {
-
-        if (
-            in_array(
-                $proposalKegiatan->status,
-                [
-                    'pending_pembina',
-                    'pending_waka',
-                    'pending_kepala',
-                    'approved',
-                ]
-            )
-        ) {
-            return false;
-        }
-
         return $user->can('proposal.edit_draft');
     }
 

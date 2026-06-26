@@ -1021,211 +1021,6 @@
         style="
         width:210mm;
         min-height:297mm;
-        margin:30px auto 0;
-        background:white;
-        padding:25mm;
-        box-shadow:0 0 15px rgba(0,0,0,.15);
-        font-family:Arial, Helvetica, sans-serif;
-    ">
-
-        <h2 style="
-            text-align:center;
-            font-size:20px;
-            font-weight:bold;
-        ">
-            BAB IV
-        </h2>
-
-        <h3
-            style="
-            text-align:center;
-            font-size:18px;
-            font-weight:bold;
-            margin-bottom:30px;
-        ">
-            REALISASI ANGGARAN
-        </h3>
-
-        <table
-            style="
-            width:100%;
-            border-collapse:collapse;
-            font-size:13px;
-        ">
-
-            <thead>
-
-                <tr style="background:#f3f4f6;">
-
-                    <th style="border:1px solid #000;padding:8px;width:40px;">
-                        No
-                    </th>
-
-                    <th style="border:1px solid #000;padding:8px;">
-                        Uraian
-                    </th>
-
-                    <th style="border:1px solid #000;padding:8px;width:130px;">
-                        Proposal
-                    </th>
-
-                    <th style="border:1px solid #000;padding:8px;width:130px;">
-                        Realisasi
-                    </th>
-
-                    <th style="border:1px solid #000;padding:8px;width:130px;">
-                        Selisih
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @php
-
-                    $totalProposal = 0;
-                    $totalRealisasi = 0;
-
-                @endphp
-
-                @foreach ($record->realisasiAnggaran as $item)
-                    @php
-
-                        $proposal = $item->proposalRab?->subtotal ?? 0;
-
-                        $realisasi = $item->subtotal;
-
-                        $selisih = $proposal - $realisasi;
-
-                        $totalProposal += $proposal;
-
-                        $totalRealisasi += $realisasi;
-
-                    @endphp
-
-                    <tr>
-
-                        <td
-                            style="
-                        border:1px solid #000;
-                        padding:8px;
-                        text-align:center;
-                    ">
-
-                            {{ $loop->iteration }}
-
-                        </td>
-
-                        <td style="border:1px solid #000;padding:8px;">
-
-                            {{ $item->uraian }}
-
-                        </td>
-
-                        <td
-                            style="
-                        border:1px solid #000;
-                        padding:8px;
-                        text-align:right;
-                    ">
-
-                            Rp {{ number_format($proposal, 0, ',', '.') }}
-
-                        </td>
-
-                        <td
-                            style="
-                        border:1px solid #000;
-                        padding:8px;
-                        text-align:right;
-                    ">
-
-                            Rp {{ number_format($realisasi, 0, ',', '.') }}
-
-                        </td>
-
-                        <td
-                            style="
-                        border:1px solid #000;
-                        padding:8px;
-                        text-align:right;
-                    ">
-
-                            Rp {{ number_format($selisih, 0, ',', '.') }}
-
-                        </td>
-
-                    </tr>
-                @endforeach
-
-            </tbody>
-
-            <tfoot>
-
-                <tr style="
-                background:#f3f4f6;
-                font-weight:bold;
-            ">
-
-                    <td colspan="2"
-                        style="
-                    border:1px solid #000;
-                    padding:8px;
-                    text-align:center;
-                ">
-
-                        TOTAL
-
-                    </td>
-
-                    <td
-                        style="
-                    border:1px solid #000;
-                    padding:8px;
-                    text-align:right;
-                ">
-
-                        Rp {{ number_format($totalProposal, 0, ',', '.') }}
-
-                    </td>
-
-                    <td
-                        style="
-                    border:1px solid #000;
-                    padding:8px;
-                    text-align:right;
-                ">
-
-                        Rp {{ number_format($totalRealisasi, 0, ',', '.') }}
-
-                    </td>
-
-                    <td
-                        style="
-                    border:1px solid #000;
-                    padding:8px;
-                    text-align:right;
-                ">
-
-                        Rp {{ number_format($totalProposal - $totalRealisasi, 0, ',', '.') }}
-
-                    </td>
-
-                </tr>
-
-            </tfoot>
-
-        </table>
-
-    </div>
-
-    <div style="page-break-after:always;"></div>
-    <div
-        style="
-        width:210mm;
-        min-height:297mm;
         margin:30px auto;
         background:white;
         padding:25mm;
@@ -1271,6 +1066,52 @@
             <p>Tidak ada dokumentasi.</p>
 
         @endif
+
+    </div>
+
+    <div style="page-break-after:always;"></div>
+
+    <div
+        style="
+    width:210mm;
+    min-height:297mm;
+    margin:30px auto;
+    background:white;
+    padding:25mm;
+    box-shadow:0 0 15px rgba(0,0,0,.15);
+">
+
+        <h2 style="text-align:center;">
+            LAMPIRAN
+        </h2>
+
+        <h3 style="text-align:center;margin-bottom:30px;">
+            BUKTI TRANSAKSI
+        </h3>
+
+        @forelse($record->realisasiAnggaran as $item)
+            <h4 style="margin-bottom:10px;">
+                {{ $loop->iteration }}.
+                {{ $item->uraian }}
+            </h4>
+
+            @if ($item->bukti)
+                <img src="{{ Storage::url($item->bukti) }}"
+                    style="
+                    width:100%;
+                    margin-bottom:25px;
+                    border:1px solid #ccc;
+                ">
+            @else
+                <p style="margin-bottom:25px;">
+                    Tidak ada bukti transaksi.
+                </p>
+            @endif
+
+        @empty
+
+            <p>Tidak ada realisasi anggaran.</p>
+        @endforelse
 
     </div>
 
@@ -1337,114 +1178,246 @@
         box-shadow:0 0 15px rgba(0,0,0,.15);
     ">
 
-        <h2 style="
+        <div style="
             text-align:center;
-            font-weight:bold;
+            margin-bottom:40px;
         ">
 
-            LEMBAR PENGESAHAN
+            <div
+                style="
+                font-size:22px;
+                font-weight:bold;
+                text-transform:uppercase;
+            ">
+                LEMBAR PENGESAHAN
+            </div>
 
-        </h2>
+            <div
+                style="
+                margin-top:10px;
+                font-size:17px;
+                font-weight:bold;
+                text-transform:uppercase;
+            ">
+                PROPOSAL KEGIATAN
+            </div>
 
-        <h3 style="
-            text-align:center;
-            margin-bottom:50px;
-        ">
+            <div
+                style="
+                margin-top:6px;
+                font-size:18px;
+                font-weight:bold;
+            ">
+                {{ strtoupper($record->nama_kegiatan) }}
+            </div>
 
-            LAPORAN KEGIATAN
+            <div style="
+                margin-top:6px;
+                font-size:15px;
+            ">
+                MTsN 3 Tulungagung
+                <br>
+                Tahun Pelajaran 2026/2027
+            </div>
 
-        </h3>
-
-        <table style="
+        </div>
+        @if ($record->proposal->isPelatihMerangkapPembina())
+            <table
+                style="
             width:100%;
+            border-collapse:collapse;
             text-align:center;
+            font-size:15px;
         ">
 
-            <tr>
+                <tr>
 
-                <td>
+                    <td width="50%">
+                        Disusun dan Diperiksa oleh,
+                        <br>
+                        Pelatih / Pembina Ekstrakurikuler
+                    </td>
 
-                    Pembina
+                    <td width="50%">
+                        Disetujui oleh,
+                        <br>
+                        Wakil Kepala Madrasah
+                        <br>
+                        Bidang Kesiswaan
+                    </td>
 
-                </td>
+                </tr>
 
-                <td>
+                <tr>
 
-                    Waka Kesiswaan
+                    <td style="height:90px;"></td>
 
-                </td>
+                    <td></td>
 
-                <td>
+                </tr>
 
-                    Kepala Madrasah
+                <tr>
 
-                </td>
+                    <td>
+                        <strong>
+                            {{ $record->proposal->pelatih()?->pegawai?->nama ?? '................................' }}
+                        </strong>
+                    </td>
 
-            </tr>
+                    <td>
+                        <strong>
+                            {{ $record->proposal->wakaKesiswaan()?->name ?? '................................' }}
+                        </strong>
+                    </td>
 
-            <tr>
+                </tr>
 
-                <td style="height:120px;">
+            </table>
 
-                    @if ($record->status == 'approved')
-                        <strong>Disetujui</strong>
-                    @endif
+            <table
+                style="
+            width:100%;
+            margin-top:70px;
+            border-collapse:collapse;
+            text-align:center;
+            font-size:15px;
+        ">
 
-                </td>
+                <tr>
 
-                <td>
+                    <td>
 
-                    @if ($record->status == 'approved')
-                        <strong>Disetujui</strong>
-                    @endif
+                        Mengetahui,
+                        <br>
+                        Kepala MTsN 3 Tulungagung
 
-                </td>
+                    </td>
 
-                <td>
+                </tr>
 
-                    @if ($record->status == 'approved')
-                        <strong>Disetujui</strong>
-                    @endif
+                <tr>
 
-                </td>
+                    <td style="height:90px;"></td>
 
-            </tr>
+                </tr>
 
-            <tr>
+                <tr>
 
-                <td>
+                    <td>
 
-                    <strong>
+                        <strong>
+                            {{ $record->proposal->kepalaMadrasah()?->name ?? '................................' }}
+                        </strong>
 
-                        {{ optional($record->proposal->pembina)->nama }}
+                    </td>
 
-                    </strong>
+                </tr>
 
-                </td>
+            </table>
+        @else
+            <table
+                style="
+            width:100%;
+            border-collapse:collapse;
+            text-align:center;
+            font-size:15px;
+        ">
 
-                <td>
+                <tr>
 
-                    <strong>
+                    <td width="50%">
+                        Disusun oleh,
+                        <br>
+                        Pelatih
+                    </td>
 
-                        {{ setting('waka_kesiswaan') }}
+                    <td width="50%">
+                        Diperiksa oleh,
+                        <br>
+                        Pembina Ekstrakurikuler
+                    </td>
 
-                    </strong>
+                </tr>
 
-                </td>
+                <tr>
 
-                <td>
+                    <td style="height:90px;"></td>
 
-                    <strong>
+                    <td></td>
 
-                        {{ setting('kepala_madrasah') }}
+                </tr>
 
-                    </strong>
+                <tr>
 
-                </td>
+                    <td>
+                        <strong>
+                            {{ $record->proposal->pelatih()?->pegawai?->nama ?? '................................' }}
+                        </strong>
+                    </td>
 
-            </tr>
+                    <td>
+                        <strong>
+                            {{ $record->proposal->pembina()?->pegawai?->nama ?? '................................' }}
+                        </strong>
+                    </td>
 
-        </table>
+                </tr>
+
+            </table>
+
+            <table
+                style="
+            width:100%;
+            margin-top:70px;
+            border-collapse:collapse;
+            text-align:center;
+            font-size:15px;
+        ">
+
+                <tr>
+
+                    <td width="50%">
+                        Disetujui oleh,
+                        <br>
+                        Wakil Kepala Madrasah
+                        <br>
+                        Bidang Kesiswaan
+                    </td>
+
+                    <td width="50%">
+                        Mengetahui,
+                        <br>
+                        Kepala MTsN 3 Tulungagung
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td style="height:90px;"></td>
+
+                    <td></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ $record->proposal->wakaKesiswaan()?->name ?? '................................' }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        <strong>
+                            {{ $record->proposal->kepalaMadrasah()?->name ?? '................................' }}
+                        </strong>
+                    </td>
+
+                </tr>
+
+            </table>
+        @endif
 
     </div>
 

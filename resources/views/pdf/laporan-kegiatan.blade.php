@@ -1009,6 +1009,73 @@
     </div>
 
     <div class="page-break"></div>
+
+    <div>
+
+        <h2>LAMPIRAN</h2>
+
+        <h3>BUKTI NOTA / TRANSAKSI</h3>
+
+        @forelse($record->realisasiAnggaran as $item)
+            <div style="margin-bottom:30px;">
+
+                <h4>
+                    {{ $loop->iteration }}.
+                    {{ $item->uraian }}
+                </h4>
+
+                <table style="width:100%;margin-bottom:10px;">
+
+                    <tr>
+
+                        <td width="180">
+                            Jumlah Realisasi
+                        </td>
+
+                        <td>
+                            :
+                            Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+                @if ($item->bukti && file_exists(storage_path('app/public/' . $item->bukti)))
+                    <img src="{{ storage_path('app/public/' . $item->bukti) }}"
+                        style="
+                        width:90%;
+                        height:auto;
+                        border:1px solid #ccc;
+                        padding:5px;
+                    ">
+                @else
+                    <div
+                        style="
+                        border:1px dashed #999;
+                        padding:15px;
+                        text-align:center;
+                    ">
+
+                        Bukti transaksi tidak tersedia.
+
+                    </div>
+                @endif
+
+            </div>
+
+        @empty
+
+            <div class="text-center">
+
+                Tidak ada bukti transaksi.
+
+            </div>
+        @endforelse
+
+    </div>
+
+    <div class="page-break"></div>
     @if ($record->sertifikat && file_exists(storage_path('app/public/' . $record->sertifikat)))
         <div>
 
@@ -1037,111 +1104,133 @@
     @endif
     <div>
 
-        <h2>LEMBAR PENGESAHAN</h2>
-
-        <h3>
-
-            LAPORAN KEGIATAN
-
-        </h3>
-
-        <div class="text-center mb-30">
-
-            {{ $record->proposal->nama_kegiatan }}
-
+        <div class="mt-40 text-center">
+            <div class="font-bold uppercase" style="font-size: 20px;">LEMBAR PENGESAHAN</div>
+            <div class="font-bold uppercase mt-10" style="font-size: 16px;">PROPOSAL KEGIATAN
+                {{ $record->nama_kegiatan }}</div>
+            <div class="mt-10">
+                MTsN 3 Tulungagung <br> Tahun Pelajaran 2026/2027
+            </div>
         </div>
+        @if ($record->proposal->isPelatihMerangkapPembina())
+            <table class="table-ttd">
 
-        <table class="table-ttd">
+                <tr>
 
-            <tr>
+                    <td width="50%">
+                        Disusun dan Diperiksa oleh,<br>
+                        Pelatih / Pembina Ekstrakurikuler
+                    </td>
 
-                <td width="33%">
+                    <td width="50%">
+                        Disetujui oleh,<br>
+                        Wakil Kepala Madrasah<br>
+                        Bidang Kesiswaan
+                    </td>
 
-                    Pembina
+                </tr>
 
-                </td>
+                <tr>
 
-                <td width="33%">
+                    <td class="ttd-space"></td>
 
-                    Wakil Kepala Madrasah
+                    <td class="ttd-space"></td>
 
-                    <br>
+                </tr>
 
-                    Bidang Kesiswaan
+                <tr>
 
-                </td>
+                    <td class="font-bold">
 
-                <td width="34%">
+                        <u>
+                            {{ $record->proposal->pelatih()?->pegawai?->nama ?? '................................' }}
+                        </u>
 
-                    Kepala Madrasah
+                    </td>
 
-                </td>
+                    <td class="font-bold">
 
-            </tr>
+                        <u>
+                            {{ $record->proposal->wakaKesiswaan()?->name ?? '................................' }}
+                        </u>
 
-            <tr>
+                    </td>
 
-                <td class="ttd-space">
+                </tr>
 
-                    @if ($record->status == 'approved')
-                        ✔
-                    @endif
+            </table>
 
-                </td>
+            <table class="table-ttd">
 
-                <td class="ttd-space">
+                <tr>
 
-                    @if ($record->status == 'approved')
-                        ✔
-                    @endif
+                    <td>
 
-                </td>
+                        Mengetahui,<br>
+                        Kepala MTsN 3 Tulungagung
 
-                <td class="ttd-space">
+                    </td>
 
-                    @if ($record->status == 'approved')
-                        ✔
-                    @endif
+                </tr>
 
-                </td>
+                <tr>
 
-            </tr>
+                    <td class="ttd-space"></td>
 
-            <tr>
+                </tr>
 
-                <td class="font-bold">
+                <tr>
 
-                    <u>
+                    <td class="font-bold">
 
-                        {{ optional(optional($record->proposal->pembina())->pegawai)->nama ?? '................................' }}
+                        <u>
+                            {{ $record->proposal->kepalaMadrasah()?->name ?? '................................' }}
+                        </u>
 
-                    </u>
+                    </td>
 
-                </td>
+                </tr>
 
-                <td class="font-bold">
+            </table>
+        @else
+            <table class="table-ttd">
+                <tr>
+                    <td width="50%">Disusun oleh,<br>Pelatih</td>
+                    <td width="50%">Diperiksa oleh,<br>Pembina Ekstrakurikuler</td>
+                </tr>
+                <tr>
+                    <td class="ttd-space"></td>
+                    <td class="ttd-space"></td>
+                </tr>
+                <tr>
+                    <td class="font-bold">
+                        <u>{{ $record->proposal->pelatih()?->pegawai?->nama ?? '................................' }}</u>
+                    </td>
+                    <td class="font-bold">
+                        <u>{{ $record->proposal->pembina()?->pegawai?->nama ?? '................................' }}</u>
+                    </td>
+                </tr>
+            </table>
 
-                    <u>
-
-                        {{ optional($record->proposal->wakaKesiswaan())->name ?? '................................' }}
-
-                    </u>
-
-                </td>
-
-                <td class="font-bold">
-
-                    <u>
-
-                        {{ optional($record->proposal->kepalaMadrasah())->name ?? '................................' }}
-
-                    </u>
-
-                </td>
-
-            </tr>
-
-        </table>
+            <table class="table-ttd">
+                <tr>
+                    <td width="50%">Disetujui oleh,<br>Wakil Kepala Madrasah<br>Bidang Kesiswaan</td>
+                    <td width="50%">Mengetahui,<br>Kepala MTsN 3 Tulungagung</td>
+                </tr>
+                <tr>
+                    <td class="ttd-space"></td>
+                    <td class="ttd-space"></td>
+                </tr>
+                <tr>
+                    <td class="font-bold">
+                        <u>{{ $record->proposal->wakaKesiswaan()?->name ?? '................................' }}</u>
+                    </td>
+                    <td class="font-bold">
+                        <u>{{ $record->proposal->kepalaMadrasah()?->name ?? '................................' }}</u>
+                    </td>
+                </tr>
+            </table>
+        @endif
 
     </div>
 

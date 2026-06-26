@@ -28,7 +28,7 @@ class LaporanKegiatanResource extends Resource
     protected static string|BackedEnum|null $navigationIcon =
     Heroicon::OutlinedDocumentText;
 
-    protected static ?string $recordTitleAttribute = 'id';
+    protected static ?string $recordTitleAttribute = 'title';
 
     protected static ?string $navigationLabel =
     'Laporan Kegiatan';

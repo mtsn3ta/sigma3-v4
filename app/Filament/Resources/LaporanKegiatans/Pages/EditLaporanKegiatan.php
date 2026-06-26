@@ -379,24 +379,13 @@ class EditLaporanKegiatan extends EditRecord
                 )
 
                 ->openUrlInNewTab(),
-            Action::make('downloadPdf')
-
+            Action::make('pdf')
                 ->label('Download PDF')
-
                 ->icon('heroicon-o-arrow-down-tray')
-
-                ->color('danger')
-
-                ->url(
-                    fn() =>
-
-                    route(
-                        'laporan-kegiatan.pdf',
-                        $this->record
-                    )
-
-                )
-
+                ->url(fn() => route(
+                    'laporan-kegiatan.pdf',
+                    $this->record
+                ))
                 ->openUrlInNewTab(),
         ];
     }

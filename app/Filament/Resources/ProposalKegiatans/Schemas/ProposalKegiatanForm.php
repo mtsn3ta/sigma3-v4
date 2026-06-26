@@ -20,6 +20,7 @@ class ProposalKegiatanForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->disabled(fn($record) => $record?->isLocked() ?? false)
             ->components([
 
                 Section::make('Informasi Kegiatan')
@@ -141,6 +142,7 @@ class ProposalKegiatanForm
 
                         FileUpload::make('surat_undangan')
                             ->label('Upload Surat Undangan')
+                            ->disk('public')
                             ->directory('proposal/surat-undangan')
                             ->acceptedFileTypes([
                                 'application/pdf',
@@ -153,6 +155,7 @@ class ProposalKegiatanForm
 
                         FileUpload::make('brosur')
                             ->label('Upload Brosur / Flyer')
+                            ->disk('public')
                             ->directory('proposal/brosur')
                             ->acceptedFileTypes([
                                 'application/pdf',

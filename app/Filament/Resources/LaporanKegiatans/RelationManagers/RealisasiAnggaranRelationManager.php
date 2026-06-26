@@ -39,9 +39,12 @@ class RealisasiAnggaranRelationManager extends RelationManager
                     ->prefix('Rp')
                     ->required(),
 
-                FileUpload::make('bukti_nota')
+                FileUpload::make('bukti')
                     ->label('Bukti Nota')
-                    ->directory('laporan/bukti-nota'),
+                    ->disk('public')
+                    ->directory('laporan/bukti')
+                    ->downloadable()
+                    ->openable(),
 
             ]);
     }
@@ -71,7 +74,7 @@ class RealisasiAnggaranRelationManager extends RelationManager
                     ->weight('bold')
                     ->alignEnd(),
 
-                TextColumn::make('bukti_nota')
+                TextColumn::make('bukti')
                     ->label('Nota')
                     ->formatStateUsing(
                         fn($state) => $state ? '✔ Ada' : '-'

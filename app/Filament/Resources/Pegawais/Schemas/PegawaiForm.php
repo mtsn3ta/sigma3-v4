@@ -81,11 +81,17 @@ class PegawaiForm
                         FileUpload::make('foto')
                             ->image()
                             ->imageEditor()
-                            ->directory('pegawai/foto'),
+                            ->disk('public')
+                            ->directory('pegawai/foto')
+                            ->downloadable()
+                            ->openable(),
 
                         FileUpload::make('ttd_digital')
                             ->image()
-                            ->directory('pegawai/ttd'),
+                            ->disk('public')
+                            ->directory('pegawai/ttd')
+                            ->downloadable()
+                            ->openable(),
 
                     ])
                     ->columns(2),

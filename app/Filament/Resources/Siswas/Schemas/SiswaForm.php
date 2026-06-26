@@ -101,7 +101,10 @@ class SiswaForm
                                 FileUpload::make('foto')
                                     ->image()
                                     ->imageEditor()
-                                    ->directory('siswa/foto'),
+                                    ->disk('public')
+                                    ->directory('siswa/foto')
+                                    ->downloadable()
+                                    ->openable(),
                             ]),
                     ]),
             ]);

@@ -2,14 +2,13 @@
 
 namespace App\Filament\Resources\LaporanKegiatans\Schemas;
 
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 
 class LaporanKegiatanForm
 {
@@ -28,43 +27,54 @@ class LaporanKegiatanForm
 
                     ->schema([
 
-                        TextInput::make('proposal.nama_kegiatan')
+                        Placeholder::make('nama_kegiatan')
                             ->label('Nama Kegiatan')
-                            ->disabled(),
+                            ->content(fn($record) => $record?->proposal?->nama_kegiatan),
 
-                        TextInput::make('proposal.jenis_kegiatan')
+                        Placeholder::make('jenis_kegiatan')
                             ->label('Jenis Kegiatan')
-                            ->disabled(),
+                            ->content(fn($record) => $record?->proposal?->jenis_kegiatan_label),
 
-                        TextInput::make('proposal.ekstrakurikuler.nama')
+                        Placeholder::make('ekstrakurikuler')
                             ->label('Ekstrakurikuler')
-                            ->disabled(),
+                            ->content(fn($record) => $record?->proposal?->ekstrakurikuler?->nama),
 
                         Grid::make(2)
-
                             ->schema([
 
-                                DatePicker::make('proposal.tanggal_mulai')
+                                Placeholder::make('tanggal_mulai')
                                     ->label('Tanggal Mulai')
-                                    ->disabled(),
+                                    ->content(
+                                        fn($record) =>
+                                        $record?->proposal?->tanggal_mulai?->format('d M Y')
+                                    ),
 
-                                DatePicker::make('proposal.tanggal_selesai')
+                                Placeholder::make('tanggal_selesai')
                                     ->label('Tanggal Selesai')
-                                    ->disabled(),
+                                    ->content(
+                                        fn($record) =>
+                                        $record?->proposal?->tanggal_selesai?->format('d M Y')
+                                    ),
 
                             ]),
 
-                        TextInput::make('proposal.tempat')
-                            ->disabled(),
+                        Placeholder::make('tempat')
+                            ->label('Tempat')
+                            ->content(fn($record) => $record?->proposal?->tempat),
 
-                        RichEditor::make('proposal.latar_belakang')
+                        Placeholder::make('latar_belakang')
                             ->label('Latar Belakang')
-                            ->disabled()
-                            ->toolbarButtons([]),
+                            ->content(fn($record) => new HtmlString(
+                                $record?->proposal?->latar_belakang ?? '-'
+                            ))
+                            ->columnSpanFull(),
 
-                        RichEditor::make('proposal.tujuan')
-                            ->disabled()
-                            ->toolbarButtons([]),
+                        Placeholder::make('tujuan')
+                            ->label('Tujuan')
+                            ->content(fn($record) => new HtmlString(
+                                $record?->proposal?->tujuan ?? '-'
+                            ))
+                            ->columnSpanFull(),
 
                     ]),
 
@@ -121,11 +131,8 @@ class LaporanKegiatanForm
                             ]),
 
                         RichEditor::make('uraian_pelaksanaan')
-
                             ->label('Uraian Pelaksanaan')
-
                             ->required()
-
                             ->columnSpanFull(),
 
                     ]),
@@ -141,18 +148,18 @@ class LaporanKegiatanForm
                     ->schema([
 
                         RichEditor::make('pencapaian')
-
-                            ->required(),
+                            ->label('Pencapaian')
+                            ->required()
+                            ->columnSpanFull(),
 
                         RichEditor::make('prestasi')
-
-                            ->helperText(
-                                'Kosongkan apabila kegiatan tidak menghasilkan prestasi.'
-                            ),
+                            ->label('Prestasi')
+                            ->columnSpanFull(),
 
                         RichEditor::make('evaluasi')
-
-                            ->required(),
+                            ->label('Evaluasi')
+                            ->required()
+                            ->columnSpanFull(),
 
                     ]),
 
@@ -187,8 +194,9 @@ class LaporanKegiatanForm
                     ->schema([
 
                         RichEditor::make('penutup')
-
-                            ->required(),
+                            ->label('Penutup')
+                            ->required()
+                            ->columnSpanFull(),
 
                     ]),
 

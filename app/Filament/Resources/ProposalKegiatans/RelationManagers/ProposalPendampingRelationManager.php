@@ -86,12 +86,14 @@ class ProposalPendampingRelationManager extends RelationManager
 
             ->headerActions([
 
-                CreateAction::make(),
+                CreateAction::make()
+                    ->visible(fn() => ! $this->ownerRecord->isLocked()),
 
                 Action::make('ambilPengampu')
                     ->label('Ambil Pengampu')
                     ->icon('heroicon-o-users')
                     ->color('success')
+                    ->visible(fn() => ! $this->ownerRecord->isLocked())
                     ->requiresConfirmation()
                     ->action(function () {
 
@@ -118,9 +120,6 @@ class ProposalPendampingRelationManager extends RelationManager
 
                             if ($existing) {
 
-                                // Jika sudah Pelatih lalu ditemukan Pembina
-                                // upgrade menjadi Pembina.
-
                                 if (
                                     $existing->peran === 'pelatih'
                                     && $pengampu->role === 'pembina'
@@ -135,13 +134,9 @@ class ProposalPendampingRelationManager extends RelationManager
                             }
 
                             ProposalPendamping::create([
-
                                 'proposal_kegiatan_id' => $proposal->id,
-
                                 'pegawai_id' => $pengampu->pegawai_id,
-
                                 'peran' => $pengampu->role,
-
                             ]);
                         }
 
@@ -154,13 +149,19 @@ class ProposalPendampingRelationManager extends RelationManager
             ])
 
             ->recordActions([
-                DeleteAction::make(),
+
+                DeleteAction::make()
+                    ->visible(fn() => ! $this->ownerRecord->isLocked()),
+
             ])
 
             ->toolbarActions([
+
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                ]),
+                ])
+                    ->visible(fn() => ! $this->ownerRecord->isLocked()),
+
             ]);
     }
 }

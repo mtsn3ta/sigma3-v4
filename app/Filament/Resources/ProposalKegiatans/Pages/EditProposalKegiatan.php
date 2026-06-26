@@ -17,6 +17,7 @@ use App\Models\LaporanRealisasiAnggaran;
 use App\Filament\Resources\LaporanKegiatans\LaporanKegiatanResource;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use App\Support\LaporanTemplate;
 
 class EditProposalKegiatan extends EditRecord
 {
@@ -433,6 +434,9 @@ class EditProposalKegiatan extends EditRecord
                                     'harga_satuan' => $rab->harga_satuan,
                                 ]);
                             }
+                            $template = LaporanTemplate::make($laporan);
+
+                            $laporan->update($template);
                         });
 
                         Notification::make()

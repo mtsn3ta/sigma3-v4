@@ -949,11 +949,11 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 🟩 Sprint 5.7 Proposal Kegiatan
 
-🟨 Sprint 5.7.9 Foundation Improvement
+🟩 Sprint 5.7.9 Foundation Improvement
 ├── 5.7.9.1 Permission & Policy Refactor
 └── 5.7.9.2 Revision Engine
 
-⬜ Sprint 5.8 Laporan Kegiatan
+🟩 Sprint 5.8 Laporan Kegiatan
 ⬜ Sprint 5.9 Laporan Bulanan
 
 ---
