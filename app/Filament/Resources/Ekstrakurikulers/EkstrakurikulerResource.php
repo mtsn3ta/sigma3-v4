@@ -13,6 +13,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class EkstrakurikulerResource extends Resource
 {
@@ -40,6 +43,31 @@ class EkstrakurikulerResource extends Resource
     public static function table(Table $table): Table
     {
         return EkstrakurikulersTable::configure($table);
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (
+            $user->hasRole('super_admin')
+            || $user->hasRole('waka_kesiswaan')
+            || $user->hasRole('kepala_madrasah')
+        ) {
+            return $query;
+        }
+
+        if ($user->pegawai) {
+
+            $ekstrakurikulerIds = $user->pegawai
+                ->pengampus()
+                ->pluck('ekstrakurikuler_id');
+
+            return $query->whereIn('id', $ekstrakurikulerIds);
+        }
+
+        return $query->whereRaw('1 = 0');
     }
 
     public static function getRelations(): array

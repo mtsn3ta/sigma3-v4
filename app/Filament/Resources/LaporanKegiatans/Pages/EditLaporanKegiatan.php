@@ -85,6 +85,9 @@ class EditLaporanKegiatan extends EditRecord
                         ->success()
 
                         ->send();
+                    $this->refreshFormData([
+                        'status',
+                    ]);
                 }),
             Action::make('approvePembina')
                 ->label('Approve Pembina')
@@ -130,6 +133,9 @@ class EditLaporanKegiatan extends EditRecord
                         ->title('Laporan disetujui Pembina.')
                         ->success()
                         ->send();
+                    $this->refreshFormData([
+                        'status',
+                    ]);
                 }),
             Action::make('approveWaka')
                 ->label('Approve Waka')
@@ -173,6 +179,9 @@ class EditLaporanKegiatan extends EditRecord
                         ->title('Laporan disetujui Waka.')
                         ->success()
                         ->send();
+                    $this->refreshFormData([
+                        'status',
+                    ]);
                 }),
             Action::make('approveKepala')
                 ->label('Approve Kepala')
@@ -217,6 +226,9 @@ class EditLaporanKegiatan extends EditRecord
                         ->title('Laporan disetujui Kepala Madrasah.')
                         ->success()
                         ->send();
+                    $this->refreshFormData([
+                        'status',
+                    ]);
                 }),
             Action::make('requestRevision')
                 ->label('Request Revision')
@@ -297,6 +309,9 @@ class EditLaporanKegiatan extends EditRecord
                         ->title('Revisi berhasil dikirim.')
                         ->warning()
                         ->send();
+                    $this->refreshFormData([
+                        'status',
+                    ]);
                 }),
             Action::make('reject')
                 ->label('Reject')
@@ -357,6 +372,9 @@ class EditLaporanKegiatan extends EditRecord
                         ->title('Laporan ditolak.')
                         ->danger()
                         ->send();
+                    $this->refreshFormData([
+                        'status',
+                    ]);
                 }),
             Action::make('preview')
 

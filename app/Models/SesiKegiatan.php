@@ -17,7 +17,11 @@ class SesiKegiatan extends Model
         'tanggal',
         'waktu_mulai',
         'waktu_selesai',
+        'program_latihan',
         'status',
+    ];
+    protected $casts = [
+        'tanggal' => 'date',
     ];
 
     public function ekstrakurikuler()

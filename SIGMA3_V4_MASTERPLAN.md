@@ -807,7 +807,7 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 - [x] Auto Ambil RAB Proposal
 - [x] Realisasi Anggaran
-- [ ] Selisih Anggaran
+- [x] Selisih Anggaran
 
 #### BAB V Penutup
 
@@ -846,72 +846,70 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 ### Database
 
-- [ ] Migration laporan_bulanan
-- [ ] Model LaporanBulanan
-- [ ] Resource LaporanBulanan
+- [x] Migration laporan_bulanan
+- [x] Model LaporanBulanan
+- [x] Resource LaporanBulanan
 
 ### Auto Generate Engine
 
 #### BAB I
 
-- [ ] Pendahuluan
-- [ ] Tujuan
-- [ ] Identitas Ekstrakurikuler
+- [x] Pendahuluan
+- [x] Tujuan
+- [x] Identitas Ekstrakurikuler
 
 #### BAB II Program Latihan
 
-- [ ] Auto Ambil Sesi Kegiatan
-- [ ] Auto Ambil Program Latihan
-- [ ] Auto Rekap Kehadiran
+- [x] Auto Ambil Sesi Kegiatan
+- [x] Auto Ambil Program Latihan
+- [x] Auto Rekap Kehadiran
 
 #### BAB III Prestasi
 
-- [ ] Auto Ambil Proposal Bulan Ini
-- [ ] Auto Ambil Laporan Kegiatan
+- [x] Auto Ambil Proposal Bulan Ini
+- [x] Auto Ambil Laporan Kegiatan
 - [ ] Auto Ambil Prestasi
 
 #### BAB IV Evaluasi
 
-- [ ] Evaluasi
-- [ ] Kendala
-- [ ] Solusi
+- [x] Evaluasi
+- [x] Kendala
+- [x] Solusi
 
 #### BAB V Penutup
 
-- [ ] Penutup
+- [x] Penutup
 
 ### Statistik Otomatis
 
-- [ ] Jumlah Anggota Aktif
-- [ ] Jumlah Sesi
-- [ ] Persentase Kehadiran
-- [ ] Jumlah Proposal
-- [ ] Jumlah Kegiatan
-- [ ] Jumlah Prestasi
+- [x] Jumlah Anggota Aktif
+- [x] Jumlah Sesi
+- [x] Persentase Kehadiran
+- [x] Jumlah Proposal
+- [x] Jumlah Kegiatan
+- [x] Jumlah Prestasi
 
 ### Lampiran
 
-- [ ] Dokumentasi Bulanan
-- [ ] Rekap Kehadiran
-- [ ] Daftar Program Latihan
+- [x] Dokumentasi Bulanan
 
 ### Workflow
 
-- [ ] Submit
-- [ ] Approval Pembina
-- [ ] Approval Waka
-- [ ] Approval Kepala
-- [ ] Reject Workflow
+- [x] Submit
+- [x] Approval Pembina
+- [x] Approval Waka
+- [x] Approval Kepala
+- [x] Reject Workflow
 
 ### Approval Logs
 
-- [ ] Auto Logging
+- [x] Auto Logging
 
 ### Preview & PDF
 
-- [ ] Preview
-- [ ] Generate PDF
-- [ ] Lembar Pengesahan
+- [x] Preview
+- [x] Generate PDF
+- [x] Lembar Pengesahan
 
 ---
 
@@ -919,42 +917,17 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 ### Laporan Kegiatan
 
-- [ ] End-to-End Workflow
-- [ ] Preview
-- [ ] PDF
+- [x] End-to-End Workflow
+- [x] Preview
+- [x] PDF
 
 ### Laporan Bulanan
 
-- [ ] Auto Generate
-- [ ] Statistik
-- [ ] Preview
-- [ ] PDF
-- [ ] End-to-End Workflow
-
----
-
-## STATUS
-
-🟩 Sprint 5.1 Ekstrakurikuler
-
-🟩 Sprint 5.2 Pengampu
-
-🟩 Sprint 5.3 Anggota Ekskul
-
-🟩 Sprint 5.4 Sesi Kegiatan
-
-🟩 Sprint 5.5 Kehadiran
-
-🟩 Sprint 5.6 Scope & Role Engine
-
-🟩 Sprint 5.7 Proposal Kegiatan
-
-🟩 Sprint 5.7.9 Foundation Improvement
-├── 5.7.9.1 Permission & Policy Refactor
-└── 5.7.9.2 Revision Engine
-
-🟩 Sprint 5.8 Laporan Kegiatan
-⬜ Sprint 5.9 Laporan Bulanan
+- [x] Auto Generate
+- [x] Statistik
+- [x] Preview
+- [x] PDF
+- [x] End-to-End Workflow
 
 ---
 

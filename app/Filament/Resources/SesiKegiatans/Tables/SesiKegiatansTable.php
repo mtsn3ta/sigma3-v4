@@ -5,6 +5,9 @@ namespace App\Filament\Resources\SesiKegiatans\Tables;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\BulkActionGroup;
 
 class SesiKegiatansTable
 {
@@ -12,6 +15,11 @@ class SesiKegiatansTable
     {
         return $table
             ->columns([
+
+                TextColumn::make('tanggal')
+                    ->label('Tanggal')
+                    ->date('d M Y')
+                    ->sortable(),
 
                 TextColumn::make('ekstrakurikuler.nama')
                     ->label('Ekstrakurikuler')
@@ -21,22 +29,37 @@ class SesiKegiatansTable
                 TextColumn::make('pelatih.nama')
                     ->label('Pelatih')
                     ->searchable()
-                    ->sortable(),
+                    ->placeholder('-'),
 
-                TextColumn::make('tanggal')
-                    ->date('d M Y')
-                    ->sortable(),
+                TextColumn::make('program_latihan')
+                    ->label('Program Latihan')
+                    ->limit(60)
+                    ->wrap()
+                    ->tooltip(fn($record) => $record->program_latihan),
 
-                TextColumn::make('waktu_mulai')
-                    ->label('Mulai')
-                    ->time('H:i'),
-
-                TextColumn::make('waktu_selesai')
-                    ->label('Selesai')
-                    ->time('H:i'),
+                TextColumn::make('jumlah_hadir')
+                    ->label('Hadir')
+                    ->state(function ($record) {
+                        return $record->kehadiran()
+                            ->where('status', 'hadir')
+                            ->count();
+                    })
+                    ->badge()
+                    ->color('success'),
 
                 TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn($state) => match ($state) {
+                        'aktif' => 'primary',
+                        'selesai' => 'success',
+                        'batal' => 'danger',
+                        default => 'gray',
+                    }),
+
+                TextColumn::make('created_at')
+                    ->label('Dibuat')
+                    ->dateTime('d M Y H:i')
+                    ->sortable(),
 
             ])
 
@@ -44,8 +67,24 @@ class SesiKegiatansTable
 
             ->recordActions([
                 EditAction::make(),
+
+                DeleteAction::make()
+
+                    ->label('Hapus')
+
+                    ->disabled(fn($record) => $record->kehadiran()->exists())
+
+                    ->tooltip(fn($record) => $record->kehadiran()->exists()
+                        ? 'Sesi yang sudah memiliki data kehadiran tidak dapat dihapus.'
+                        : null)
+
+                    ->requiresConfirmation(),
             ])
 
-            ->toolbarActions([]);
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 }

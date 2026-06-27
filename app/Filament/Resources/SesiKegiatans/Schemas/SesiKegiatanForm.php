@@ -7,6 +7,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TimePicker;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 
 class SesiKegiatanForm
@@ -35,6 +36,11 @@ class SesiKegiatanForm
                             ->default(now())
                             ->native(false)
                             ->required(),
+
+                        Textarea::make('program_latihan')
+                            ->label('Program Latihan')
+                            ->rows(5)
+                            ->columnSpanFull(),
 
                         TimePicker::make('waktu_mulai')
                             ->seconds(false)
