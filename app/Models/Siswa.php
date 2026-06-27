@@ -83,4 +83,14 @@ class Siswa extends Model
     {
         return $this->kelasAktif?->kelas?->nama_kelas;
     }
+    public function prestasi()
+    {
+        return $this->belongsToMany(
+
+            Prestasi::class,
+
+            'prestasi_siswa'
+
+        )->withTimestamps();
+    }
 }

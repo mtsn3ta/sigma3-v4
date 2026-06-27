@@ -31,6 +31,15 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->sidebarCollapsibleOnDesktop() // Membuat sidebar bisa diciutkan untuk memberikan kesan luas pada area kerja
+            ->navigationGroups([
+                'Master Data',
+                'Akademik',
+                'Ekstrakurikuler',
+                'Publikasi',
+                'Pengaturan',
+            ])
+
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

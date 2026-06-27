@@ -87,4 +87,28 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->isPembinaEkskul($ekstrakurikulerId)
             || $this->isPelatihEkskul($ekstrakurikulerId);
     }
+    public function prestasi()
+    {
+        return $this->hasMany(
+
+            Prestasi::class,
+
+            'created_by_id'
+
+        );
+    }
+    public function galeri()
+    {
+        return $this->hasMany(
+            Galeri::class,
+            'created_by_id'
+        );
+    }
+    public function pengumuman()
+    {
+        return $this->hasMany(
+            Pengumuman::class,
+            'created_by_id'
+        );
+    }
 }

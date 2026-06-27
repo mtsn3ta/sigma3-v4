@@ -46,4 +46,22 @@ class Ekstrakurikuler extends Model
     {
         return $this->hasMany(ProposalKegiatan::class);
     }
+    public function prestasi()
+    {
+        return $this->hasMany(
+            Prestasi::class
+        );
+    }
+    public function galeri()
+    {
+        return $this->hasMany(
+            Galeri::class
+        );
+    }
+    public function pengumuman()
+    {
+        return $this->hasMany(
+            Pengumuman::class
+        );
+    }
 }

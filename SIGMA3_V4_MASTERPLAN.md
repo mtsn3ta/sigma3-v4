@@ -931,11 +931,45 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 ---
 
-# PHASE 6 — KEHADIRAN
+# PHASE 6 — PUBLIKASI
 
 ---
 
-## PHASE 6.1 Backend Kehadiran
+## Sprint 6.1 Prestasi
+
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Policy
+- [x] Testing
+
+---
+
+## Sprint 6.2 Pengumuman
+
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Policy
+- [x] Testing
+
+---
+
+## Sprint 6.3 Galeri
+
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Policy
+- [x] Testing
+
+---
+
+# PHASE 7 — KEHADIRAN
+
+---
+
+## PHASE 7.1 Backend Kehadiran
 
 ### Kehadiran Sekolah
 
@@ -965,7 +999,7 @@ Status:
 
 ---
 
-## PHASE 6.2 Frontend RFID
+## PHASE 7.2 Frontend RFID
 
 ### RFID Sekolah
 
@@ -993,11 +1027,11 @@ Status:
 
 ---
 
-# PHASE 7 — BK
+# PHASE 8 — BK
 
 ---
 
-## Sprint 7.1 Konseling
+## Sprint 8.1 Konseling
 
 - [ ] Migration
 - [ ] Model
@@ -1006,7 +1040,7 @@ Status:
 
 ---
 
-## Sprint 7.2 Permasalahan
+## Sprint 8.2 Permasalahan
 
 - [ ] Migration
 - [ ] Model
@@ -1015,7 +1049,7 @@ Status:
 
 ---
 
-## Sprint 7.3 Dashboard BK
+## Sprint 8.3 Dashboard BK
 
 - [ ] Widget
 - [ ] Statistik
@@ -1024,7 +1058,7 @@ Status:
 
 ---
 
-## Sprint 7.4 Izin Keluar
+## Sprint 8.4 Izin Keluar
 
 - [ ] Migration
 - [ ] Model
@@ -1038,11 +1072,11 @@ Status:
 
 ---
 
-# PHASE 8 — GURU
+# PHASE 9 — GURU
 
 ---
 
-## Sprint 8.1 Jurnal Mengajar
+## Sprint 9.1 Jurnal Mengajar
 
 - [ ] Migration
 - [ ] Model
@@ -1051,7 +1085,7 @@ Status:
 
 ---
 
-## Sprint 8.2 Guru Berhalangan
+## Sprint 9.2 Guru Berhalangan
 
 - [ ] Migration
 - [ ] Model
@@ -1060,44 +1094,9 @@ Status:
 
 ---
 
-## Sprint 8.3 Distribusi Tugas
+## Sprint 9.3 Distribusi Tugas
 
 - [ ] Workflow
-- [ ] Resource
-- [ ] Testing
-
-Status:
-
-⬜ BELUM DIMULAI
-
----
-
-# PHASE 9 — PUBLIKASI
-
----
-
-## Sprint 9.1 Prestasi
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
-
----
-
-## Sprint 9.2 Pengumuman
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
-
----
-
-## Sprint 9.3 Galeri
-
-- [ ] Migration
-- [ ] Model
 - [ ] Resource
 - [ ] Testing
 
