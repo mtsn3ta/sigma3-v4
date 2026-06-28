@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Master Data',
                 'Akademik',
+                'BK',
                 'Ekstrakurikuler',
                 'Publikasi',
                 'Pengaturan',

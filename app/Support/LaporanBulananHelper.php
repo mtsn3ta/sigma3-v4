@@ -8,6 +8,7 @@ use App\Models\LaporanBulanan;
 use App\Models\LaporanKegiatan;
 use App\Models\ProposalKegiatan;
 use App\Models\SesiKegiatan;
+use App\Models\Prestasi;
 
 class LaporanBulananHelper
 {
@@ -173,7 +174,28 @@ class LaporanBulananHelper
     public static function prestasi(
         LaporanBulanan $laporan
     ) {
-        return collect();
+        return Prestasi::query()
+
+            ->with('siswa')
+
+            ->where(
+                'ekstrakurikuler_id',
+                $laporan->ekstrakurikuler_id
+            )
+
+            ->whereMonth(
+                'tanggal',
+                $laporan->bulan
+            )
+
+            ->whereYear(
+                'tanggal',
+                $laporan->tahun
+            )
+
+            ->orderBy('tanggal')
+
+            ->get();
     }
 
     /*
@@ -234,7 +256,7 @@ class LaporanBulananHelper
 
             'jumlah_kegiatan' => self::kegiatan($laporan)->count(),
 
-            'jumlah_prestasi' => 0,
+            'jumlah_prestasi' => self::prestasi($laporan)->count(),
 
         ];
     }

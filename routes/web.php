@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProposalPdfController;
 use App\Http\Controllers\LaporanKegiatanPdfController;
 use App\Http\Controllers\LaporanBulananPdfController;
+use App\Http\Controllers\Thermal\IzinKeluarPrintController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,3 +21,13 @@ Route::get(
     '/laporan-bulanan/{laporanBulanan}/pdf',
     LaporanBulananPdfController::class
 )->name('laporan-bulanan.pdf');
+Route::middleware(['auth'])->group(function () {
+
+    Route::get(
+
+        '/thermal/izin-keluar/{izinKeluar}',
+
+        IzinKeluarPrintController::class
+
+    )->name('thermal.izin-keluar');
+});

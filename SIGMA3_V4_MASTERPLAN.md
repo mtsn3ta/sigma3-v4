@@ -83,11 +83,11 @@ Implementation
 
 CURRENT:
 
-🟨 PHASE 3.5 — PERMISSION FOUNDATION
+🟨 PHASE 7 — BK
 
 NEXT:
 
-⬜ PHASE 4 — MASTER DATA
+⬜ PHASE 8 — GURU
 
 ---
 
@@ -714,8 +714,8 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 #### Policies
 
 - [x] ProposalKegiatanPolicy
-- [ ] LaporanKegiatanPolicy (Sprint 5.8)
-- [ ] LaporanBulananPolicy (Sprint 5.8)
+- [x] LaporanKegiatanPolicy (Sprint 5.8)
+- [x] LaporanBulananPolicy (Sprint 5.8)
 
 #### Resource Visibility
 
@@ -758,7 +758,7 @@ Membangun sistem Proposal Kegiatan Ekstrakurikuler yang dapat diajukan, disetuju
 
 # Sprint 5.8 Laporan Kegiatan & Laporan Bulanan
 
-STATUS: 0%
+STATUS: 99%
 
 Tujuan:
 
@@ -868,7 +868,7 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 - [x] Auto Ambil Proposal Bulan Ini
 - [x] Auto Ambil Laporan Kegiatan
-- [ ] Auto Ambil Prestasi
+- [x] Auto Ambil Prestasi
 
 #### BAB IV Evaluasi
 
@@ -965,11 +965,95 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 ---
 
-# PHASE 7 — KEHADIRAN
+# PHASE 7 — BK
 
 ---
 
-## PHASE 7.1 Backend Kehadiran
+## Sprint 7.1 Konseling
+
+- [x] Migration
+
+- [x] Model
+
+- [x] Resource
+
+- [x] Testing
+
+---
+
+## Sprint 7.2 Permasalahan
+
+- [x] Migration
+
+- [x] Model
+
+- [x] Resource
+
+- [x] Testing
+
+---
+
+## Sprint 7.4 Izin Keluar
+
+- [x] Migration
+
+- [x] Model
+
+- [x] Resource
+
+- [ ] Thermal Print
+
+- [ ] Testing
+
+# PHASE 8 — GURU
+
+---
+
+## Sprint 8.1 Jurnal Mengajar
+
+- [ ] Migration
+
+- [ ] Model
+
+- [ ] Resource
+
+- [ ] Testing
+
+---
+
+## Sprint 8.2 Guru Berhalangan
+
+- [ ] Migration
+
+- [ ] Model
+
+- [ ] Resource
+
+- [ ] Testing
+
+# PHASE 9 — GURU PIKET
+
+## Sprint 9.1 Distribusi Tugas
+
+- [ ] Workflow
+
+- [ ] Resource
+
+- [ ] Testing
+
+## Izin Keluar sama seperti BK
+
+Status:
+
+⬜ BELUM DIMULAI
+
+---
+
+# PHASE 10 — KEHADIRAN
+
+---
+
+## PHASE 10.1 Backend Kehadiran
 
 ### Kehadiran Sekolah
 
@@ -999,7 +1083,7 @@ Status:
 
 ---
 
-## PHASE 7.2 Frontend RFID
+## PHASE 10.2 Frontend RFID
 
 ### RFID Sekolah
 
@@ -1027,11 +1111,11 @@ Status:
 
 ---
 
-# PHASE 8 — BK
+# PHASE 11 — SYSTEM
 
 ---
 
-## Sprint 8.1 Konseling
+## Sprint 11.1 Settings
 
 - [ ] Migration
 - [ ] Model
@@ -1040,86 +1124,7 @@ Status:
 
 ---
 
-## Sprint 8.2 Permasalahan
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
-
----
-
-## Sprint 8.3 Dashboard BK
-
-- [ ] Widget
-- [ ] Statistik
-- [ ] Ranking
-- [ ] Monitoring
-
----
-
-## Sprint 8.4 Izin Keluar
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Thermal Print
-- [ ] Testing
-
-Status:
-
-⬜ BELUM DIMULAI
-
----
-
-# PHASE 9 — GURU
-
----
-
-## Sprint 9.1 Jurnal Mengajar
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
-
----
-
-## Sprint 9.2 Guru Berhalangan
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
-
----
-
-## Sprint 9.3 Distribusi Tugas
-
-- [ ] Workflow
-- [ ] Resource
-- [ ] Testing
-
-Status:
-
-⬜ BELUM DIMULAI
-
----
-
-# PHASE 10 — SYSTEM
-
----
-
-## Sprint 10.1 Settings
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
-
----
-
-## Sprint 10.2 Activity Logs
+## Sprint 11.2 Activity Logs
 
 - [ ] Logging Engine
 - [ ] Resource
@@ -1127,7 +1132,7 @@ Status:
 
 ---
 
-## Sprint 10.3 Approval Logs
+## Sprint 11.3 Approval Logs
 
 - [ ] Logging Engine
 - [ ] Resource
@@ -1139,7 +1144,7 @@ Status:
 
 ---
 
-# PHASE 11 — MIGRASI DATA
+# PHASE 12 — MIGRASI DATA
 
 Tujuan:
 
@@ -1162,7 +1167,7 @@ Status:
 
 ---
 
-# PHASE 12 — TESTING
+# PHASE 13 — TESTING
 
 ## Internal Testing
 

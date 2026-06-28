@@ -42,4 +42,22 @@ class Pegawai extends Model
             EkstrakurikulerPengampu::class
         );
     }
+    public function konseling()
+    {
+        return $this->hasMany(
+            KonselingSiswa::class
+        );
+    }
+    public function permasalahan()
+    {
+        return $this->hasMany(
+            PermasalahanSiswa::class
+        );
+    }
+    public function izinKeluar()
+    {
+        return $this->hasMany(
+            IzinKeluar::class
+        );
+    }
 }

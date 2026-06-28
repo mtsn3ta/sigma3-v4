@@ -225,15 +225,114 @@
         margin-top:10px;
     ">
 
-        <tr>
+        <thead>
 
-            <td class="border" align="center">
+            <tr>
 
-                Data prestasi belum tersedia.
+                <th class="border" width="5%">No</th>
 
-            </td>
+                <th class="border">Nama Lomba</th>
 
-        </tr>
+                <th class="border">Prestasi</th>
+
+                <th class="border" width="12%">Jenis</th>
+
+                <th class="border" width="15%">Tingkat</th>
+
+                <th class="border" width="15%">Tanggal</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @forelse($prestasi as $item)
+                <tr>
+
+                    <td class="border" align="center">
+                        {{ $loop->iteration }}
+                    </td>
+
+                    <td class="border">
+                        {{ $item->nama_lomba }}
+                    </td>
+
+                    <td class="border">
+
+                        <strong>{{ $item->nama_prestasi }}</strong>
+
+                        @if ($item->siswa->isNotEmpty())
+                            <br>
+
+                            <small>
+
+                                {{ $item->siswa->pluck('nama')->join(', ') }}
+
+                            </small>
+                        @endif
+
+                    </td>
+
+                    <td class="border" align="center">
+
+                        {{ $item->jenis_label }}
+
+                    </td>
+
+                    <td class="border" align="center">
+
+                        {{ $item->tingkat }}
+
+                    </td>
+
+                    <td class="border" align="center">
+
+                        {{ $item->tanggal->translatedFormat('d M Y') }}
+
+                    </td>
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td colspan="6" class="border" align="center">
+
+                        Belum ada prestasi pada bulan ini.
+
+                    </td>
+
+                </tr>
+            @endforelse
+
+        </tbody>
 
     </table>
+    @if ($prestasi->isNotEmpty())
+        @php
+
+            $individu = $prestasi->where('jenis', 'individu')->count();
+
+            $tim = $prestasi->where('jenis', 'tim')->count();
+
+        @endphp
+
+        <p style="margin-top:18px; text-align:justify;">
+
+            Pada bulan ini ekstrakurikuler
+            <strong>{{ $record->ekstrakurikuler->nama }}</strong>
+            memperoleh
+            <strong>{{ $prestasi->count() }}</strong>
+            prestasi,
+            terdiri dari
+            <strong>{{ $individu }}</strong>
+            prestasi individu
+            dan
+            <strong>{{ $tim }}</strong>
+            prestasi tim.
+
+        </p>
+    @endif
 </div>

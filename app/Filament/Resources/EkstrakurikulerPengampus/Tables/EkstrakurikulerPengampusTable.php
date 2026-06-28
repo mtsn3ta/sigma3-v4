@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\EkstrakurikulerPengampus\Tables;
 
-use Filament\Actions\EditAction;
+use App\Support\RoleHelper;
+use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -11,6 +12,7 @@ class EkstrakurikulerPengampusTable
     public static function configure(Table $table): Table
     {
         return $table
+
             ->columns([
 
                 TextColumn::make('ekstrakurikuler.nama')
@@ -36,7 +38,24 @@ class EkstrakurikulerPengampusTable
             ->filters([])
 
             ->recordActions([
-                EditAction::make(),
+
+                DeleteAction::make()
+
+                    ->after(function ($record) {
+
+                        $pegawai = $record->pegawai;
+
+                        if (! $pegawai?->user) {
+                            return;
+                        }
+
+                        RoleHelper::removePengampuRoleIfUnused(
+                            $pegawai->user,
+                            $pegawai->id,
+                            $record->role
+                        );
+                    }),
+
             ])
 
             ->toolbarActions([]);

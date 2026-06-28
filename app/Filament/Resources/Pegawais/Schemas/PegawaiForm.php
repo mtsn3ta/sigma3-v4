@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\Pegawais\Schemas;
 
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class PegawaiForm
@@ -17,6 +20,12 @@ class PegawaiForm
     {
         return $schema
             ->components([
+
+                /*
+                |--------------------------------------------------------------------------
+                | Data Dasar
+                |--------------------------------------------------------------------------
+                */
 
                 Section::make('Data Dasar')
                     ->schema([
@@ -33,25 +42,143 @@ class PegawaiForm
                             ->maxLength(50),
 
                         Select::make('jenis_pegawai')
+                            ->label('Jenis Pegawai')
                             ->options([
                                 'internal' => 'Internal',
                                 'eksternal' => 'Eksternal',
                             ])
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function (Set $set) {
+                                $set('roles', []);
+                            }),
 
                         TextInput::make('no_hp')
+                            ->label('No. HP')
                             ->tel()
                             ->required(),
 
                         TextInput::make('rfid_uid')
                             ->label('RFID UID')
-                            ->nullable()
                             ->unique(ignoreRecord: true),
 
                     ])
                     ->columns(2),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Role Sistem
+                |--------------------------------------------------------------------------
+                */
+
+                Section::make('Role Sistem')
+
+                    ->schema([
+
+                        CheckboxList::make('roles')
+
+                            ->label('Role Tambahan')
+
+                            ->options([
+
+                                'kepala_madrasah' => 'Kepala Madrasah',
+
+                                'waka_kesiswaan' => 'Waka Kesiswaan',
+
+                                'waka_kurikulum' => 'Waka Kurikulum',
+
+                                'waka_humas' => 'Waka Humas',
+
+                                'waka_sarpras' => 'Waka Sarpras',
+
+                                'bk' => 'Guru BK',
+
+                                'piket' => 'Guru Piket',
+
+                            ])
+
+                            ->columns(2)
+
+                            ->live()
+
+                            ->disableOptionWhen(function (string $value, Get $get): bool {
+
+                                $selected = $get('roles') ?? [];
+
+                                $wakaRoles = [
+
+                                    'waka_kesiswaan',
+                                    'waka_kurikulum',
+                                    'waka_humas',
+                                    'waka_sarpras',
+
+                                ];
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Kepala Madrasah
+                                |--------------------------------------------------------------------------
+                                */
+
+                                if (
+                                    in_array('kepala_madrasah', $selected) &&
+                                    $value !== 'kepala_madrasah'
+                                ) {
+                                    return true;
+                                }
+
+                                if (
+                                    $value === 'kepala_madrasah' &&
+                                    count(array_intersect($selected, $wakaRoles)) > 0
+                                ) {
+                                    return true;
+                                }
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Waka hanya satu
+                                |--------------------------------------------------------------------------
+                                */
+
+                                if (in_array($value, $wakaRoles)) {
+
+                                    foreach ($wakaRoles as $waka) {
+
+                                        if (
+                                            $waka !== $value &&
+                                            in_array($waka, $selected)
+                                        ) {
+                                            return true;
+                                        }
+                                    }
+                                }
+
+                                return false;
+                            })
+
+                            ->helperText(
+                                "• Pegawai Internal otomatis memiliki role Guru.\n" .
+                                    "• Pegawai Eksternal otomatis memiliki role Pelatih.\n" .
+                                    "• Role Pembina & Pelatih diberikan otomatis melalui penugasan Ekstrakurikuler.\n" .
+                                    "• Kepala Madrasah tidak dapat memiliki role lain.\n" .
+                                    "• Hanya boleh memilih satu role Waka."
+                            ),
+
+                    ])
+
+                    ->visible(
+                        fn(Get $get) =>
+                        $get('jenis_pegawai') === 'internal'
+                    ),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Biodata
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Biodata')
+
                     ->schema([
 
                         Radio::make('jenis_kelamin')
@@ -73,9 +200,17 @@ class PegawaiForm
                             ->columnSpanFull(),
 
                     ])
+
                     ->columns(3),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Dokumen
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Dokumen')
+
                     ->schema([
 
                         FileUpload::make('foto')
@@ -94,9 +229,17 @@ class PegawaiForm
                             ->openable(),
 
                     ])
+
                     ->columns(2),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Status
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Status')
+
                     ->schema([
 
                         Radio::make('status')

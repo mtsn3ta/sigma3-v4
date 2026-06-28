@@ -4,7 +4,6 @@ namespace App\Filament\Resources\LaporanBulanans\RelationManagers;
 
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 
 class ApprovalLogsRelationManager extends RelationManager

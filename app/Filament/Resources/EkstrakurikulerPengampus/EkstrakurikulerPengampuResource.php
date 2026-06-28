@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\EkstrakurikulerPengampus;
 
 use App\Filament\Resources\EkstrakurikulerPengampus\Pages\CreateEkstrakurikulerPengampu;
-use App\Filament\Resources\EkstrakurikulerPengampus\Pages\EditEkstrakurikulerPengampu;
 use App\Filament\Resources\EkstrakurikulerPengampus\Pages\ListEkstrakurikulerPengampus;
 use App\Filament\Resources\EkstrakurikulerPengampus\Schemas\EkstrakurikulerPengampuForm;
 use App\Filament\Resources\EkstrakurikulerPengampus\Tables\EkstrakurikulerPengampusTable;
@@ -52,9 +51,11 @@ class EkstrakurikulerPengampuResource extends Resource
     public static function getPages(): array
     {
         return [
+
             'index' => ListEkstrakurikulerPengampus::route('/'),
+
             'create' => CreateEkstrakurikulerPengampu::route('/create'),
-            'edit' => EditEkstrakurikulerPengampu::route('/{record}/edit'),
+
         ];
     }
 }
