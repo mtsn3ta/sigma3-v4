@@ -6,6 +6,7 @@ use App\Models\AnggotaEkskul;
 use App\Models\KehadiranEkskul;
 use App\Filament\Resources\SesiKegiatans\SesiKegiatanResource;
 use Filament\Resources\Pages\CreateRecord;
+use App\Services\ActivityLogService;
 
 class CreateSesiKegiatan extends CreateRecord
 {
@@ -33,5 +34,9 @@ class CreateSesiKegiatan extends CreateRecord
                 ]
             );
         }
+        ActivityLogService::log(
+            'Create Sesi',
+            $this->record->ekstrakurikuler->nama
+        );
     }
 }

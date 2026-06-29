@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Support\RoleHelper;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Hash;
+use App\Services\ActivityLogService;
 
 class CreatePegawai extends CreateRecord
 {
@@ -33,5 +34,12 @@ class CreatePegawai extends CreateRecord
         $data['user_id'] = $user->id;
 
         return $data;
+    }
+    protected function afterCreate(): void
+    {
+        ActivityLogService::log(
+            'Create Pegawai',
+            'Menambahkan pegawai ' . $this->record->nama
+        );
     }
 }

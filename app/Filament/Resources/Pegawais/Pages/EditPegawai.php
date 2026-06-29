@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Pegawais\Pages;
 use App\Filament\Resources\Pegawais\PegawaiResource;
 use App\Support\RoleHelper;
 use Filament\Resources\Pages\EditRecord;
+use App\Services\ActivityLogService;
 
 class EditPegawai extends EditRecord
 {
@@ -67,5 +68,12 @@ class EditPegawai extends EditRecord
     protected function getHeaderActions(): array
     {
         return [];
+    }
+    protected function afterSave(): void
+    {
+        ActivityLogService::log(
+            'Update Pegawai',
+            'Mengubah data pegawai ' . $this->record->nama
+        );
     }
 }

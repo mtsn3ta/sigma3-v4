@@ -24,6 +24,12 @@ class KehadiranEkskul extends Model
         'waktu_scan' => 'datetime',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
     public function sesiKegiatan()
     {
         return $this->belongsTo(SesiKegiatan::class);
@@ -37,5 +43,55 @@ class KehadiranEkskul extends Model
     public function petugas()
     {
         return $this->belongsTo(User::class, 'petugas_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    public function isHadir(): bool
+    {
+        return $this->status === 'hadir';
+    }
+
+    public function isTidakHadir(): bool
+    {
+        return $this->status === 'tidak_hadir';
+    }
+
+    public function isRfid(): bool
+    {
+        return $this->sumber === 'rfid';
+    }
+
+    public function isManual(): bool
+    {
+        return $this->sumber === 'manual';
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+
+            'hadir'        => 'Hadir',
+
+            'tidak_hadir'  => 'Tidak Hadir',
+
+            default        => '-',
+        };
+    }
+
+    public function getSumberLabelAttribute(): string
+    {
+        return match ($this->sumber) {
+
+            'rfid'   => 'RFID',
+
+            'manual' => 'Manual',
+
+            default  => '-',
+        };
     }
 }

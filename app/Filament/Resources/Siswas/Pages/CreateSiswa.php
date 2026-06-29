@@ -6,6 +6,7 @@ use App\Filament\Resources\Siswas\SiswaResource;
 use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Hash;
+use App\Services\ActivityLogService;
 
 class CreateSiswa extends CreateRecord
 {
@@ -25,5 +26,12 @@ class CreateSiswa extends CreateRecord
         $data['user_id'] = $user->id;
 
         return $data;
+    }
+    protected function afterCreate(): void
+    {
+        ActivityLogService::log(
+            'Create Siswa',
+            'Menambahkan siswa ' . $this->record->nama
+        );
     }
 }

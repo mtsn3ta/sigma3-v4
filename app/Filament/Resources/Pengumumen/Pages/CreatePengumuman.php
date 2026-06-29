@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Pengumumen\Pages;
 use App\Filament\Resources\Pengumumen\PengumumanResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ActivityLogService;
 
 class CreatePengumuman extends CreateRecord
 {
@@ -15,5 +16,12 @@ class CreatePengumuman extends CreateRecord
         $data['created_by_id'] = Auth::id();
 
         return $data;
+    }
+    protected function afterCreate(): void
+    {
+        ActivityLogService::log(
+            'Create Pengumuman',
+            $this->record->judul
+        );
     }
 }

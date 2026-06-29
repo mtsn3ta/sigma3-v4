@@ -1238,30 +1238,26 @@ Status:
 
 ## Sprint 11.1 Settings
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Testing
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Testing
 
 ---
 
 ## Sprint 11.2 Activity Logs
 
-- [ ] Logging Engine
-- [ ] Resource
-- [ ] Testing
+- [x] Logging Engine
+- [x] Resource
+- [x] Testing
 
 ---
 
 ## Sprint 11.3 Approval Logs
 
-- [ ] Logging Engine
-- [ ] Resource
-- [ ] Testing
-
-Status:
-
-⬜ BELUM DIMULAI
+- [x] Logging Engine
+- [x] Resource
+- [x] Testing
 
 ---
 

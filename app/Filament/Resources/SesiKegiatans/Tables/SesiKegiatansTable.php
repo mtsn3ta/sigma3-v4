@@ -8,6 +8,8 @@ use Filament\Tables\Table;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Action;
+use App\Filament\Resources\SesiKegiatans\Pages;
 
 class SesiKegiatansTable
 {
@@ -66,6 +68,28 @@ class SesiKegiatansTable
             ->filters([])
 
             ->recordActions([
+
+                Action::make('absensi')
+
+                    ->label('Absensi')
+
+                    ->icon('heroicon-o-clipboard-document-check')
+
+                    ->color('success')
+
+                    ->visible(fn($record) => $record->status === 'aktif')
+
+                    ->url(fn($record) => Pages\Absensi::getUrl([
+                        'record' => $record,
+                    ])),
+
+                Action::make('lihat_absensi')
+                    ->label('Lihat')
+                    ->icon('heroicon-o-eye')
+                    ->color('gray')
+                    ->visible(fn($record) => $record->status === 'selesai')
+                    ->url(fn($record) => '#'),
+
                 EditAction::make(),
 
                 DeleteAction::make()
@@ -79,6 +103,7 @@ class SesiKegiatansTable
                         : null)
 
                     ->requiresConfirmation(),
+
             ])
 
             ->toolbarActions([

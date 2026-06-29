@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Prestasis\Pages;
 use App\Filament\Resources\Prestasis\PrestasiResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ActivityLogService;
 
 class CreatePrestasi extends CreateRecord
 {
@@ -15,5 +16,12 @@ class CreatePrestasi extends CreateRecord
         $data['created_by_id'] = Auth::id();
 
         return $data;
+    }
+    protected function afterCreate(): void
+    {
+        ActivityLogService::log(
+            'Create Prestasi',
+            $this->record->judul
+        );
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TahunAjarans\Pages;
 use App\Filament\Resources\TahunAjarans\TahunAjaranResource;
 use App\Models\TahunAjaran;
 use Filament\Resources\Pages\EditRecord;
+use App\Services\ActivityLogService;
 
 class EditTahunAjaran extends EditRecord
 {
@@ -27,5 +28,12 @@ class EditTahunAjaran extends EditRecord
     protected function getHeaderActions(): array
     {
         return [];
+    }
+    protected function afterSave(): void
+    {
+        ActivityLogService::log(
+            'Update Tahun Ajaran',
+            $this->record->tahun
+        );
     }
 }

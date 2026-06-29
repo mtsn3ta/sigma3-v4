@@ -30,7 +30,7 @@ class RoleResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

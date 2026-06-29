@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Galeris\Pages;
 use App\Filament\Resources\Galeris\GaleriResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ActivityLogService;
 
 class CreateGaleri extends CreateRecord
 {
@@ -35,5 +36,9 @@ class CreateGaleri extends CreateRecord
 
             ]);
         }
+        ActivityLogService::log(
+            'Create Galeri',
+            $this->record->judul
+        );
     }
 }

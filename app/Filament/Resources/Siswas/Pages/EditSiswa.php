@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Siswas\Pages;
 
 use App\Filament\Resources\Siswas\SiswaResource;
 use Filament\Resources\Pages\EditRecord;
+use App\Services\ActivityLogService;
 
 class EditSiswa extends EditRecord
 {
@@ -29,5 +30,12 @@ class EditSiswa extends EditRecord
     protected function getHeaderActions(): array
     {
         return [];
+    }
+    protected function afterSave(): void
+    {
+        ActivityLogService::log(
+            'Update Siswa',
+            'Mengubah data siswa ' . $this->record->nama
+        );
     }
 }

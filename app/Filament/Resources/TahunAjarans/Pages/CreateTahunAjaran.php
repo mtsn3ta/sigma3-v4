@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TahunAjarans\Pages;
 use App\Filament\Resources\TahunAjarans\TahunAjaranResource;
 use App\Models\TahunAjaran;
 use Filament\Resources\Pages\CreateRecord;
+use App\Services\ActivityLogService;
 
 class CreateTahunAjaran extends CreateRecord
 {
@@ -21,5 +22,12 @@ class CreateTahunAjaran extends CreateRecord
         }
 
         return $data;
+    }
+    protected function afterCreate(): void
+    {
+        ActivityLogService::log(
+            'Create Tahun Ajaran',
+            $this->record->tahun
+        );
     }
 }

@@ -92,6 +92,7 @@ class SesiKegiatanResource extends Resource
             'index' => ListSesiKegiatans::route('/'),
             'create' => CreateSesiKegiatan::route('/create'),
             'edit' => EditSesiKegiatan::route('/{record}/edit'),
+            'absensi' => Pages\Absensi::route('/{record}/absensi'),
         ];
     }
 }
