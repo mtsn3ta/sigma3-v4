@@ -18,6 +18,10 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationItem;
+use App\Filament\Resources\IzinKeluars\IzinKeluarResource;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -35,10 +39,52 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Master Data',
                 'Akademik',
+                'Guru',
                 'BK',
+                'Guru Piket',
+                'Monitoring',
                 'Ekstrakurikuler',
                 'Publikasi',
                 'Pengaturan',
+            ])
+            ->navigationItems([
+
+                NavigationItem::make('Izin Keluar')
+                    ->group('BK')
+                    ->icon('heroicon-o-arrow-right-start-on-rectangle')
+                    ->visible(function (): bool {
+
+                        /** @var User|null $user */
+                        $user = Auth::user();
+
+                        return $user?->hasRole('bk') ?? false;
+                    })
+                    ->url(fn(): string => IzinKeluarResource::getUrl())
+                    ->isActiveWhen(
+                        fn() =>
+                        request()->routeIs(
+                            IzinKeluarResource::getRouteBaseName() . '.*'
+                        )
+                    ),
+
+                NavigationItem::make('Izin Keluar')
+                    ->group('Guru Piket')
+                    ->icon('heroicon-o-arrow-right-start-on-rectangle')
+                    ->visible(function (): bool {
+
+                        /** @var User|null $user */
+                        $user = Auth::user();
+
+                        return $user?->hasRole('piket') ?? false;
+                    })
+                    ->url(fn(): string => IzinKeluarResource::getUrl())
+                    ->isActiveWhen(
+                        fn() =>
+                        request()->routeIs(
+                            IzinKeluarResource::getRouteBaseName() . '.*'
+                        )
+                    ),
+
             ])
 
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

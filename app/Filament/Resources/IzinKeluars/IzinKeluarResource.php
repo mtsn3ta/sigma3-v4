@@ -13,11 +13,14 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Support\NavigationHelper;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class IzinKeluarResource extends Resource
 {
     protected static ?string $model = IzinKeluar::class;
+
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string|BackedEnum|null $navigationIcon =
     Heroicon::OutlinedArrowRightStartOnRectangle;
@@ -30,13 +33,14 @@ class IzinKeluarResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Izin Keluar';
 
-    public static function getNavigationGroup(): ?string
+    public static function canAccess(): bool
     {
-        return NavigationHelper::group([
-            'bk'    => 'BK',
-            'piket' => 'Guru Piket',
-        ]);
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        return $user?->can('izin_keluar.view') ?? false;
     }
+
     public static function form(Schema $schema): Schema
     {
         return IzinKeluarForm::configure($schema);

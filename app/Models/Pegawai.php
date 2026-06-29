@@ -60,4 +60,19 @@ class Pegawai extends Model
             IzinKeluar::class
         );
     }
+    public function tugasGuruIzin()
+    {
+        return $this->hasMany(
+            TugasGuruIzin::class,
+            'pegawai_id'
+        );
+    }
+
+    public function tugasGuruDisampaikan()
+    {
+        return $this->hasMany(
+            TugasGuruIzin::class,
+            'petugas_id'
+        );
+    }
 }

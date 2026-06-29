@@ -14,6 +14,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class KonselingSiswaResource extends Resource
 {
@@ -42,6 +44,13 @@ class KonselingSiswaResource extends Resource
                 'pegawai',
 
             ]);
+    }
+    public static function canAccess(): bool
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        return $user?->hasRole('bk') ?? false;
     }
     public static function form(Schema $schema): Schema
     {

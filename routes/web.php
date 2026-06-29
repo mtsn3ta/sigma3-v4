@@ -5,6 +5,7 @@ use App\Http\Controllers\ProposalPdfController;
 use App\Http\Controllers\LaporanKegiatanPdfController;
 use App\Http\Controllers\LaporanBulananPdfController;
 use App\Http\Controllers\Thermal\IzinKeluarPrintController;
+use App\Http\Controllers\Thermal\TugasGuruIzinPrintController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,4 +31,12 @@ Route::middleware(['auth'])->group(function () {
         IzinKeluarPrintController::class
 
     )->name('thermal.izin-keluar');
+
+    Route::get(
+
+        '/thermal/tugas-guru-izin/{tugasGuruIzin}',
+
+        TugasGuruIzinPrintController::class
+
+    )->name('thermal.tugas-guru-izin');
 });

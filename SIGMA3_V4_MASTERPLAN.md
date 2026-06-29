@@ -1001,9 +1001,9 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 - [x] Resource
 
-- [ ] Thermal Print
+- [x] Thermal Print
 
-- [ ] Testing
+- [x] Testing
 
 # PHASE 8 — GURU
 
@@ -1011,79 +1011,173 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 ## Sprint 8.1 Jurnal Mengajar
 
-- [ ] Migration
+### Backend
 
-- [ ] Model
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Policy
 
-- [ ] Resource
+### Integrasi
 
-- [ ] Testing
+- [x] Integrasi Engine Kehadiran
+- [x] Integrasi Guru Berhalangan
+
+### Testing
+
+- [x] Testing
+
+> Catatan:
+>
+> - Struktur database harus final dan siap terintegrasi dengan Engine Kehadiran.
+> - Guru tidak menginput ulang data siswa tidak hadir apabila sudah tersedia dari sistem kehadiran.
+> - Tidak ada penyimpanan data turunan (nama guru, nama kelas, jumlah siswa, hari).
 
 ---
 
 ## Sprint 8.2 Guru Berhalangan
 
-- [ ] Migration
+### Backend
 
-- [ ] Model
+- [x] Migration
+- [x] Model
+- [x] Resource
+- [x] Policy
 
-- [ ] Resource
+### Workflow
 
-- [ ] Testing
+- [x] Pengajuan Guru Berhalangan
+- [x] Distribusi Tugas
+- [x] Thermal Print
+
+### Testing
+
+- [x] Testing
+
+---
 
 # PHASE 9 — GURU PIKET
 
-## Sprint 9.1 Distribusi Tugas
+---
 
-- [ ] Workflow
+## Sprint 9.1 Distribusi Tugas Guru
 
-- [ ] Resource
+### Workflow
 
-- [ ] Testing
+- [x] Distribusi Tugas
+- [x] Thermal Print
 
-## Izin Keluar sama seperti BK
+### Backend
 
-Status:
+- [x] Resource
 
-⬜ BELUM DIMULAI
+### Testing
+
+- [x] Testing
+
+---
+
+## Sprint 9.2 Monitoring Kehadiran
+
+### Monitoring
+
+- [ ] Belum RFID
+- [x] Verifikasi Sakit
+- [x] Verifikasi Izin
+- [x] Verifikasi Alfa
+
+### Backend
+
+- [x] Resource
+
+### Testing
+
+- [x] Testing
+
+---
+
+## Sprint 9.3 Izin Keluar
+
+### Integrasi
+
+- [x] Integrasi Modul BK
+- [x] Monitoring Siswa Keluar
+- [x] Thermal Print
+
+### Testing
+
+- [x] Testing
 
 ---
 
 # PHASE 10 — KEHADIRAN
 
----
-
-## PHASE 10.1 Backend Kehadiran
-
-### Kehadiran Sekolah
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Rekap
-- [ ] Export
-
-### Kehadiran Ibadah
-
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
-- [ ] Rekap
-- [ ] Export
-
-### Dashboard Kehadiran
-
-- [ ] Widget
-- [ ] Statistik
-- [ ] Monitoring
-
 Status:
 
 ⬜ BELUM DIMULAI
 
 ---
 
-## PHASE 10.2 Frontend RFID
+## Sprint 10.1 Core Kehadiran Sekolah
+
+### Backend
+
+- [x] Migration
+- [x] Model
+- [x] Resource
+
+### Engine
+
+- [x] Engine Status Kehadiran
+- [x] Service / Helper Kehadiran
+- [x] Status Hadir
+- [x] Status Sakit
+- [x] Status Izin
+- [x] Status Alfa
+- [x] Status Belum RFID
+
+### Integrasi
+
+- [x] Integrasi RFID
+- [x] Integrasi Jurnal Mengajar
+- [x] Integrasi Guru Piket
+- [x] Integrasi BK
+
+---
+
+## Sprint 10.2 Rekap & Dashboard
+
+### Rekap
+
+- [x] Rekap Harian
+- [x] Rekap Bulanan
+- [x] Rekap Semester
+- [x] Export Excel
+
+### Dashboard
+
+- [ ] Widget
+- [ ] Statistik
+- [ ] Monitoring Real Time
+
+---
+
+## Sprint 10.3 Kehadiran Ibadah
+
+### Backend
+
+- [ ] Migration
+- [ ] Model
+- [ ] Resource
+
+### Rekap
+
+- [ ] Rekap
+- [ ] Export
+
+---
+
+## Sprint 10.4 Frontend RFID
 
 ### RFID Sekolah
 
@@ -1097,7 +1191,7 @@ Status:
 
 ### RFID Ekstrakurikuler
 
-- [ ] Scan Kehadiran Ekskul
+- [ ] Scan Kehadiran Ekstrakurikuler
 
 ### Monitoring Device
 
@@ -1105,9 +1199,36 @@ Status:
 - [ ] UID Mapping
 - [ ] Error Handling
 
+---
+
+# FUTURE ROADMAP
+
+## Portal Orang Tua (Public)
+
 Status:
 
-⬜ BELUM DIMULAI
+⬜ FUTURE
+
+### Pelaporan Izin Orang Tua
+
+- [ ] Public Form
+- [ ] Upload Surat
+- [ ] Validasi Token / QR
+- [ ] Verifikasi Guru Piket
+- [ ] Integrasi Kehadiran
+
+### WhatsApp Integration
+
+- [ ] WhatsApp API
+- [ ] Link Otomatis
+- [ ] Notifikasi Orang Tua
+- [ ] Reminder Kehadiran
+
+> Catatan:
+>
+> Portal Orang Tua tidak menggunakan akun login.
+> Seluruh akses menggunakan Public Link, QR Code, atau WhatsApp Link.
+> Implementasi dilakukan setelah seluruh modul inti SIGMA3 V4 stabil.
 
 ---
 

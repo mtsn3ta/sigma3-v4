@@ -14,6 +14,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class PermasalahanSiswaResource extends Resource
 {
@@ -30,6 +32,14 @@ class PermasalahanSiswaResource extends Resource
     protected static ?string $pluralModelLabel = 'Permasalahan';
 
     protected static ?int $navigationSort = 2;
+
+    public static function canAccess(): bool
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        return $user?->hasRole('bk') ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

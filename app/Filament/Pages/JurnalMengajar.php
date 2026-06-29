@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use BackedEnum;
+use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
+use Filament\Actions\Action; // Tambahkan ini
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
+class JurnalMengajar extends Page
+{
+    protected string $view = 'filament.pages.jurnal-mengajar';
+
+    protected static string|BackedEnum|null $navigationIcon =
+    Heroicon::OutlinedClipboardDocumentList;
+
+    protected static ?string $navigationLabel = 'Jurnal Mengajar';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Guru';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function canAccess(): bool
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        return $user?->hasRole('guru') ?? false;
+    }
+
+    // Tambahkan method ini untuk membuat tombol "Isi Jurnal" di kanan atas halaman
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('isiJurnal')
+                ->label('Isi Jurnal')
+                ->icon('heroicon-m-plus')
+                ->color('primary')
+                ->action(fn() => $this->dispatch('tambah-jurnal')),
+        ];
+    }
+}
