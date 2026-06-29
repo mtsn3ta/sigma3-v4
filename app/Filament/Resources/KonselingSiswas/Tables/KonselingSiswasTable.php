@@ -9,6 +9,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\Kelas;
+use App\Models\Siswa;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Get;
 
 class KonselingSiswasTable
 {
@@ -87,7 +92,70 @@ class KonselingSiswasTable
             ])
 
             ->toolbarActions([
-                //
+
+                Action::make('export_pdf')
+
+                    ->label('Export PDF')
+
+                    ->icon('heroicon-o-document-arrow-down')
+
+                    ->color('danger')
+
+                    ->form([
+
+                        Select::make('kelas_id')
+
+                            ->label('Kelas')
+
+                            ->options(
+                                Kelas::orderBy('tingkat')
+                                    ->orderBy('nama_kelas')
+                                    ->pluck('nama_kelas', 'id')
+                            )
+
+                            ->live()
+
+                            ->required(),
+
+                        Select::make('siswa_id')
+
+                            ->label('Siswa')
+
+                            ->options(function (Get $get) {
+
+                                if (! $get('kelas_id')) {
+                                    return [];
+                                }
+
+                                return Siswa::query()
+
+                                    ->whereHas(
+                                        'kelasAktif',
+                                        fn($q) => $q->where(
+                                            'kelas_id',
+                                            $get('kelas_id')
+                                        )
+                                    )
+
+                                    ->orderBy('nama')
+
+                                    ->pluck('nama', 'id');
+                            })
+
+                            ->searchable()
+
+                            ->required(),
+
+                    ])
+
+                    ->action(function (array $data) {
+
+                        return redirect()->route(
+                            'konseling.print',
+                            $data['siswa_id']
+                        );
+                    }),
+
             ]);
     }
 }

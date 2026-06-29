@@ -6,6 +6,8 @@ use App\Http\Controllers\LaporanKegiatanPdfController;
 use App\Http\Controllers\LaporanBulananPdfController;
 use App\Http\Controllers\Thermal\IzinKeluarPrintController;
 use App\Http\Controllers\Thermal\TugasGuruIzinPrintController;
+use App\Http\Controllers\PrintKonselingController;
+use App\Http\Controllers\PrintPermasalahanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,3 +42,15 @@ Route::middleware(['auth'])->group(function () {
 
     )->name('thermal.tugas-guru-izin');
 });
+Route::middleware(['auth'])
+    ->get(
+        '/bk/konseling/{siswa}/print',
+        PrintKonselingController::class
+    )
+    ->name('konseling.print');
+Route::middleware(['auth'])
+    ->get(
+        '/bk/permasalahan/{siswa}/print',
+        PrintPermasalahanController::class
+    )
+    ->name('permasalahan.print');
