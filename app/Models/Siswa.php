@@ -121,4 +121,10 @@ class Siswa extends Model
             KehadiranSekolah::class
         );
     }
+    public function kehadiranIbadah()
+    {
+        return $this->hasMany(
+            KehadiranIbadah::class
+        );
+    }
 }

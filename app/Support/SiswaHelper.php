@@ -62,4 +62,107 @@ class SiswaHelper
 
             ->toArray();
     }
+    public static function belumVerifikasiIbadahOptions(
+        ?int $kelasId,
+        ?string $tanggal,
+        ?string $jenis,
+    ): array {
+
+        if (
+            blank($kelasId) ||
+            blank($tanggal) ||
+            blank($jenis)
+        ) {
+            return [];
+        }
+
+        return Siswa::query()
+
+            ->where('status', 'aktif')
+
+            ->whereHas(
+
+                'kelasAktif',
+
+                fn($query) =>
+
+                $query->where(
+                    'kelas_id',
+                    $kelasId
+                )
+
+            )
+
+            ->whereHas(
+
+                'kehadiranSekolah',
+
+                fn($query) =>
+
+                $query
+
+                    ->whereDate(
+                        'tanggal',
+                        $tanggal
+                    )
+
+                    ->whereIn(
+                        'status',
+                        [
+                            'hadir',
+                            'terlambat',
+                        ]
+                    )
+
+            )
+
+            ->whereDoesntHave(
+
+                'kehadiranIbadah',
+
+                fn($query) =>
+
+                $query
+
+                    ->whereDate(
+                        'tanggal',
+                        $tanggal
+                    )
+
+                    ->where(
+                        'jenis',
+                        $jenis
+                    )
+
+            )
+
+            ->whereDoesntHave(
+
+                'izinKeluar',
+
+                fn($query) =>
+
+                $query
+
+                    ->whereDate(
+                        'tanggal',
+                        $tanggal
+                    )
+
+                    ->where(
+                        'status_proses',
+                        'keluar'
+                    )
+
+            )
+
+            ->orderBy('nama')
+
+            ->pluck(
+                'nama',
+                'id'
+            )
+
+            ->toArray();
+    }
 }

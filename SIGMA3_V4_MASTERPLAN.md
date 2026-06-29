@@ -1166,14 +1166,14 @@ Status:
 
 ### Backend
 
-- [ ] Migration
-- [ ] Model
-- [ ] Resource
+- [x] Migration
+- [x] Model
+- [x] Resource
 
 ### Rekap
 
-- [ ] Rekap
-- [ ] Export
+- [x] Rekap
+- [x] Export
 
 ---
 
