@@ -11,6 +11,8 @@ use App\Http\Controllers\PrintPermasalahanController;
 use App\Http\Controllers\PrintMonitoringJurnalController;
 use App\Http\Controllers\PrintMonitoringTugasGuruIzinController;
 use App\Http\Controllers\PrintMonitoringIzinKeluarController;
+use App\Http\Controllers\PrintMonitoringPermasalahanController;
+use App\Http\Controllers\PrintMonitoringEkstrakurikulerController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -69,3 +71,11 @@ Route::get(
     '/print/monitoring-izin-keluar',
     PrintMonitoringIzinKeluarController::class
 )->name('print.monitoring-izin-keluar');
+Route::get(
+    '/print/monitoring-permasalahan',
+    PrintMonitoringPermasalahanController::class
+)->name('print.monitoring-permasalahan');
+Route::get(
+    '/print/monitoring-ekstrakurikuler',
+    PrintMonitoringEkstrakurikulerController::class
+)->name('print.monitoring-ekstrakurikuler');
