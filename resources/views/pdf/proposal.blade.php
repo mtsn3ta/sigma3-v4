@@ -117,7 +117,6 @@
             font-size: 26px;
             font-weight: bold;
             margin-top: 6px;
-            text-transform: uppercase;
         }
 
         .kop-tahun {
@@ -213,48 +212,133 @@
 
     {{-- ========================= COVER ========================= --}}
     <div class="cover-container">
+
         <div class="text-center">
-            <img src="{{ public_path('images/logo-mtsn3.png') }}" alt="Logo Madrasah" class="logo">
-            <div class="kop-instansi">KEMENTERIAN AGAMA REPUBLIK INDONESIA</div>
-            <div class="kop-instansi">KANTOR KEMENTERIAN AGAMA KABUPATEN TULUNGAGUNG</div>
-            <div class="kop-nama">MTsN 3 TULUNGAGUNG</div>
-            <div class="kop-tahun">Tahun Pelajaran 2026/2027</div>
+
+            @if (\App\Support\SettingHelper::schoolOfficialLogo())
+                <img src="{{ public_path('storage/' . \App\Support\SettingHelper::schoolOfficialLogo()) }}"
+                    alt="Logo Madrasah" class="logo">
+            @endif
+
+            <div class="kop-instansi">
+
+                KEMENTERIAN AGAMA REPUBLIK INDONESIA
+
+            </div>
+
+            <div class="kop-instansi">
+
+                KANTOR KEMENTERIAN AGAMA KABUPATEN TULUNGAGUNG
+
+            </div>
+
+            <div class="kop-nama">
+
+                {{ \App\Support\SettingHelper::schoolName() }}
+
+            </div>
+
+            <div class="kop-tahun">
+
+                Tahun Pelajaran
+                {{ \App\Support\SettingHelper::tahunAjaranLabel() }}
+
+            </div>
+
         </div>
 
         <hr class="garis-kop">
 
         <div class="text-center">
-            <div class="judul-proposal">PROPOSAL KEGIATAN</div>
-            <div class="nama-kegiatan">{{ $record->nama_kegiatan }}</div>
+
+            <div class="judul-proposal">
+
+                PROPOSAL KEGIATAN
+
+            </div>
+
+            <div class="nama-kegiatan">
+
+                {{ $record->nama_kegiatan }}
+
+            </div>
+
         </div>
 
         <div class="mt-40">
+
             <table class="table-info">
+
                 <tr>
+
                     <td>Ekstrakurikuler</td>
-                    <td>: {{ $record->ekstrakurikuler->nama }}</td>
+
+                    <td>
+
+                        : {{ $record->ekstrakurikuler->nama }}
+
+                    </td>
+
                 </tr>
+
                 <tr>
+
                     <td>Jenis Kegiatan</td>
-                    <td>: {{ $record->jenis_kegiatan_label }}</td>
+
+                    <td>
+
+                        : {{ $record->jenis_kegiatan_label }}
+
+                    </td>
+
                 </tr>
+
                 <tr>
+
                     <td>Tempat</td>
-                    <td>: {{ $record->tempat }}</td>
+
+                    <td>
+
+                        : {{ $record->tempat }}
+
+                    </td>
+
                 </tr>
+
                 <tr>
+
                     <td>Tanggal</td>
-                    <td>: {{ $record->tanggal_mulai?->translatedFormat('d F Y') }} s.d.
-                        {{ $record->tanggal_selesai?->translatedFormat('d F Y') }}</td>
+
+                    <td>
+
+                        :
+
+                        {{ $record->tanggal_mulai?->translatedFormat('d F Y') }}
+
+                        s.d.
+
+                        {{ $record->tanggal_selesai?->translatedFormat('d F Y') }}
+
+                    </td>
+
                 </tr>
+
                 <tr>
+
                     <td>Status Proposal</td>
-                    <td>: {{ $record->status_label }}</td>
+
+                    <td>
+
+                        : {{ $record->status_label }}
+
+                    </td>
+
                 </tr>
+
             </table>
+
         </div>
 
-        <div class="cover-footer">MTsN 3 Tulungagung</div>
     </div>
 
     <div class="page-break"></div>

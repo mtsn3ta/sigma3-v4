@@ -110,7 +110,6 @@
         .kop-instansi {
             font-size: 15px;
             font-weight: bold;
-            text-transform: uppercase;
         }
 
         .kop-nama {
@@ -216,7 +215,10 @@
 
         <div class="text-center">
 
-            <img src="{{ public_path('images/logo-mtsn3.png') }}" class="logo">
+            @if (\App\Support\SettingHelper::schoolOfficialLogo())
+                <img src="{{ public_path('storage/' . \App\Support\SettingHelper::schoolOfficialLogo()) }}"
+                    class="logo">
+            @endif
 
             <div class="kop-instansi">
                 KEMENTERIAN AGAMA REPUBLIK INDONESIA
@@ -227,11 +229,16 @@
             </div>
 
             <div class="kop-nama">
-                MTsN 3 TULUNGAGUNG
+
+                {{ \App\Support\SettingHelper::schoolName() }}
+
             </div>
 
             <div class="kop-tahun">
-                Tahun Pelajaran 2026/2027
+
+                Tahun Pelajaran
+                {{ \App\Support\SettingHelper::tahunAjaranLabel() }}
+
             </div>
 
         </div>
@@ -333,12 +340,6 @@
                 </tr>
 
             </table>
-
-        </div>
-
-        <div class="cover-footer">
-
-            MTsN 3 Tulungagung
 
         </div>
 

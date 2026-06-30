@@ -47,7 +47,7 @@
 </head>
 
 <body>
-
+    @include('pdf.components.header')
     <h2>
 
         MONITORING EKSTRAKURIKULER
@@ -199,7 +199,7 @@
         </tbody>
 
     </table>
-
+    @include('pdf.components.footer')
 </body>
 
 </html>

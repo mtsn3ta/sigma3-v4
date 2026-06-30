@@ -82,9 +82,17 @@
 
     <div class="title">
 
-        <h2>LEMBAR KONSELING SISWA</h2>
+        <h2>
 
-        <h3>MTsN 3 Tulungagung</h3>
+            LEMBAR KONSELING SISWA
+
+        </h2>
+
+        <h3>
+
+            {{ \App\Support\SettingHelper::schoolName() }}
+
+        </h3>
 
     </div>
 

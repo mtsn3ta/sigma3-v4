@@ -37,23 +37,6 @@ class SettingForm
 
                     ])
                     ->columns(2),
-
-                Section::make('Identitas')
-                    ->schema([
-
-                        FileUpload::make('logo')
-                            ->directory('settings')
-                            ->image()
-                            ->imageEditor(),
-
-                        FileUpload::make('favicon')
-                            ->directory('settings')
-                            ->image()
-                            ->imageEditor(),
-
-                    ])
-                    ->columns(2),
-
                 Section::make('Sistem')
                     ->schema([
 
@@ -77,6 +60,31 @@ class SettingForm
 
                     ])
                     ->columns(2),
+                Section::make('Identitas')
+                    ->schema([
+
+                        FileUpload::make('logo')
+                            ->label('Logo Aplikasi')
+                            ->disk('public')
+                            ->directory('settings')
+                            ->image()
+                            ->imageEditor(),
+
+                        FileUpload::make('logo_resmi')
+                            ->label('Logo Dokumen Resmi')
+                            ->disk('public')
+                            ->directory('settings')
+                            ->image()
+                            ->imageEditor(),
+
+                        FileUpload::make('favicon')
+                            ->label('Favicon')
+                            ->disk('public')
+                            ->directory('settings')
+                            ->image()
+                            ->imageEditor(),
+
+                    ])
 
             ]);
     }

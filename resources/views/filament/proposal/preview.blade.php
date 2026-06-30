@@ -24,37 +24,58 @@
 
             <div style="text-align:center;">
 
-                <img src="{{ asset('images/logo-mtsn3.png') }}" alt="Logo Madrasah"
-                    style="
-                    width:110px;
-                    height:auto;
-                    margin-bottom:20px;
-                ">
+                @if (\App\Support\SettingHelper::schoolOfficialLogo())
+                    <img src="{{ asset('storage/' . \App\Support\SettingHelper::schoolOfficialLogo()) }}"
+                        alt="Logo Madrasah"
+                        style="
+            display:block;
+            width:110px;
+            height:auto;
+            margin:0 auto 20px auto;
+        ">
+                @endif
 
                 <div
                     style="
-                font-size:15px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
+            font-size:15px;
+            font-weight:bold;
+            text-transform:uppercase;
+        ">
+
                     KEMENTERIAN AGAMA REPUBLIK INDONESIA
+
                 </div>
 
                 <div
                     style="
-                font-size:26px;
-                font-weight:bold;
-                margin-top:6px;
-                text-transform:uppercase;
-            ">
-                    MTsN 3 TULUNGAGUNG
+            font-size:15px;
+            font-weight:bold;
+            text-transform:uppercase;
+        ">
+
+                    KANTOR KEMENTERIAN AGAMA KABUPATEN TULUNGAGUNG
+
+                </div>
+
+                <div
+                    style="
+            font-size:26px;
+            font-weight:bold;
+            margin-top:6px;
+        ">
+
+                    {{ \App\Support\SettingHelper::schoolName() }}
+
                 </div>
 
                 <div style="
-                font-size:18px;
-                margin-top:5px;
-            ">
-                    Tahun Pelajaran 2026/2027
+            font-size:18px;
+            margin-top:5px;
+        ">
+
+                    Tahun Pelajaran
+                    {{ \App\Support\SettingHelper::tahunAjaranLabel() }}
+
                 </div>
 
             </div>

@@ -94,8 +94,10 @@
 
         <div class="text-center">
 
-            <img src="{{ public_path('images/logo-mtsn3.png') }}" class="logo">
-
+            @if (\App\Support\SettingHelper::schoolOfficialLogo())
+                <img src="{{ public_path('storage/' . \App\Support\SettingHelper::schoolOfficialLogo()) }}"
+                    class="logo">
+            @endif
             <div class="font-bold uppercase">
 
                 KEMENTERIAN AGAMA REPUBLIK INDONESIA
@@ -110,18 +112,19 @@
             </div>
 
             <div style="
-font-size:28px;
-font-weight:bold;
-margin-top:8px;
-">
+        font-size:28px;
+        font-weight:bold;
+        margin-top:8px;
+    ">
 
-                MTsN 3 TULUNGAGUNG
+                {{ \App\Support\SettingHelper::schoolName() }}
 
             </div>
 
             <div style="margin-top:8px;">
 
-                Tahun Pelajaran 2026/2027
+                Tahun Pelajaran
+                {{ \App\Support\SettingHelper::tahunAjaranLabel() }}
 
             </div>
 
@@ -156,17 +159,6 @@ margin-top:10px;
                 {{ $record->tahun }}
 
             </div>
-
-        </div>
-
-        <div style="
-margin-top:100px;
-text-align:center;
-font-size:18px;
-font-weight:bold;
-">
-
-            MTsN 3 Tulungagung
 
         </div>
 

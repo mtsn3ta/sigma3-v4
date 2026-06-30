@@ -92,6 +92,7 @@
 <body>
 
     @foreach ($data as $halaman)
+        @include('pdf.components.header')
         <h2>
 
             MONITORING PERMASALAHAN SISWA
@@ -293,6 +294,7 @@
         @unless ($loop->last)
             <div class="page-break"></div>
         @endunless
+        @include('pdf.components.footer')
     @endforeach
 
 </body>

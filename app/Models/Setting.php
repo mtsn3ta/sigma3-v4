@@ -22,7 +22,7 @@ class Setting extends Model
         'email',
 
         'logo',
-
+        'logo_resmi',
         'favicon',
 
         'kepala_aktif_id',

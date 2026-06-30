@@ -77,6 +77,7 @@
 <body>
 
     @foreach ($data as $halaman)
+        @include('pdf.components.header')
         <h2>
 
             MONITORING TUGAS GURU IZIN
@@ -233,6 +234,7 @@
         @unless ($loop->last)
             <div class="page-break"></div>
         @endunless
+        @include('pdf.components.footer')
     @endforeach
 
 </body>

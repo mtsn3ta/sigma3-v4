@@ -90,6 +90,7 @@
 <body>
 
     @foreach ($monitoring as $halaman)
+        @include('pdf.components.header')
         <h2>
             MONITORING JURNAL MENGAJAR
         </h2>
@@ -290,6 +291,7 @@
         @unless ($loop->last)
             <div class="page-break"></div>
         @endunless
+        @include('pdf.components.footer')
     @endforeach
 
 </body>
