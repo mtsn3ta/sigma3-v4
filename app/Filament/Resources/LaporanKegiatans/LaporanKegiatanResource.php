@@ -26,7 +26,7 @@ class LaporanKegiatanResource extends Resource
     protected static ?string $model = LaporanKegiatan::class;
 
     protected static string|BackedEnum|null $navigationIcon =
-    Heroicon::OutlinedDocumentText;
+    Heroicon::OutlinedDocumentCheck;
 
     protected static ?string $recordTitleAttribute = 'title';
 

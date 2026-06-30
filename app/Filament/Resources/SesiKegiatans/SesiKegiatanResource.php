@@ -21,11 +21,11 @@ class SesiKegiatanResource extends Resource
 {
     protected static ?string $model = SesiKegiatan::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     protected static ?string $recordTitleAttribute = 'tanggal';
 
-    protected static ?string $navigationLabel = 'Sesi Kegiatan';
+    protected static ?string $navigationLabel = 'Sesi & Absensi Ekstra';
 
     protected static ?string $modelLabel = 'Sesi Kegiatan';
 

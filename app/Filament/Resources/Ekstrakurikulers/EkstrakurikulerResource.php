@@ -21,7 +21,7 @@ class EkstrakurikulerResource extends Resource
 {
     protected static ?string $model = Ekstrakurikuler::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
     protected static ?string $recordTitleAttribute = 'nama';
 

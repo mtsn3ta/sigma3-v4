@@ -22,7 +22,7 @@ class LaporanBulananResource extends Resource
     protected static ?string $model = LaporanBulanan::class;
 
     protected static string|BackedEnum|null $navigationIcon =
-    Heroicon::OutlinedDocumentText;
+    Heroicon::OutlinedClipboardDocumentList;
 
     protected static ?string $recordTitleAttribute = 'title';
 

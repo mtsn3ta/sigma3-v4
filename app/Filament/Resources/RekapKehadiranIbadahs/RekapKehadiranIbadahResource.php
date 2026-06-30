@@ -23,7 +23,7 @@ class RekapKehadiranIbadahResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup =
     'Monitoring';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     public static function getRelations(): array
     {

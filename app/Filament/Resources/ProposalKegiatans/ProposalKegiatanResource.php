@@ -27,7 +27,7 @@ class ProposalKegiatanResource extends Resource
     protected static ?string $model = ProposalKegiatan::class;
 
     protected static string|BackedEnum|null $navigationIcon =
-    Heroicon::OutlinedDocumentText;
+    Heroicon::OutlinedDocumentPlus;
 
     protected static ?string $recordTitleAttribute =
     'nama_kegiatan';

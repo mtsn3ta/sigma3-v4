@@ -21,7 +21,7 @@ class PrestasiResource extends Resource
 {
     protected static ?string $model = Prestasi::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
 
     protected static ?string $recordTitleAttribute = 'nama_prestasi';
     protected static ?string $navigationLabel = 'Prestasi';

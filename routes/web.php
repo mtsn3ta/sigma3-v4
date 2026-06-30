@@ -8,6 +8,9 @@ use App\Http\Controllers\Thermal\IzinKeluarPrintController;
 use App\Http\Controllers\Thermal\TugasGuruIzinPrintController;
 use App\Http\Controllers\PrintKonselingController;
 use App\Http\Controllers\PrintPermasalahanController;
+use App\Http\Controllers\PrintMonitoringJurnalController;
+use App\Http\Controllers\PrintMonitoringTugasGuruIzinController;
+use App\Http\Controllers\PrintMonitoringIzinKeluarController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -54,3 +57,15 @@ Route::middleware(['auth'])
         PrintPermasalahanController::class
     )
     ->name('permasalahan.print');
+Route::get(
+    '/print/monitoring-jurnal',
+    PrintMonitoringJurnalController::class
+)->name('print.monitoring-jurnal');
+Route::get(
+    '/print/monitoring-tugas-guru-izin',
+    PrintMonitoringTugasGuruIzinController::class
+)->name('print.monitoring-tugas-guru-izin');
+Route::get(
+    '/print/monitoring-izin-keluar',
+    PrintMonitoringIzinKeluarController::class
+)->name('print.monitoring-izin-keluar');

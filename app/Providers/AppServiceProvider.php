@@ -18,6 +18,7 @@ use App\Services\ActivityLogService;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -70,6 +71,13 @@ class AppServiceProvider extends ServiceProvider
                 'Logout',
                 $event->user->name . ' berhasil logout.'
             );
+        });
+        Carbon::setLocale('id');
+
+        Gate::before(function ($user, string $ability) {
+            return $user->hasRole('super_admin')
+                ? true
+                : null;
         });
     }
 }

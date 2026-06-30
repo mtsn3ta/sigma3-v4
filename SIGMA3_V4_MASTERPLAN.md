@@ -1081,7 +1081,7 @@ Membangun sistem pelaporan kegiatan ekstrakurikuler yang terintegrasi dengan Pro
 
 ### Monitoring
 
-- [ ] Belum RFID
+- [x] Belum RFID
 - [x] Verifikasi Sakit
 - [x] Verifikasi Izin
 - [x] Verifikasi Alfa

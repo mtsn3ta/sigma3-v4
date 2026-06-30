@@ -25,7 +25,7 @@ class RekapKehadiranSekolahResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup =
     'Monitoring';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     // Method table() dihapus karena tabel sudah dipisah ke komponen Livewire
 
