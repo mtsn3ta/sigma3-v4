@@ -54,7 +54,6 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(
                 SettingHelper::schoolFaviconUrl()
             )           // Mengunci ke Light Mode agar tidak merusak tema Glass
-            ->sidebarCollapsibleOnDesktop() // Membuat sidebar bisa diciutkan untuk memberikan kesan luas pada area kerja
             ->spa()
             ->navigationGroups([
                 'Master Data',

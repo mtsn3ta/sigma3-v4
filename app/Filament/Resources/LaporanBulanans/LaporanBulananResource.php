@@ -24,8 +24,6 @@ class LaporanBulananResource extends Resource
     protected static string|BackedEnum|null $navigationIcon =
     Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'title';
-
     protected static ?string $navigationLabel =
     'Laporan Bulanan';
 
@@ -39,7 +37,10 @@ class LaporanBulananResource extends Resource
     'Ekstrakurikuler';
 
     protected static ?int $navigationSort = 8;
-
+    public static function canGloballySearch(): bool
+    {
+        return false;
+    }
     public static function form(Schema $schema): Schema
     {
         return LaporanBulananForm::configure($schema);

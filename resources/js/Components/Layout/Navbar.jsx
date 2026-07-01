@@ -198,6 +198,7 @@ export default function Navbar({ hasUrgentAlert = false }) {
                         <div className="flex items-center gap-3">
                             <Button
                                 href="/admin/login"
+                                external
                                 variant="primary"
                                 className="hidden h-10 px-6 md:inline-flex"
                             >
@@ -328,6 +329,7 @@ export default function Navbar({ hasUrgentAlert = false }) {
                             <div className="mt-auto pb-4">
                                 <Button
                                     href="/admin/login"
+                                    external
                                     variant="primary"
                                     className="w-full py-4 text-lg"
                                 >

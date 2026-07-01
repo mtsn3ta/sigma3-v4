@@ -28,8 +28,6 @@ class LaporanKegiatanResource extends Resource
     protected static string|BackedEnum|null $navigationIcon =
     Heroicon::OutlinedDocumentCheck;
 
-    protected static ?string $recordTitleAttribute = 'title';
-
     protected static ?string $navigationLabel =
     'Laporan Kegiatan';
 
@@ -43,7 +41,10 @@ class LaporanKegiatanResource extends Resource
     'Ekstrakurikuler';
 
     protected static ?int $navigationSort = 7;
-
+    public static function canGloballySearch(): bool
+    {
+        return false;
+    }
     public static function canAccess(): bool
     {
         /** @var User|null $user */

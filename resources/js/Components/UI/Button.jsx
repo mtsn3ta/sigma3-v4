@@ -1,5 +1,3 @@
-// resources/js/Components/UI/Button.jsx
-
 import { Link } from "@inertiajs/react";
 import { cn, css, glass, radius, shadow } from "@/Theme";
 
@@ -10,19 +8,24 @@ const base = cn(
 );
 
 const variants = {
-    primary: cn("bg-slate-900 text-white hover:bg-slate-800", shadow.medium),
+    primary: cn("bg-teal-600 text-white hover:bg-teal-700", shadow.medium),
     secondary: cn(
-        "bg-emerald-600 text-white hover:bg-emerald-700",
-        shadow.medium,
+        "bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100",
+        shadow.low,
     ),
     outline:
-        "border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50",
-    glass: cn(glass.default, "text-slate-800 hover:bg-white/60", shadow.low),
+        "border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50 hover:border-slate-400 hover:text-teal-600",
+    glass: cn(
+        glass.default,
+        "text-slate-800 hover:bg-teal-50/60 hover:text-teal-700",
+        shadow.low,
+    ),
     danger: cn("bg-red-600 text-white hover:bg-red-700", shadow.medium),
 };
 
 export default function Button({
     href,
+    external = false,
     children,
     variant = "primary",
     className = "",
@@ -31,6 +34,14 @@ export default function Button({
     const classes = cn(base, variants[variant] ?? variants.primary, className);
 
     if (href) {
+        if (external) {
+            return (
+                <a href={href} className={classes} {...props}>
+                    {children}
+                </a>
+            );
+        }
+
         return (
             <Link href={href} className={classes} {...props}>
                 {children}

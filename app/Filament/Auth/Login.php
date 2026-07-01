@@ -12,6 +12,7 @@ class Login extends BaseLogin
     {
         return 'SIGMA-3';
     }
+
     public function getSubHeading(): ?string
     {
         return 'Sistem Informasi Global MTsN 3 Tulungagung';
@@ -21,10 +22,24 @@ class Login extends BaseLogin
     {
         return TextInput::make('email')
             ->label('Username')
-            ->placeholder('Masukkan NIP / NIK / NISN')
+            ->placeholder('Username')
+            ->prefixIcon('heroicon-s-user') // Menambahkan ikon di sebelah kiri
             ->required()
             ->autocomplete('username')
-            ->autofocus();
+            ->autofocus()
+            ->extraInputAttributes(['class' => 'text-white']);
+    }
+
+    protected function getPasswordFormComponent(): Component
+    {
+        return TextInput::make('password')
+            ->label('Password')
+            ->placeholder('*************')
+            ->prefixIcon('heroicon-s-lock-closed') // Ikon gembok
+            ->password()
+            ->revealable(filament()->arePasswordsRevealable())
+            ->required()
+            ->extraInputAttributes(['name' => 'password']);
     }
 
     protected function getCredentialsFromFormData(array $data): array
