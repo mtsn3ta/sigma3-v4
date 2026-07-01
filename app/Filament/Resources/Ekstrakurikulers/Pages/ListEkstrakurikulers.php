@@ -17,4 +17,8 @@ class ListEkstrakurikulers extends ListRecords
                 ->label('Tambah Baru'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Ekstrakurikuler';
+    }
 }

@@ -42,4 +42,8 @@ class CreatePegawai extends CreateRecord
             'Menambahkan pegawai ' . $this->record->nama
         );
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Pegawai Baru';
+    }
 }

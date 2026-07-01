@@ -16,4 +16,8 @@ class CreateKelas extends CreateRecord
             $this->record->nama_kelas
         );
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Kelas';
+    }
 }

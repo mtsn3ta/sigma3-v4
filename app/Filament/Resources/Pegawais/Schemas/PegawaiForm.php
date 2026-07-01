@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Pegawais\Schemas;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Schemas\Components\Grid; // Gunakan Grid untuk kontrol lebih
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -20,236 +21,93 @@ class PegawaiForm
     {
         return $schema
             ->components([
-
-                /*
-                |--------------------------------------------------------------------------
-                | Data Dasar
-                |--------------------------------------------------------------------------
-                */
-
-                Section::make('Data Dasar')
+                // Menggunakan Section dengan style yang lebih clean
+                Section::make('Data Dasar Pegawai')
+                    ->description('Informasi identitas utama pegawai.')
+                    ->icon('heroicon-o-user-circle')
+                    ->columnSpanFull()
                     ->schema([
-
                         TextInput::make('nama')
                             ->required()
                             ->maxLength(150),
-
                         TextInput::make('nik_nip')
                             ->label('NIK / NIP')
                             ->helperText('Digunakan sebagai username login.')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(50),
-
                         Select::make('jenis_pegawai')
-                            ->label('Jenis Pegawai')
                             ->options([
                                 'internal' => 'Internal',
                                 'eksternal' => 'Eksternal',
                             ])
                             ->required()
                             ->live()
-                            ->afterStateUpdated(function (Set $set) {
-                                $set('roles', []);
-                            }),
-
+                            ->afterStateUpdated(fn(Set $set) => $set('roles', [])),
                         TextInput::make('no_hp')
                             ->label('No. HP')
                             ->tel()
                             ->required(),
-
                         TextInput::make('rfid_uid')
-                            ->label('RFID UID')
-                            ->unique(ignoreRecord: true),
-
+                            ->label('RFID UID'),
                     ])
-                    ->columns(2),
+                    ->columnSpanFull(),
 
-                /*
-                |--------------------------------------------------------------------------
-                | Role Sistem
-                |--------------------------------------------------------------------------
-                */
-
-                Section::make('Role Sistem')
-
+                Section::make('Hak Akses & Role')
+                    ->icon('heroicon-o-shield-check')
+                    ->columnSpanFull()
                     ->schema([
-
                         CheckboxList::make('roles')
-
                             ->label('Role Tambahan')
-
                             ->options([
-
                                 'kepala_madrasah' => 'Kepala Madrasah',
-
                                 'waka_kesiswaan' => 'Waka Kesiswaan',
-
                                 'waka_kurikulum' => 'Waka Kurikulum',
-
                                 'waka_humas' => 'Waka Humas',
-
                                 'waka_sarpras' => 'Waka Sarpras',
-
                                 'bk' => 'Guru BK',
-
                                 'piket' => 'Guru Piket',
-
                             ])
-
-                            ->columns(2)
-
-                            ->live()
-
-                            ->disableOptionWhen(function (string $value, Get $get): bool {
-
-                                $selected = $get('roles') ?? [];
-
-                                $wakaRoles = [
-
-                                    'waka_kesiswaan',
-                                    'waka_kurikulum',
-                                    'waka_humas',
-                                    'waka_sarpras',
-
-                                ];
-
-                                /*
-                                |--------------------------------------------------------------------------
-                                | Kepala Madrasah
-                                |--------------------------------------------------------------------------
-                                */
-
-                                if (
-                                    in_array('kepala_madrasah', $selected) &&
-                                    $value !== 'kepala_madrasah'
-                                ) {
-                                    return true;
-                                }
-
-                                if (
-                                    $value === 'kepala_madrasah' &&
-                                    count(array_intersect($selected, $wakaRoles)) > 0
-                                ) {
-                                    return true;
-                                }
-
-                                /*
-                                |--------------------------------------------------------------------------
-                                | Waka hanya satu
-                                |--------------------------------------------------------------------------
-                                */
-
-                                if (in_array($value, $wakaRoles)) {
-
-                                    foreach ($wakaRoles as $waka) {
-
-                                        if (
-                                            $waka !== $value &&
-                                            in_array($waka, $selected)
-                                        ) {
-                                            return true;
-                                        }
-                                    }
-                                }
-
-                                return false;
-                            })
-
-                            ->helperText(
-                                "• Pegawai Internal otomatis memiliki role Guru.\n" .
-                                    "• Pegawai Eksternal otomatis memiliki role Pelatih.\n" .
-                                    "• Role Pembina & Pelatih diberikan otomatis melalui penugasan Ekstrakurikuler.\n" .
-                                    "• Kepala Madrasah tidak dapat memiliki role lain.\n" .
-                                    "• Hanya boleh memilih satu role Waka."
-                            ),
-
+                            ->columnSpanFull()
+                            ->helperText('Pilih hak akses sistem yang sesuai dengan jabatan.'),
                     ])
+                    ->visible(fn(Get $get) => $get('jenis_pegawai') === 'internal'),
 
-                    ->visible(
-                        fn(Get $get) =>
-                        $get('jenis_pegawai') === 'internal'
-                    ),
-
-                /*
-                |--------------------------------------------------------------------------
-                | Biodata
-                |--------------------------------------------------------------------------
-                */
-
-                Section::make('Biodata')
-
+                Section::make('Biodata Lengkap')
+                    ->icon('heroicon-o-identification')
+                    ->columnSpanFull()
                     ->schema([
-
                         Radio::make('jenis_kelamin')
-                            ->options([
-                                'L' => 'Laki-laki',
-                                'P' => 'Perempuan',
-                            ])
+                            ->inline()
+                            ->options(['L' => 'Laki-laki', 'P' => 'Perempuan'])
                             ->required(),
-
-                        TextInput::make('tempat_lahir')
-                            ->required(),
-
                         DatePicker::make('tanggal_lahir')
                             ->native(false)
                             ->required(),
-
-                        Textarea::make('alamat')
-                            ->required()
-                            ->columnSpanFull(),
-
-                    ])
-
-                    ->columns(3),
-
-                /*
-                |--------------------------------------------------------------------------
-                | Dokumen
-                |--------------------------------------------------------------------------
-                */
-
-                Section::make('Dokumen')
-
-                    ->schema([
-
-                        FileUpload::make('foto')
-                            ->image()
-                            ->imageEditor()
-                            ->disk('public')
-                            ->directory('pegawai/foto')
-                            ->downloadable()
-                            ->openable(),
-
-                        FileUpload::make('ttd_digital')
-                            ->image()
-                            ->disk('public')
-                            ->directory('pegawai/ttd')
-                            ->downloadable()
-                            ->openable(),
-
-                    ])
-
-                    ->columns(2),
-
-                /*
-                |--------------------------------------------------------------------------
-                | Status
-                |--------------------------------------------------------------------------
-                */
-
-                Section::make('Status')
-
-                    ->schema([
-
-                        Radio::make('status')
-                            ->options([
-                                'aktif' => 'Aktif',
-                                'nonaktif' => 'Nonaktif',
-                            ])
-                            ->default('aktif')
+                        TextInput::make('tempat_lahir')
                             ->required(),
+                        Textarea::make('alamat')
+                            ->columnSpanFull(),
+                    ])
+                    ->columnSpanFull(),
 
+                Section::make('Dokumen & Status')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->columnSpanFull()
+                    ->schema([
+                        Grid::make(2)->schema([
+                            FileUpload::make('foto')
+                                ->image()
+                                ->imageEditor()
+                                ->directory('pegawai/foto'),
+                            FileUpload::make('ttd_digital')
+                                ->image()
+                                ->directory('pegawai/ttd'),
+                        ]),
+                        Radio::make('status')
+                            ->inline()
+                            ->options(['aktif' => 'Aktif', 'nonaktif' => 'Nonaktif'])
+                            ->default('aktif'),
                     ]),
             ]);
     }

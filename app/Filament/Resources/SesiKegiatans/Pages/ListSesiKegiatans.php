@@ -179,4 +179,8 @@ class ListSesiKegiatans extends ListRecords
 
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Sesi Kegiatan & Absensi';
+    }
 }

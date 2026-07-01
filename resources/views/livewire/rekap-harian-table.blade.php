@@ -1,11 +1,11 @@
-<div>
+<div style="display: flex; flex-direction: column; gap: 2rem; width: 100%;">
 
-    {{ $this->form }}
+    <div style="width: 100%;">
+        {{ $this->form }}
+    </div>
 
-    <div class="mt-6">
-
+    <div style="width: 100%;">
         {{ $this->table }}
-
     </div>
 
     <x-filament-actions::modals />

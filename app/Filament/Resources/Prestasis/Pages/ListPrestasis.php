@@ -17,4 +17,8 @@ class ListPrestasis extends ListRecords
                 ->label('Tambah Prestasi'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Prestasi Siswa';
+    }
 }

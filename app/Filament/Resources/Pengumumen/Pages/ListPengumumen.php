@@ -17,4 +17,8 @@ class ListPengumumen extends ListRecords
                 ->label('Tambah Pengumuman'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Pengumuman';
+    }
 }

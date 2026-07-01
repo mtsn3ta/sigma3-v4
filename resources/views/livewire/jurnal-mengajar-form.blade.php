@@ -5,18 +5,26 @@
             {{ $record ? 'Edit Jurnal Mengajar' : 'Isi Jurnal Mengajar' }}
         </x-slot>
 
-        <form wire:submit="submit" class="space-y-6">
+        <form wire:submit="submit" style="display: flex; flex-direction: column; gap: 1.5rem;">
 
-            {{ $this->form }}
+            {{-- Form Builder --}}
+            <div style="width: 100%;">
+                {{ $this->form }}
+            </div>
 
+            {{-- List Siswa Tidak Hadir (Modern Style) --}}
             @if ($siswaTidakHadir->isNotEmpty())
-                <x-filament::section heading="Siswa Tidak Hadir Sekolah" class="mt-6">
-                    <div class="space-y-2">
+                <div style="padding: 1rem; border-radius: 0.75rem; border: 1px solid #e5e7eb; background: #f9fafb;">
+                    <h4 style="font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">
+                        Siswa Tidak Hadir Sekolah
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         @foreach ($siswaTidakHadir as $item)
-                            <div class="flex items-center justify-between rounded-lg border p-3 dark:border-gray-700">
-                                <div class="font-medium">
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border-radius: 0.5rem; background: #fff; border: 1px solid #f3f4f6;">
+                                <span style="font-size: 0.875rem; font-weight: 500; color: #111827;">
                                     {{ $item->siswa->nama }}
-                                </div>
+                                </span>
                                 <x-filament::badge :color="match ($item->status) {
                                     'sakit' => 'warning',
                                     'izin' => 'info',
@@ -28,11 +36,12 @@
                             </div>
                         @endforeach
                     </div>
-                </x-filament::section>
+                </div>
             @endif
 
-            {{-- Tombol Aksi di bagian bawah modal --}}
-            <div class="mt-6 flex justify-end gap-x-3">
+            {{-- Footer Modal --}}
+            <div
+                style="display: flex; justify-content: flex-end; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #f3f4f6;">
                 <x-filament::button color="gray" x-on:click="close">
                     Batal
                 </x-filament::button>

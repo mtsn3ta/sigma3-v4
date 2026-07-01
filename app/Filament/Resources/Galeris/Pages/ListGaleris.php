@@ -17,4 +17,8 @@ class ListGaleris extends ListRecords
                 ->label('Tambah Galeri'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Galeri';
+    }
 }

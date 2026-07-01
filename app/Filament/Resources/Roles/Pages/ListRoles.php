@@ -13,7 +13,12 @@ class ListRoles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah Pengaturan'),
         ];
+    }
+    public function getTitle(): string
+    {
+        return 'Daftar Pengaturan Role';
     }
 }

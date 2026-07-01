@@ -22,7 +22,7 @@ class PengumumanForm
             ->components([
 
                 Section::make('Informasi Pengumuman')
-
+                    ->columnSpanFull()
                     ->schema([
 
                         Select::make('ekstrakurikuler_id')
@@ -140,25 +140,15 @@ class PengumumanForm
                             ->maxLength(150),
 
                         Select::make('tipe')
-
-                            ->label('Tipe Alert')
-
+                            ->label('Jenis Pengumuman')
                             ->options([
-
-                                'info' => 'Info',
-
-                                'success' => 'Success',
-
-                                'warning' => 'Warning',
-
-                                'danger' => 'Danger',
-
+                                'info'    => 'Informasi',
+                                'success' => 'Kabar Baik',
+                                'warning' => 'Perhatian',
+                                'danger'  => 'Penting',
                             ])
-
                             ->default('info')
-
                             ->native(false)
-
                             ->required(),
 
                         Select::make('status')

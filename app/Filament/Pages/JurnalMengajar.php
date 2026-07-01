@@ -21,7 +21,10 @@ class JurnalMengajar extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Guru';
 
     protected static ?int $navigationSort = 1;
-
+    public function getTitle(): string
+    {
+        return 'Riwayat Jurnal Mengajar';
+    }
     public static function canAccess(): bool
     {
         /** @var User|null $user */

@@ -63,7 +63,7 @@ class KonselingSiswaForm
 
                     ])
 
-                    ->columns(2),
+                    ->columnSpanFull(),
 
             ]);
     }

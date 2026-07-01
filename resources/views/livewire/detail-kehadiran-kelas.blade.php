@@ -1,36 +1,63 @@
-<div class="overflow-x-auto">
-    <table class="w-full text-sm text-left border rounded-lg overflow-hidden dark:border-gray-700">
-        <thead class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+<div
+    style="overflow-x: auto; border-radius: 0.75rem; border: 1px solid #e5e7eb; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+    <table style="width: 100%; font-size: 0.875rem; text-align: left; border-collapse: collapse;">
+        <thead style="background-color: rgba(249, 250, 251, 0.7); border-bottom: 1px solid #e5e7eb;">
             <tr>
-                <th class="px-4 py-3 border-b dark:border-gray-700">Nama Siswa</th>
-                <th class="px-4 py-3 border-b dark:border-gray-700 text-center">Status</th>
-                <th class="px-4 py-3 border-b dark:border-gray-700">Keterangan</th>
+                <th style="padding: 0.75rem 1rem; font-weight: 600; color: #111827;">
+                    Nama Siswa
+                </th>
+                <th style="padding: 0.75rem 1rem; font-weight: 600; text-align: center; color: #111827;">
+                    Status
+                </th>
+                <th style="padding: 0.75rem 1rem; font-weight: 600; color: #111827;">
+                    Keterangan
+                </th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-gray-700 dark:text-gray-300">
-            @foreach ($siswa as $s)
+        <tbody style="color: #374151;">
+            @forelse ($siswa as $s)
                 @php
                     $kehadiran = $s->kehadiranSekolah->first();
                     $status = $kehadiran ? strtolower($kehadiran->status) : 'belum ada data';
-                    $keterangan = $kehadiran ? $kehadiran->keterangan : '-';
+                    $keterangan = $kehadiran && $kehadiran->keterangan ? $kehadiran->keterangan : null;
                 @endphp
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                    <td class="px-4 py-3">{{ $s->nama }}</td>
-                    <td class="px-4 py-3 text-center">
+
+                <tr style="border-bottom: 1px solid #f3f4f6; transition: background-color 0.2s;"
+                    onmouseover="this.style.backgroundColor='#f9fafb'"
+                    onmouseout="this.style.backgroundColor='transparent'">
+
+                    <td style="padding: 0.75rem 1rem; font-weight: 500; color: #111827;">
+                        {{ $s->nama }}
+                    </td>
+
+                    <td style="padding: 0.75rem 1rem; text-align: center;">
                         <x-filament::badge :color="match ($status) {
                             'hadir' => 'success',
                             'terlambat' => 'warning',
                             'izin' => 'info',
-                            'sakit' => 'info',
+                            'sakit' => 'gray',
                             'alfa' => 'danger',
                             default => 'gray',
                         }">
                             {{ ucfirst($status) }}
                         </x-filament::badge>
                     </td>
-                    <td class="px-4 py-3">{{ $keterangan ?: '-' }}</td>
+
+                    <td style="padding: 0.75rem 1rem; color: #4b5563;">
+                        @if ($keterangan)
+                            {{ $keterangan }}
+                        @else
+                            <span style="font-style: italic; color: #9ca3af;">-</span>
+                        @endif
+                    </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="3" style="padding: 2rem 1rem; text-align: center; color: #6b7280;">
+                        Belum ada data siswa di kelas ini.
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

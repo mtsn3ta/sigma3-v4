@@ -25,4 +25,8 @@ class CreateAnggotaEkskul extends CreateRecord
 
         return $data;
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Anggota Ekstrakurikuler';
+    }
 }

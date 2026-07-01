@@ -17,6 +17,7 @@ class RoleForm
                 TextInput::make('name')
                     ->label('Nama Role')
                     ->required()
+                    ->columnSpanFull()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
 
@@ -25,6 +26,7 @@ class RoleForm
                         name: 'permissions',
                         titleAttribute: 'name'
                     )
+                    ->columnSpanFull()
                     ->columns(3),
 
             ]);

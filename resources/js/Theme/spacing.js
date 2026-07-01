@@ -3,15 +3,14 @@
 export const spacing = {
     container: "px-6 md:px-8 lg:px-12",
 
-    sectionY: "py-24 lg:py-28",
+    sectionY: "py-16 lg:py-20",
 
     sectionTop: "pt-24 lg:pt-28",
 
     sectionBottom: "pb-24 lg:pb-28",
 
-    heroTop: "pt-36 lg:pt-44",
-
-    heroBottom: "pb-24 lg:pb-32",
+    heroTop: "pt-24 lg:pt-28",
+    heroBottom: "pb-20 lg:pb-24",
 
     card: "p-6 lg:p-8",
 

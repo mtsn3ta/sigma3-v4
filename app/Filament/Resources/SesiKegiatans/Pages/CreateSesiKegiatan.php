@@ -39,4 +39,8 @@ class CreateSesiKegiatan extends CreateRecord
             $this->record->ekstrakurikuler->nama
         );
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Sesi Kegiatan';
+    }
 }

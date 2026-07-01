@@ -19,4 +19,8 @@ class Absensi extends Page
     {
         $this->record = $record;
     }
+    public function getTitle(): string
+    {
+        return 'Absensi Ekstrakurikuler';
+    }
 }

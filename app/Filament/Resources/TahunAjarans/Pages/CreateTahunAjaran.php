@@ -30,4 +30,8 @@ class CreateTahunAjaran extends CreateRecord
             $this->record->tahun
         );
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Tahun Ajaran';
+    }
 }

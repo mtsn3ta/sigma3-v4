@@ -17,4 +17,8 @@ class ListEkstrakurikulerPengampus extends ListRecords
                 ->label('Tambah Pengampu'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Pembina & Pelatih';
+    }
 }

@@ -100,6 +100,25 @@ class SettingHelper
             : null;
     }
     /*
+|--------------------------------------------------------------------------
+| Foto Kepala Madrasah
+|--------------------------------------------------------------------------
+*/
+
+    public static function kepalaMadrasahPhoto(): ?string
+    {
+        return self::setting()?->kepala_madrasah_photo;
+    }
+
+    public static function kepalaMadrasahPhotoUrl(): ?string
+    {
+        $photo = self::kepalaMadrasahPhoto();
+
+        return $photo
+            ? asset('storage/' . $photo)
+            : null;
+    }
+    /*
     |--------------------------------------------------------------------------
     | Kepala Madrasah
     |--------------------------------------------------------------------------

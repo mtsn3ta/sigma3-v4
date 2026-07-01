@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\KelasSiswas\Schemas;
 
 use App\Models\TahunAjaran;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class KelasSiswaForm
@@ -13,41 +15,53 @@ class KelasSiswaForm
     {
         return $schema
             ->components([
+                Section::make('Penempatan Siswa')
+                    ->description('Tentukan siswa, kelas tujuan, dan tahun ajaran aktif.')
+                    ->icon('heroicon-o-user-group')
+                    ->schema([
+                        // Siswa diletakkan di baris sendiri karena ini entitas utama
+                        Select::make('siswa_id')
+                            ->label('Pilih Siswa')
+                            ->relationship('siswa', 'nama')
+                            ->searchable()
+                            ->preload()
+                            ->validationMessages([
+                                'unique' => 'Siswa sudah terdaftar pada tahun ajaran tersebut.',
+                            ])
+                            ->required()
+                            ->columnSpanFull(),
 
-                Select::make('siswa_id')
-                    ->relationship('siswa', 'nama')
-                    ->searchable()
-                    ->preload()
-                    ->validationMessages([
-                        'unique' => 'Siswa sudah terdaftar pada tahun ajaran tersebut.',
+                        // Kelas dan Tahun Ajaran disandingkan
+                        Grid::make(2)->schema([
+                            Select::make('kelas_id')
+                                ->label('Kelas Tujuan')
+                                ->relationship('kelas', 'nama_kelas')
+                                ->searchable()
+                                ->preload()
+                                ->required(),
+
+                            Select::make('tahun_ajaran_id')
+                                ->label('Tahun Ajaran')
+                                ->relationship('tahunAjaran', 'tahun')
+                                ->searchable()
+                                ->preload()
+                                ->default(TahunAjaran::where('aktif', true)->value('id'))
+                                ->required(),
+                        ]),
+
+                        // Status di bawah sendiri dengan tampilan horizontal
+                        Radio::make('status')
+                            ->label('Status Penempatan')
+                            ->options([
+                                'aktif' => 'Aktif',
+                                'naik' => 'Naik',
+                                'lulus' => 'Lulus',
+                            ])
+                            ->inline()
+                            ->default('aktif')
+                            ->required(),
                     ])
-                    ->required(),
-
-                Select::make('kelas_id')
-                    ->relationship('kelas', 'nama_kelas')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-
-                Select::make('tahun_ajaran_id')
-                    ->relationship('tahunAjaran', 'tahun')
-                    ->searchable()
-                    ->preload()
-                    ->default(
-                        TahunAjaran::where('aktif', true)
-                            ->value('id')
-                    )
-                    ->required(),
-
-                Radio::make('status')
-                    ->options([
-                        'aktif' => 'Aktif',
-                        'naik' => 'Naik',
-                        'lulus' => 'Lulus',
-                    ])
-                    ->default('aktif')
-                    ->required(),
-
+                    ->columnSpanFull(),
             ]);
     }
 }

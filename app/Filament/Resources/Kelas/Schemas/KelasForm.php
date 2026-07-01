@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Kelas\Schemas;
 
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class KelasForm
@@ -12,30 +13,39 @@ class KelasForm
     {
         return $schema
             ->components([
+                Section::make('Informasi Kelas')
+                    ->description('Kelola data tingkat dan status kelas.')
+                    ->icon('heroicon-o-academic-cap')
+                    ->schema([
+                        TextInput::make('nama_kelas')
+                            ->label('Nama Kelas')
+                            ->placeholder('Contoh: 7A')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(50)
+                            ->columnSpanFull(),
 
-                TextInput::make('nama_kelas')
-                    ->label('Nama Kelas')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(50)
-                    ->placeholder('7A'),
+                        Radio::make('tingkat')
+                            ->label('Tingkat Kelas')
+                            ->options([
+                                7 => 'Kelas 7',
+                                8 => 'Kelas 8',
+                                9 => 'Kelas 9',
+                            ])
+                            ->inline() // Dibuat mendatar agar hemat ruang
+                            ->required(),
 
-                Radio::make('tingkat')
-                    ->options([
-                        7 => 'Kelas 7',
-                        8 => 'Kelas 8',
-                        9 => 'Kelas 9',
+                        Radio::make('status')
+                            ->label('Status Kelas')
+                            ->options([
+                                'aktif' => 'Aktif',
+                                'nonaktif' => 'Nonaktif',
+                            ])
+                            ->inline() // Dibuat mendatar agar hemat ruang
+                            ->default('aktif')
+                            ->required(),
                     ])
-                    ->required(),
-
-                Radio::make('status')
-                    ->options([
-                        'aktif' => 'Aktif',
-                        'nonaktif' => 'Nonaktif',
-                    ])
-                    ->default('aktif')
-                    ->required(),
-
+                    ->columnSpanFull(), // Membagi tampilan menjadi 2 kolom agar seimbang
             ]);
     }
 }

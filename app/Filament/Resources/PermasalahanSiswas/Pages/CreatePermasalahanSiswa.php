@@ -22,4 +22,8 @@ class CreatePermasalahanSiswa extends CreateRecord
 
         return $data;
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Permasalahan Siswa';
+    }
 }

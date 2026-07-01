@@ -1,15 +1,12 @@
+// resources/js/Components/UI/Badge.jsx
 import { cn, glass, radius, shadow } from "@/Theme";
 
 const variants = {
-    primary: "border-emerald-500/20 bg-emerald-50/60 text-emerald-700",
-
-    neutral: "border-slate-300/40 bg-white/60 text-slate-700",
-
-    success: "border-green-500/20 bg-green-50/60 text-green-700",
-
-    warning: "border-amber-500/20 bg-amber-50/60 text-amber-700",
-
-    danger: "border-red-500/20 bg-red-50/60 text-red-700",
+    primary: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+    neutral: "border-slate-500/30 bg-slate-500/10 text-slate-300",
+    success: "border-green-500/30 bg-green-500/10 text-green-300",
+    warning: "border-amber-500/30 bg-amber-500/10 text-amber-300",
+    danger: "border-red-500/30 bg-red-500/10 text-red-300",
 };
 
 export default function Badge({
@@ -20,16 +17,10 @@ export default function Badge({
     return (
         <span
             className={cn(
-                "inline-flex items-center px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em]",
-
+                "inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] border backdrop-blur-md",
                 radius.full,
-
-                glass.subtle,
-
                 shadow.low,
-
                 variants[variant],
-
                 className,
             )}
         >

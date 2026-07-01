@@ -24,6 +24,7 @@ class Setting extends Model
         'logo',
         'logo_resmi',
         'favicon',
+        'kepala_madrasah_photo',
 
         'kepala_aktif_id',
 

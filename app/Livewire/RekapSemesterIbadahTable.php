@@ -22,6 +22,7 @@ use App\Models\TahunAjaran;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
+use Filament\Schemas\Components\Section;
 
 class RekapSemesterIbadahTable extends Component implements HasActions, HasForms, HasTable
 {
@@ -44,47 +45,48 @@ class RekapSemesterIbadahTable extends Component implements HasActions, HasForms
     {
         return $schema
             ->components([
-
-                Grid::make(3)
+                // Membungkus filter dalam Section agar serasi dengan form lainnya
+                Section::make()
                     ->schema([
+                        Grid::make(['default' => 1, 'md' => 3])
+                            ->schema([
+                                Select::make('tahun')
+                                    ->label('Tahun Ajaran')
+                                    ->options(
+                                        TahunAjaran::orderByDesc('tahun')
+                                            ->pluck('tahun', 'tahun')
+                                    )
+                                    ->default(
+                                        TahunAjaran::where('aktif', true)
+                                            ->value('tahun')
+                                    )
+                                    ->live()
+                                    ->afterStateUpdated(fn() => $this->resetTable()),
 
-                        Select::make('tahun')
-                            ->label('Tahun Ajaran')
-                            ->options(
-                                TahunAjaran::orderByDesc('tahun')
-                                    ->pluck('tahun', 'tahun')
-                            )
-                            ->default(
-                                TahunAjaran::where('aktif', true)
-                                    ->value('tahun')
-                            )
-                            ->live()
-                            ->afterStateUpdated(fn() => $this->resetTable()),
+                                Select::make('semester')
+                                    ->label('Semester')
+                                    ->options([
+                                        'ganjil' => 'Ganjil',
+                                        'genap'  => 'Genap',
+                                    ])
+                                    ->default('ganjil')
+                                    ->live()
+                                    ->afterStateUpdated(fn() => $this->resetTable()),
 
-                        Select::make('semester')
-                            ->label('Semester')
-                            ->options([
-                                'ganjil' => 'Ganjil',
-                                'genap'  => 'Genap',
-                            ])
-                            ->default('ganjil')
-                            ->live()
-                            ->afterStateUpdated(fn() => $this->resetTable()),
-
-                        Select::make('kelas_id')
-                            ->label('Kelas')
-                            ->options(
-                                Kelas::orderBy('tingkat')
-                                    ->orderBy('nama_kelas')
-                                    ->pluck('nama_kelas', 'id')
-                            )
-                            ->placeholder('Semua Kelas')
-                            ->searchable()
-                            ->live()
-                            ->afterStateUpdated(fn() => $this->resetTable()),
-
+                                Select::make('kelas_id')
+                                    ->label('Filter Kelas')
+                                    ->options(
+                                        Kelas::orderBy('tingkat')
+                                            ->orderBy('nama_kelas')
+                                            ->pluck('nama_kelas', 'id')
+                                    )
+                                    ->placeholder('Semua Kelas')
+                                    ->searchable()
+                                    ->live()
+                                    ->afterStateUpdated(fn() => $this->resetTable()),
+                            ]),
                     ])
-
+                    ->compact(), // Padding minimal agar rapi
             ])
             ->statePath('data');
     }

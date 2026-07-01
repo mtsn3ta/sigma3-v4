@@ -14,11 +14,11 @@ const MENUS = [
     },
     {
         title: "Fitur",
-        href: "#fitur",
+        href: "#fitur-modul",
     },
     {
         title: "Prestasi",
-        href: "#prestasi",
+        href: "#features",
     },
     {
         title: "Monitoring Absensi",
@@ -31,19 +31,19 @@ const MENUS = [
 ];
 
 const SECTIONS = {
-    fitur: "Fitur",
     prestasi: "Prestasi",
     monitoring: "Monitoring Absensi",
     "student-intelligence": "Student Intelligence",
 };
 
-export default function Navbar() {
+export default function Navbar({ hasUrgentAlert = false }) {
     const { settings } = usePage().props;
 
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [active, setActive] = useState("Beranda");
 
+    // Efek untuk mendeteksi posisi scroll dan menu aktif
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
@@ -70,16 +70,34 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Efek untuk mengunci scroll body saat mobile menu terbuka
+    useEffect(() => {
+        if (mobileOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "unset";
+        }
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [mobileOpen]);
+
     const navbarClass = cn(
         glass.default,
         radius.xl,
         css.transition,
         scrolled ? shadow.medium : shadow.none,
     );
+    const topOffset = hasUrgentAlert ? 72 : 0;
 
     return (
         <>
-            <header className="fixed inset-x-0 top-4 z-50">
+            <header
+                className={cn(
+                    "fixed inset-x-0 z-50 transition-all duration-300",
+                    hasUrgentAlert ? "top-18" : "top-2",
+                )}
+            >
                 <Container>
                     <motion.nav
                         initial={false}
@@ -188,6 +206,8 @@ export default function Navbar() {
 
                             <button
                                 type="button"
+                                aria-label="Buka menu navigasi"
+                                aria-expanded={mobileOpen}
                                 onClick={() => setMobileOpen((value) => !value)}
                                 className={cn(
                                     glass.default,
@@ -225,7 +245,17 @@ export default function Navbar() {
                             exit={{ opacity: 0 }}
                             transition={motionTheme.fast}
                             onClick={() => setMobileOpen(false)}
-                            className="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-sm"
+                            style={{
+                                top: topOffset,
+                            }}
+                            className="
+    fixed
+    inset-x-0
+    bottom-0
+    z-40
+    bg-slate-900/20
+    backdrop-blur-sm
+"
                         />
 
                         <motion.aside
@@ -242,11 +272,15 @@ export default function Navbar() {
                                 opacity: 0.5,
                             }}
                             transition={motionTheme.normal}
+                            style={{
+                                top: topOffset,
+                                height: `calc(100vh - ${topOffset}px)`,
+                            }}
                             className={cn(
                                 glass.strong,
                                 radius.xl,
                                 shadow.high,
-                                "fixed right-0 top-0 z-50 flex h-screen w-full max-w-[320px] flex-col border-l p-8",
+                                "fixed right-0 z-50 flex w-full max-w-[320px] flex-col border-l p-8",
                             )}
                         >
                             <div className="mt-4 mb-12">

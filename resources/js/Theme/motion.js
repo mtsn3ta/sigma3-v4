@@ -24,5 +24,6 @@ export const motion = {
 };
 
 export const css = {
-    transition: "transition-all duration-300",
+    // Menambahkan ease kustom agar transisi CSS murni memiliki nuansa Apple
+    transition: "transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
 };

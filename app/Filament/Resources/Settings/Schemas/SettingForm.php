@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 class SettingForm
@@ -15,16 +16,19 @@ class SettingForm
     {
         return $schema
             ->components([
-
                 Section::make('Informasi Madrasah')
+                    ->icon('heroicon-o-building-library')
+                    ->description('Detail identitas resmi lembaga.')
+                    ->columnSpanFull()
                     ->schema([
-
                         TextInput::make('nama_madrasah')
+                            ->label('Nama Madrasah')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpanFull(),
 
                         Textarea::make('alamat')
-                            ->rows(3)
+                            ->rows(2)
                             ->columnSpanFull(),
 
                         TextInput::make('telepon')
@@ -34,58 +38,62 @@ class SettingForm
                         TextInput::make('email')
                             ->email()
                             ->maxLength(150),
+                    ]),
 
-                    ])
-                    ->columns(2),
-                Section::make('Sistem')
+                Section::make('Pengaturan Sistem Aktif')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->description('Tentukan data yang aktif untuk operasional aplikasi.')
+                    ->columnSpanFull()
                     ->schema([
-
                         Select::make('kepala_aktif_id')
-                            ->label('Kepala Madrasah')
-                            ->relationship(
-                                'kepalaAktif',
-                                'nama'
-                            )
+                            ->label('Kepala Madrasah Saat Ini')
+                            ->relationship('kepalaAktif', 'nama')
                             ->searchable()
                             ->preload(),
 
                         Select::make('tahun_ajaran_aktif_id')
                             ->label('Tahun Ajaran Aktif')
-                            ->relationship(
-                                'tahunAjaranAktif',
-                                'tahun'
-                            )
+                            ->relationship('tahunAjaranAktif', 'tahun')
                             ->searchable()
                             ->preload(),
+                    ]),
 
-                    ])
-                    ->columns(2),
-                Section::make('Identitas')
+                Section::make('Identitas Visual & Media')
+                    ->icon('heroicon-o-photo')
+                    ->description('Kelola aset visual untuk dokumen resmi dan tampilan aplikasi.')
+                    ->columnSpanFull()
                     ->schema([
+                        Grid::make(3)->schema([
+                            FileUpload::make('logo')
+                                ->label('Logo Aplikasi')
+                                ->disk('public')
+                                ->directory('settings')
+                                ->image()
+                                ->imageEditor(),
 
-                        FileUpload::make('logo')
-                            ->label('Logo Aplikasi')
+                            FileUpload::make('logo_resmi')
+                                ->label('Logo Dokumen')
+                                ->disk('public')
+                                ->directory('settings')
+                                ->image()
+                                ->imageEditor(),
+
+                            FileUpload::make('favicon')
+                                ->label('Favicon')
+                                ->disk('public')
+                                ->directory('settings')
+                                ->image()
+                                ->imageEditor(),
+                        ]),
+
+                        FileUpload::make('kepala_madrasah_photo')
+                            ->label('Foto Kepala Madrasah')
                             ->disk('public')
                             ->directory('settings')
                             ->image()
-                            ->imageEditor(),
-
-                        FileUpload::make('logo_resmi')
-                            ->label('Logo Dokumen Resmi')
-                            ->disk('public')
-                            ->directory('settings')
-                            ->image()
-                            ->imageEditor(),
-
-                        FileUpload::make('favicon')
-                            ->label('Favicon')
-                            ->disk('public')
-                            ->directory('settings')
-                            ->image()
-                            ->imageEditor(),
-
-                    ])
-
+                            ->imageEditor()
+                            ->imagePreviewHeight('220'),
+                    ]),
             ]);
     }
 }

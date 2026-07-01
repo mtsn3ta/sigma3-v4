@@ -30,7 +30,10 @@ class GuruBerhalangan extends Page
 
         return $user?->hasRole('guru') ?? false;
     }
-
+    public function getTitle(): string
+    {
+        return 'Riwayat Guru Berhalangan';
+    }
     protected function getHeaderActions(): array
     {
         return [

@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
+use Filament\Schemas\Components\Section;
 
 class RekapHarianIbadahTable extends Component implements HasActions, HasForms, HasTable
 {
@@ -37,23 +38,20 @@ class RekapHarianIbadahTable extends Component implements HasActions, HasForms, 
     public function form(Schema $schema): Schema
     {
         return $schema
-
             ->components([
-
-                DatePicker::make('tanggal')
-
-                    ->label('Tanggal Rekap')
-
-                    ->default(now())
-
-                    ->live()
-
-                    ->afterStateUpdated(
-                        fn() => $this->resetTable()
-                    ),
-
+                // Membungkus input ke dalam Section (Kartu) agar tidak melayang
+                Section::make()
+                    ->schema([
+                        DatePicker::make('tanggal')
+                            ->label('Pilih Tanggal Rekap')
+                            ->live()
+                            ->default(now())
+                            ->afterStateUpdated(fn() => $this->resetTable())
+                            // Membatasi lebar input agar tidak kepanjangan
+                            ->extraAttributes(['class' => 'max-w-xs'])
+                    ])
+                    ->compact(), // Gunakan compact agar padding tidak terlalu tebal untuk sebuah filter
             ])
-
             ->statePath('data');
     }
 

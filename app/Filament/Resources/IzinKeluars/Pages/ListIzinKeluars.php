@@ -16,7 +16,8 @@ class ListIzinKeluars extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah Izin Keluar'),
         ];
     }
     public function getTabs(): array

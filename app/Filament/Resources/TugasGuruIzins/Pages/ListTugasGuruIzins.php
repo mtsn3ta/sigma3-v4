@@ -13,4 +13,8 @@ class ListTugasGuruIzins extends ListRecords
     {
         return [];
     }
+    public function getTitle(): string
+    {
+        return 'Riwayat Guru Berhalangan';
+    }
 }

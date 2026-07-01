@@ -43,4 +43,8 @@ class CreateEkstrakurikulerPengampu extends CreateRecord
 
         return $firstRecord;
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Pembina & Pelatih';
+    }
 }

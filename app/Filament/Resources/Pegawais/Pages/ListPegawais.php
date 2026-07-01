@@ -17,4 +17,9 @@ class ListPegawais extends ListRecords
                 ->label('Tambah Pegawai'),
         ];
     }
+    // Mengubah judul halaman utama list
+    public function getTitle(): string
+    {
+        return 'Daftar Semua Pegawai';
+    }
 }

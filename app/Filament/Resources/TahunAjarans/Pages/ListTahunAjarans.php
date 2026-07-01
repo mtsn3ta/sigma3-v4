@@ -17,4 +17,8 @@ class ListTahunAjarans extends ListRecords
                 ->label('Tambah Tahun Ajaran'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Tahun Ajaran';
+    }
 }

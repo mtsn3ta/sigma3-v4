@@ -24,4 +24,8 @@ class CreatePengumuman extends CreateRecord
             $this->record->judul
         );
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Pengumuman';
+    }
 }

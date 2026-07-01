@@ -17,4 +17,8 @@ class ListAnggotaEkskuls extends ListRecords
                 ->label('Tambah Anggota'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Anggota Ekstrakurikuler';
+    }
 }

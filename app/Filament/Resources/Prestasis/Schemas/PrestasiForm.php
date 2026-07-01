@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\Auth;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 
 class PrestasiForm
 {
@@ -23,287 +24,194 @@ class PrestasiForm
     {
         return $schema
             ->components([
-
                 Section::make('Informasi Prestasi')
-
+                    ->description('Catat detail prestasi siswa, mulai dari nama lomba hingga tingkat pencapaian.')
+                    ->icon('heroicon-o-trophy')
+                    ->columnSpanFull()
                     ->schema([
-
                         Select::make('ekstrakurikuler_id')
-
                             ->label('Ekstrakurikuler')
-
-                            ->searchable()
-
-                            ->preload()
-
-                            ->native(false)
-
                             ->placeholder('Tidak terkait ekstrakurikuler')
+                            ->native(false)
+                            ->searchable()
+                            ->preload()
                             ->live()
-                            ->options(function () {
-
-                                /** @var User|null $user */
-                                $user = Auth::user();
-
-                                if (! $user) {
-                                    return [];
-                                }
-
-                                if (
-                                    $user->hasRole('super_admin')
-                                    || $user->hasRole('waka_kesiswaan')
-                                    || $user->hasRole('kepala_madrasah')
-                                ) {
-
-                                    return Ekstrakurikuler::query()
-
-                                        ->orderBy('nama')
-
-                                        ->pluck('nama', 'id');
-                                }
-
-                                return Ekstrakurikuler::query()
-
-                                    ->whereIn(
-                                        'id',
-                                        $user->pegawai
-                                            ? $user->pegawai
-                                            ->pengampus()
-                                            ->pluck('ekstrakurikuler_id')
-                                            : []
-                                    )
-
-                                    ->orderBy('nama')
-
-                                    ->pluck('nama', 'id');
-                            })
-
-                            ->default(function () {
-
-                                /** @var User|null $user */
-                                $user = Auth::user();
-
-                                if (! $user) {
-                                    return null;
-                                }
-
-                                if (
-                                    $user->hasRole('super_admin')
-                                    || $user->hasRole('waka_kesiswaan')
-                                    || $user->hasRole('kepala_madrasah')
-                                ) {
-                                    return null;
-                                }
-
-                                $ids = $user->pegawai
-                                    ? $user->pegawai
-                                    ->pengampus()
-                                    ->pluck('ekstrakurikuler_id')
-                                    : collect();
-
-                                return $ids->count() === 1
-                                    ? $ids->first()
-                                    : null;
-                            })
-
-                            ->disabled(function () {
-
-                                /** @var User|null $user */
-                                $user = Auth::user();
-
-                                if (! $user) {
-                                    return false;
-                                }
-
-                                if (
-                                    $user->hasRole('super_admin')
-                                    || $user->hasRole('waka_kesiswaan')
-                                    || $user->hasRole('kepala_madrasah')
-                                ) {
-                                    return false;
-                                }
-
-                                $ids = $user->pegawai
-                                    ? $user->pegawai
-                                    ->pengampus()
-                                    ->pluck('ekstrakurikuler_id')
-                                    : collect();
-
-                                return $ids->count() === 1;
-                            }),
+                            ->afterStateUpdated(fn(Set $set) => $set('siswa_ids', []))
+                            ->options(fn() => self::getEkskulOptions())
+                            ->default(fn() => self::getDefaultEkskul())
+                            ->disabled(fn() => self::shouldDisableEkskul()),
 
                         TextInput::make('nama_prestasi')
-
                             ->label('Nama Prestasi')
-
                             ->placeholder('Contoh: Juara 1 Futsal Putra')
-
                             ->required()
-
                             ->maxLength(150),
 
                         TextInput::make('nama_lomba')
-
-                            ->label('Nama Lomba')
-
-                            ->placeholder('Contoh: PORSENI MTs Kabupaten Tulungagung')
-
+                            ->label('Nama Lomba / Event')
+                            ->placeholder('Contoh: PORSENI MTs Kabupaten')
                             ->required()
-
                             ->maxLength(150),
 
-                        Select::make('jenis')
-
+                        Select::make('tingkat')
+                            ->label('Tingkat Kejuaraan')
                             ->options([
-
-                                'individu' => 'Individu',
-
-                                'tim' => 'Tim',
-
+                                'kecamatan' => 'Kecamatan',
+                                'kabupaten' => 'Kabupaten',
+                                'karesidenan' => 'Karesidenan',
+                                'provinsi' => 'Provinsi',
+                                'nasional' => 'Nasional',
+                                'internasional' => 'Internasional',
                             ])
-
                             ->native(false)
-
+                            ->searchable()
                             ->required(),
 
-                        Select::make('tingkat')
-
-                            ->label('Tingkat')
-
-                            ->options([
-
-                                'kecamatan' => 'Kecamatan',
-
-                                'kabupaten' => 'Kabupaten',
-
-                                'karesidenan' => 'Karesidenan',
-
-                                'provinsi' => 'Provinsi',
-
-                                'nasional' => 'Nasional',
-
-                                'internasional' => 'Internasional',
-
-                            ])
-
+                        Select::make('jenis')
+                            ->label('Jenis Prestasi')
+                            ->options(['individu' => 'Individu', 'tim' => 'Tim'])
                             ->native(false)
-
-                            ->searchable()
-
                             ->required(),
 
                         DatePicker::make('tanggal')
-                            ->required()
-                            ->default(now()),
+                            ->label('Tanggal Lomba')
+                            ->default(now())
+                            ->required(),
+                    ]),
 
-                    ])
-
-                    ->columns(2),
-
-                Section::make('Peserta')
-
+                Section::make('Peserta Prestasi')
+                    ->description('Pilih siswa yang memperoleh prestasi.')
+                    ->icon('heroicon-o-users')
+                    ->columnSpanFull()
                     ->schema([
 
                         MultiSelect::make('siswa_ids')
-
-                            ->label('Siswa')
+                            ->label('Siswa Berprestasi')
                             ->live()
-                            ->relationship(
-                                'siswa',
-                                'nama'
-                            )
-
                             ->searchable()
-
                             ->preload()
-
-                            ->options(function (Get $get) {
-
-                                $ekstrakurikulerId = $get('ekstrakurikuler_id');
-
-                                /*
-        |--------------------------------------------------------------------------
-        | Prestasi Non Ekstrakurikuler
-        |--------------------------------------------------------------------------
-        */
-
-                                if (! $ekstrakurikulerId) {
-
-                                    return Siswa::query()
-
-                                        ->orderBy('nama')
-
-                                        ->pluck('nama', 'id');
-                                }
-
-                                /*
-        |--------------------------------------------------------------------------
-        | Prestasi Ekstrakurikuler
-        |--------------------------------------------------------------------------
-        */
-
-                                return Siswa::query()
-
-                                    ->whereIn(
-                                        'id',
-                                        AnggotaEkskul::query()
-
-                                            ->where(
-                                                'ekstrakurikuler_id',
-                                                $ekstrakurikulerId
-                                            )
-
-                                            ->where(
-                                                'status',
-                                                'aktif'
-                                            )
-
-                                            ->pluck('siswa_id')
-                                    )
-
-                                    ->orderBy('nama')
-
-                                    ->pluck('nama', 'id');
-                            })
-
+                            ->options(
+                                fn(Get $get) => self::getSiswaOptions(
+                                    $get('ekstrakurikuler_id')
+                                )
+                            )
                             ->required()
-
                             ->columnSpanFull(),
 
                     ]),
 
                 Section::make('Dokumentasi')
-
+                    ->icon('heroicon-o-camera')
+                    ->columnSpanFull()
                     ->schema([
-
                         RichEditor::make('keterangan')
-
-                            ->label('Keterangan')
-
+                            ->label('Catatan Tambahan')
                             ->columnSpanFull(),
 
                         FileUpload::make('foto')
-
-                            ->label('Foto Prestasi')
-
+                            ->label('Bukti Foto Prestasi')
                             ->disk('public')
-
                             ->directory('prestasi')
-
                             ->image()
-
                             ->imageEditor()
-
                             ->downloadable()
-
-                            ->openable()
-
                             ->columnSpanFull(),
-
-                    ])
-
-                    ->columnSpanFull(),
-
+                    ]),
             ]);
+    }
+    // Helper methods untuk menjaga controller tetap bersih
+    private static function getEkskulOptions(): array
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (! $user) return [];
+
+        // Jika admin/waka/kepala, tampilkan semua
+        if ($user->hasRole(['super_admin', 'waka_kesiswaan', 'kepala_madrasah'])) {
+            return Ekstrakurikuler::query()->orderBy('nama')->pluck('nama', 'id')->toArray();
+        }
+
+        // Jika pelatih/pembina, hanya tampilkan yang diampu
+        return Ekstrakurikuler::query()
+            ->whereIn(
+                'id',
+                $user->pegawai
+                    ? $user->pegawai
+                    ->pengampus()
+                    ->pluck('ekstrakurikuler_id')
+                    : []
+            )
+            ->orderBy('nama')
+            ->pluck('nama', 'id')
+            ->toArray();
+    }
+
+    private static function getDefaultEkskul(): ?int
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (!$user || $user->hasRole(['super_admin', 'waka_kesiswaan', 'kepala_madrasah'])) {
+            return null;
+        }
+
+        $ids = $user->pegawai?->pengampus()->pluck('ekstrakurikuler_id') ?? collect();
+        return $ids->count() === 1 ? $ids->first() : null;
+    }
+
+    private static function shouldDisableEkskul(): bool
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (!$user || $user->hasRole(['super_admin', 'waka_kesiswaan', 'kepala_madrasah'])) {
+            return false;
+        }
+
+        $ids = $user->pegawai?->pengampus()->pluck('ekstrakurikuler_id') ?? collect();
+        return $ids->count() === 1;
+    }
+    private static function getSiswaOptions(?int $ekstrakurikulerId): array
+    {
+        // Jika tidak ada ekstrakurikuler yang dipilih, ambil semua siswa
+        if (!$ekstrakurikulerId) {
+            return Siswa::query()
+                ->orderBy('nama')
+                ->pluck('nama', 'id')
+                ->toArray();
+        }
+
+        // Jika ada ekstrakurikuler, filter hanya siswa yang aktif di ekskul tersebut
+        return Siswa::query()
+
+            ->whereIn(
+
+                'id',
+
+                AnggotaEkskul::query()
+
+                    ->where(
+
+                        'ekstrakurikuler_id',
+
+                        $ekstrakurikulerId
+
+                    )
+
+                    ->where(
+
+                        'status',
+
+                        'aktif'
+
+                    )
+
+                    ->pluck('siswa_id')
+
+            )
+
+            ->orderBy('nama')
+
+            ->pluck('nama', 'id')
+
+            ->toArray();
     }
 }

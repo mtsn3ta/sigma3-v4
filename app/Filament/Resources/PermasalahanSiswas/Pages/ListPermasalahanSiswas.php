@@ -13,7 +13,12 @@ class ListPermasalahanSiswas extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah'),
         ];
+    }
+    public function getTitle(): string
+    {
+        return 'Daftar Permasalahan Siswa';
     }
 }

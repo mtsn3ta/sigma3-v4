@@ -5,6 +5,7 @@ export default function GlassCard({
     variant = "default",
     elevation = "medium",
     className = "",
+    padding = true,
     ...props
 }) {
     return (

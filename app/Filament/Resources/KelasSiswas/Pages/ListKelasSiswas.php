@@ -17,4 +17,8 @@ class ListKelasSiswas extends ListRecords
                 ->label('Tambah Kelas Siswa'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Kelas Siswa';
+    }
 }

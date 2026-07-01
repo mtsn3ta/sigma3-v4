@@ -30,4 +30,8 @@ class CreateKelasSiswa extends CreateRecord
 
         return $data;
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Kelas Siswa';
+    }
 }

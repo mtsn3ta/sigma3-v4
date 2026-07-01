@@ -16,4 +16,8 @@ class CreateEkstrakurikuler extends CreateRecord
             $this->record->nama
         );
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Ekstrakurikuler';
+    }
 }

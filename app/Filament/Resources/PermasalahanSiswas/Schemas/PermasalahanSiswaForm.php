@@ -67,7 +67,7 @@ class PermasalahanSiswaForm
 
                     ])
 
-                    ->columns(2),
+                    ->columnSpanFull(),
 
             ]);
     }

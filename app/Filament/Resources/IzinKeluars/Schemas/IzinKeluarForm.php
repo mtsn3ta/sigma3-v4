@@ -82,7 +82,7 @@ class IzinKeluarForm
 
                     ])
 
-                    ->columns(2),
+                    ->columnSpanFull(),
 
             ]);
     }

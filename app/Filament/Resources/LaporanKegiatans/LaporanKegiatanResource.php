@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\LaporanKegiatans\RelationManagers\PesertaRelationManager;
 use App\Filament\Resources\LaporanKegiatans\RelationManagers\PendampingRelationManager;
 use App\Filament\Resources\LaporanKegiatans\RelationManagers\RealisasiAnggaranRelationManager;
-use App\Filament\Resources\LaporanKegiatans\RelationManagers\ApprovalLogRelationManager;
+use App\Filament\Resources\LaporanKegiatans\RelationManagers\ApprovalLogsRelationManager;
 use App\Filament\Resources\LaporanKegiatans\Pages\PreviewLaporanKegiatan;
 
 class LaporanKegiatanResource extends Resource
@@ -72,7 +72,7 @@ class LaporanKegiatanResource extends Resource
 
             RealisasiAnggaranRelationManager::class,
 
-            ApprovalLogRelationManager::class,
+            ApprovalLogsRelationManager::class,
 
         ];
     }

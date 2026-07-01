@@ -17,4 +17,8 @@ class ListKonselingSiswas extends ListRecords
                 ->label('Tambah Konseling'),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'Daftar Konseling Siswa';
+    }
 }

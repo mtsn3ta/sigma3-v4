@@ -22,6 +22,7 @@ use Filament\Navigation\NavigationItem;
 use App\Filament\Resources\IzinKeluars\IzinKeluarResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Support\SettingHelper;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -33,9 +34,28 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(\App\Filament\Auth\Login::class)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Emerald,
+                'success' => Color::Emerald,
+                'danger' => Color::Rose,
+                'warning' => Color::Amber,
+                'info' => Color::Sky,
+                'gray' => Color::Slate,
             ])
+            ->maxContentWidth('full')
+            ->sidebarWidth('18rem')
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->font('Plus Jakarta Sans')      // Opsional: Gunakan font yang sama dengan frontend
+            ->brandName('SIGMA-3')
+
+            ->brandLogo(
+                SettingHelper::schoolLogoUrl()
+            )
+            ->brandLogoHeight('3rem')
+            ->favicon(
+                SettingHelper::schoolFaviconUrl()
+            )           // Mengunci ke Light Mode agar tidak merusak tema Glass
             ->sidebarCollapsibleOnDesktop() // Membuat sidebar bisa diciutkan untuk memberikan kesan luas pada area kerja
+            ->spa()
             ->navigationGroups([
                 'Master Data',
                 'Akademik',

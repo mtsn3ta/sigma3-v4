@@ -1,36 +1,51 @@
-<div class="space-y-4 text-sm">
+<div style="display: flex; flex-direction: column; gap: 1.25rem; font-size: 0.875rem; color: #374151;">
 
-    <div>
-        <div class="font-semibold text-green-600">🟢 Hadir</div>
-        <p>
-            Digunakan apabila siswa mengikuti ibadah tetapi tidak berhasil melakukan
-            scan RFID (kartu rusak, reader bermasalah, atau kendala teknis lainnya).
-        </p>
-    </div>
+    {{-- Keterangan Status --}}
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
 
-    <div>
-        <div class="font-semibold text-pink-600">🩷 Menstruasi</div>
-        <p>
-            Digunakan khusus untuk siswi yang tidak mengikuti ibadah karena sedang
-            menstruasi.
-        </p>
-    </div>
-
-    <div>
-        <div class="font-semibold text-red-600">🔴 Tidak Hadir</div>
-        <p>
-            Digunakan apabila siswa seharusnya mengikuti ibadah tetapi tidak hadir
-            tanpa alasan yang dibenarkan.
-        </p>
-    </div>
-
-    <div
-        class="rounded-lg border border-yellow-300 bg-yellow-50 p-3 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-200">
-        <div class="font-semibold">
-            💡 Catatan
+        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <div style="font-weight: 600; color: #059669; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🟢</span> Hadir
+            </div>
+            <p style="margin: 0; color: #4b5563; padding-left: 1.5rem;">
+                Digunakan apabila siswa mengikuti ibadah tetapi tidak berhasil melakukan scan RFID (kartu rusak, reader
+                bermasalah, atau kendala teknis lainnya).
+            </p>
         </div>
 
-        <p class="mt-1">
+        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <div style="font-weight: 600; color: #db2777; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🩷</span> Menstruasi
+            </div>
+            <p style="margin: 0; color: #4b5563; padding-left: 1.5rem;">
+                Digunakan khusus untuk siswi yang tidak mengikuti ibadah karena sedang menstruasi.
+            </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <div style="font-weight: 600; color: #dc2626; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔴</span> Tidak Hadir
+            </div>
+            <p style="margin: 0; color: #4b5563; padding-left: 1.5rem;">
+                Digunakan apabila siswa seharusnya mengikuti ibadah tetapi tidak hadir tanpa alasan yang dibenarkan.
+            </p>
+        </div>
+
+    </div>
+
+    {{-- Catatan Box --}}
+    <div
+        style="
+        border-radius: 0.75rem;
+        border: 1px solid #fde68a;
+        background-color: #fefce8;
+        padding: 1rem;
+        color: #92400e;
+    ">
+        <div style="font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <span>💡</span> Catatan
+        </div>
+        <p style="margin: 0.25rem 0 0 0; line-height: 1.5;">
             Halaman ini hanya menampilkan siswa yang <strong>hadir di madrasah</strong>,
             <strong>tidak sedang sakit</strong>, <strong>tidak izin</strong>,
             <strong>tidak alfa</strong>, <strong>tidak sedang izin keluar</strong>,

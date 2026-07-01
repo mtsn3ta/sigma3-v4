@@ -34,4 +34,8 @@ class CreateSiswa extends CreateRecord
             'Menambahkan siswa ' . $this->record->nama
         );
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Siswa Baru';
+    }
 }

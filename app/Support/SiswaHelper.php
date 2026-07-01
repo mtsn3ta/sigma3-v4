@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\KelasSiswa;
 use App\Models\Siswa;
+use App\Models\KehadiranSekolah;
 
 class SiswaHelper
 {
@@ -164,5 +165,53 @@ class SiswaHelper
             )
 
             ->toArray();
+    }
+    /**
+     * Jumlah siswa aktif.
+     */
+    public static function count(): int
+    {
+        return Siswa::query()
+
+            ->where('status', 'aktif')
+
+            ->count();
+    }
+    public static function attendanceSummary(): array
+    {
+        $query = KehadiranSekolah::query()
+            ->whereDate('tanggal', today());
+
+        $hadir = (clone $query)->where('status', 'hadir')->count();
+
+        $terlambat = (clone $query)->where('status', 'terlambat')->count();
+
+        $sakit = (clone $query)->where('status', 'sakit')->count();
+
+        $izin = (clone $query)->where('status', 'izin')->count();
+
+        $alfa = (clone $query)->where('status', 'alfa')->count();
+
+        $total = self::count();
+
+        $persentase = $total > 0
+            ? round((($hadir + $terlambat) / $total) * 100)
+            : 0;
+
+        return [
+            'today' => today()->translatedFormat('l, d F Y'),
+
+            'hadir' => $hadir,
+
+            'terlambat' => $terlambat,
+
+            'sakit' => $sakit,
+
+            'izin' => $izin,
+
+            'alfa' => $alfa,
+
+            'persentase' => $persentase,
+        ];
     }
 }
