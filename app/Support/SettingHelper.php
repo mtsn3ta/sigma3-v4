@@ -73,7 +73,32 @@ class SettingHelper
     {
         return self::setting()?->favicon;
     }
+    public static function schoolLogoUrl(): ?string
+    {
+        $logo = self::schoolLogo();
 
+        return $logo
+            ? asset('storage/' . $logo)
+            : null;
+    }
+
+    public static function schoolOfficialLogoUrl(): ?string
+    {
+        $logo = self::schoolOfficialLogo();
+
+        return $logo
+            ? asset('storage/' . $logo)
+            : null;
+    }
+
+    public static function schoolFaviconUrl(): ?string
+    {
+        $favicon = self::schoolFavicon();
+
+        return $favicon
+            ? asset('storage/' . $favicon)
+            : null;
+    }
     /*
     |--------------------------------------------------------------------------
     | Kepala Madrasah

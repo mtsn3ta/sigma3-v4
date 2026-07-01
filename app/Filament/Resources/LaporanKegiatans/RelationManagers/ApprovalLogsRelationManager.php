@@ -7,7 +7,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ApprovalLogRelationManager extends RelationManager
+class ApprovalLogsRelationManager extends RelationManager
 {
     protected static string $relationship = 'approvalLogs';
 

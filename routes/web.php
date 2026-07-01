@@ -13,10 +13,10 @@ use App\Http\Controllers\PrintMonitoringTugasGuruIzinController;
 use App\Http\Controllers\PrintMonitoringIzinKeluarController;
 use App\Http\Controllers\PrintMonitoringPermasalahanController;
 use App\Http\Controllers\PrintMonitoringEkstrakurikulerController;
+use App\Http\Controllers\Frontend\LandingController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', LandingController::class)
+    ->name('landing');
 Route::get(
     '/proposal/{proposal}/pdf',
     ProposalPdfController::class
