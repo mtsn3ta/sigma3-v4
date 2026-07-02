@@ -91,20 +91,18 @@ export default function UrgentAlert({ visible, onClose }) {
                         RIGHT: ACTION & CLOSE
                     ========================== */}
                     <div className="flex shrink-0 items-center gap-2">
-                        {announcement.lampiran && (
-                            <Link
-                                href={`/pengumuman/${announcement.id}`}
-                                className={cn(
-                                    css.transition,
-                                    radius.full,
-                                    "hidden px-4 py-1.5 text-xs font-bold uppercase tracking-wider",
-                                    "bg-white/40 shadow-sm hover:bg-white/60 md:inline-flex",
-                                    "border border-white/20",
-                                )}
-                            >
-                                Lihat Detail
-                            </Link>
-                        )}
+                        <Link
+                            href={`/pengumuman/${announcement.id}`}
+                            className={cn(
+                                css.transition,
+                                radius.full,
+                                "hidden px-4 py-1.5 text-xs font-bold uppercase tracking-wider",
+                                "bg-white/40 shadow-sm hover:bg-white/60 md:inline-flex",
+                                "border border-white/20",
+                            )}
+                        >
+                            Lihat Detail
+                        </Link>
 
                         <button
                             type="button"

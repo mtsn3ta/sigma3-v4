@@ -18,6 +18,7 @@ use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\EkstrakurikulerController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\MonitoringAttendanceController;
+use App\Http\Controllers\PengumumanController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
@@ -29,6 +30,10 @@ Route::get(
     '/monitoring',
     [MonitoringAttendanceController::class, 'index']
 )->name('monitoring');
+Route::get(
+    '/pengumuman/{pengumuman}',
+    PengumumanController::class
+)->name('frontend.pengumuman.show');
 Route::get(
     '/ekstrakurikuler',
     [EkstrakurikulerController::class, 'index']
