@@ -192,7 +192,7 @@ export default function Landing() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-auto lg:auto-rows-80">
                         {/* 1. MONITORING ABSENSI (Lebar 2 Kolom) */}
                         <Link
-                            href="/monitoring-absensi"
+                            href="/monitoring"
                             className="group block lg:col-span-2 h-full outline-none"
                         >
                             <GlassCard className="relative h-full w-full p-6 lg:p-8 flex flex-col overflow-hidden bg-white/60 border-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:bg-white/80">

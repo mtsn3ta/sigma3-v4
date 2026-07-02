@@ -14,9 +14,25 @@ use App\Http\Controllers\PrintMonitoringIzinKeluarController;
 use App\Http\Controllers\PrintMonitoringPermasalahanController;
 use App\Http\Controllers\PrintMonitoringEkstrakurikulerController;
 use App\Http\Controllers\Frontend\LandingController;
+use App\Http\Controllers\PrestasiController;
+use App\Http\Controllers\EkstrakurikulerController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\MonitoringAttendanceController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
+Route::get('/prestasi', [PrestasiController::class, 'index'])
+    ->name('prestasi');
+Route::get('/galeri', [GalleryController::class, 'index'])
+    ->name('galeri');
+Route::get(
+    '/monitoring',
+    [MonitoringAttendanceController::class, 'index']
+)->name('monitoring');
+Route::get(
+    '/ekstrakurikuler',
+    [EkstrakurikulerController::class, 'index']
+)->name('ekstrakurikuler');
 Route::get(
     '/proposal/{proposal}/pdf',
     ProposalPdfController::class

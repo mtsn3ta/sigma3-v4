@@ -12,6 +12,10 @@ export const spacing = {
     heroTop: "pt-24 lg:pt-28",
     heroBottom: "pb-20 lg:pb-24",
 
+    // Internal Pages
+    pageHeroTop: "pt-36 lg:pt-40",
+    pageHeroBottom: "pb-14 lg:pb-16",
+
     card: "p-6 lg:p-8",
 
     buttonX: "px-6",

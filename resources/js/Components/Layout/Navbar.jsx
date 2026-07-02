@@ -22,7 +22,7 @@ const MENUS = [
     },
     {
         title: "Monitoring Absensi",
-        href: "#monitoring",
+        href: "/monitoring",
     },
     {
         title: "Student Intelligence",
