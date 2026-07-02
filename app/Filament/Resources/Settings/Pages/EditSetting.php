@@ -45,4 +45,8 @@ class EditSetting extends EditRecord
             'Mengubah pengaturan sistem.'
         );
     }
+    public function getTitle(): string
+    {
+        return 'Pengaturan Umum & Jam Absen';
+    }
 }

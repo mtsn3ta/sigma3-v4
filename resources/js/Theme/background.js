@@ -64,7 +64,8 @@ glowLeft: `
     blur-[180px]
 `,
     // Memberikan tekstur "kertas" digital yang sangat halus
-    noise: "absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]",
+   noise:
+"absolute inset-0 pointer-events-none opacity-[0.02]",
 
     // Grid yang halus untuk kesan "Tech/Future"
     grid: `

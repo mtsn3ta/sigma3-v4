@@ -19,9 +19,7 @@ class SettingResource extends Resource
     protected static string|BackedEnum|null $navigationIcon =
     Heroicon::OutlinedCog6Tooth;
 
-    protected static ?string $recordTitleAttribute = 'nama_madrasah';
-
-    protected static ?string $navigationLabel = 'Settings';
+    protected static ?string $navigationLabel = 'Pengaturan';
 
     protected static ?string $pluralModelLabel = 'Settings';
 

@@ -19,9 +19,26 @@ use App\Http\Controllers\EkstrakurikulerController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\MonitoringAttendanceController;
 use App\Http\Controllers\PengumumanController;
+use Inertia\Inertia;
 
 Route::get('/', LandingController::class)
     ->name('landing');
+Route::prefix('absensi')
+    ->name('absensi.')
+    ->group(function () {
+
+        Route::get('/', function () {
+            return Inertia::render('RFID/School');
+        })->name('sekolah');
+
+        Route::get('/ibadah', function () {
+            return Inertia::render('RFID/Ibadah');
+        })->name('ibadah');
+
+        Route::get('/ekskul', function () {
+            return Inertia::render('RFID/Extracurricular');
+        })->name('ekskul');
+    });
 Route::get('/prestasi', [PrestasiController::class, 'index'])
     ->name('prestasi');
 Route::get('/galeri', [GalleryController::class, 'index'])

@@ -149,7 +149,93 @@ class SettingHelper
     {
         return self::setting()?->tahunAjaranAktif?->tahun ?? '-';
     }
+    /*
+|--------------------------------------------------------------------------
+| RFID School
+|--------------------------------------------------------------------------
+*/
 
+    public static function rfidSchoolEnabled(): bool
+    {
+        return (bool) self::setting()?->rfid_school_enabled;
+    }
+
+    public static function rfidSchoolCheckinStart(): string
+    {
+        return self::setting()?->rfid_school_checkin_start ?? '06:00:00';
+    }
+
+    public static function rfidSchoolCheckinEnd(): string
+    {
+        return self::setting()?->rfid_school_checkin_end ?? '07:10:00';
+    }
+
+    public static function rfidSchoolCheckoutStart(): string
+    {
+        return self::setting()?->rfid_school_checkout_start ?? '14:30:00';
+    }
+
+    public static function rfidSchoolCheckoutEnd(): string
+    {
+        return self::setting()?->rfid_school_checkout_end ?? '17:00:00';
+    }
+
+    /*
+|--------------------------------------------------------------------------
+| RFID Ibadah
+|--------------------------------------------------------------------------
+*/
+
+    public static function rfidIbadahEnabled(): bool
+    {
+        return (bool) self::setting()?->rfid_ibadah_enabled;
+    }
+
+    public static function rfidDhuhaStart(): string
+    {
+        return self::setting()?->rfid_ibadah_dhuha_start ?? '06:40:00';
+    }
+
+    public static function rfidDhuhaEnd(): string
+    {
+        return self::setting()?->rfid_ibadah_dhuha_end ?? '07:00:00';
+    }
+
+    public static function rfidDzuhurStart(): string
+    {
+        return self::setting()?->rfid_ibadah_dzuhur_start ?? '11:45:00';
+    }
+
+    public static function rfidDzuhurEnd(): string
+    {
+        return self::setting()?->rfid_ibadah_dzuhur_end ?? '12:20:00';
+    }
+
+    public static function rfidDisableFriday(): bool
+    {
+        return (bool) self::setting()?->rfid_ibadah_disable_friday;
+    }
+
+    /*
+|--------------------------------------------------------------------------
+| RFID General
+|--------------------------------------------------------------------------
+*/
+
+    public static function rfidUidLockSeconds(): int
+    {
+        return (int) (self::setting()?->rfid_general_uid_lock_seconds ?? 2);
+    }
+
+    public static function rfidEnableWebNfc(): bool
+    {
+        return (bool) self::setting()?->rfid_general_enable_web_nfc;
+    }
+
+    public static function rfidEnableUsbReader(): bool
+    {
+        return (bool) self::setting()?->rfid_general_enable_usb_reader;
+    }
     /*
     |--------------------------------------------------------------------------
     | Lainnya

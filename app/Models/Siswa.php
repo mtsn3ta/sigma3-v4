@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Siswa extends Model
 {
@@ -125,6 +126,14 @@ class Siswa extends Model
     {
         return $this->hasMany(
             KehadiranIbadah::class
+        );
+    }
+
+    public function scopeAktif(Builder $query): Builder
+    {
+        return $query->where(
+            'status',
+            'aktif',
         );
     }
 }
