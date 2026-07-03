@@ -14,11 +14,11 @@ const MENUS = [
     },
     {
         title: "Fitur",
-        href: "#fitur-modul",
+        href: "/#fitur-modul", // Tambahkan '/' di depan agar kembali ke beranda dari halaman lain
     },
     {
-        title: "Prestasi",
-        href: "#features",
+        title: "Layanan Unggulan",
+        href: "/#features",
     },
     {
         title: "Monitoring Absensi",
@@ -26,28 +26,38 @@ const MENUS = [
     },
     {
         title: "Student Intelligence",
-        href: "#student-intelligence",
+        href: "/#student-intelligence",
     },
 ];
 
+// Sesuaikan ID dengan yang ada di DOM dan title dengan MENUS
 const SECTIONS = {
-    prestasi: "Prestasi",
-    monitoring: "Monitoring Absensi",
+    "fitur-modul": "Fitur",
+    features: "Layanan Unggulan",
     "student-intelligence": "Student Intelligence",
 };
 
 export default function Navbar({ hasUrgentAlert = false }) {
-    const { settings } = usePage().props;
+    // Ambil url saat ini dari Inertia untuk membedakan halaman aktif
+    const { props, url } = usePage();
+    const settings = props.settings || {};
 
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [active, setActive] = useState("Beranda");
 
-    // Efek untuk mendeteksi posisi scroll dan menu aktif
+    // Efek untuk mendeteksi posisi scroll dan menu aktif berdasarkan URL
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
 
+            // Jika sedang berada di halaman monitoring, set aktif statis tanpa cek scroll section
+            if (url && url.startsWith("/monitoring")) {
+                setActive("Monitoring Absensi");
+                return;
+            }
+
+            // Jika di halaman beranda, jalankan scroll spy
             let current = "Beranda";
 
             Object.entries(SECTIONS).forEach(([id, title]) => {
@@ -65,10 +75,11 @@ export default function Navbar({ hasUrgentAlert = false }) {
 
         window.addEventListener("scroll", handleScroll);
 
+        // Jalankan saat pertama kali mount atau URL berubah
         handleScroll();
 
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [url]); // Tambahkan url sebagai dependency agar update saat pindah halaman
 
     // Efek untuk mengunci scroll body saat mobile menu terbuka
     useEffect(() => {
@@ -121,7 +132,7 @@ export default function Navbar({ hasUrgentAlert = false }) {
                             {settings.logo ? (
                                 <img
                                     src={settings.logo}
-                                    alt={settings.school_name}
+                                    alt={settings.school_name || "Logo"}
                                     className={cn(
                                         css.transition,
                                         "h-10 w-10 object-contain group-hover:scale-105 md:h-11 md:w-11",
@@ -249,14 +260,7 @@ export default function Navbar({ hasUrgentAlert = false }) {
                             style={{
                                 top: topOffset,
                             }}
-                            className="
-    fixed
-    inset-x-0
-    bottom-0
-    z-40
-    bg-slate-900/20
-    backdrop-blur-sm
-"
+                            className="fixed inset-x-0 bottom-0 z-40 bg-slate-900/20 backdrop-blur-sm"
                         />
 
                         <motion.aside

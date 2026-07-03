@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
-import { Head, usePage, router } from "@inertiajs/react";
-import { useState } from "react";
+import { Head, usePage } from "@inertiajs/react";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 import FrontendLayout from "@/Layouts/FrontendLayout";
 
@@ -11,33 +12,98 @@ import GlassCard from "@/Components/UI/GlassCard";
 import { cn, background, motion as motionTheme, spacing } from "@/Theme";
 
 export default function Monitoring() {
+    const searchTimeout = useRef(null);
+    /*
+    |--------------------------------------------------------------------------
+    | Initial Data (Inertia)
+    |--------------------------------------------------------------------------
+    */
+
     const {
+        attendance: initialAttendance,
+        statistics: initialStatistics,
         settings,
-        statistics = {},
-        attendance = { data: [] },
-        filters = {},
+        filters: initialFilters = {},
         classes = {},
     } = usePage().props;
 
-    const [search, setSearch] = useState(filters.search ?? "");
-    const [kelas, setKelas] = useState(filters.kelas ?? "");
-    const [tanggal, setTanggal] = useState(filters.tanggal ?? "");
+    /*
+|--------------------------------------------------------------------------
+| React State
+|--------------------------------------------------------------------------
+*/
 
-    const applyFilter = () => {
-        router.get(
-            "/monitoring",
-            {
-                search,
-                kelas,
-                tanggal,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                replace: true,
-            },
-        );
+    const [attendance, setAttendance] = useState(initialAttendance);
+
+    const [statistics, setStatistics] = useState(initialStatistics);
+
+    const [loading, setLoading] = useState(false);
+
+    const [filters, setFilters] = useState({
+        search: initialFilters.search ?? "",
+        kelas: initialFilters.kelas ?? "",
+        tanggal: initialFilters.tanggal ?? "",
+    });
+
+    /*
+|--------------------------------------------------------------------------
+| Load Attendance
+|--------------------------------------------------------------------------
+*/
+
+    const loadAttendance = async (
+        currentFilters = filters,
+        page = attendance.current_page ?? 1,
+    ) => {
+        setLoading(true);
+
+        try {
+            const { data } = await axios.get("/api/monitoring", {
+                params: {
+                    ...currentFilters,
+                    page,
+                },
+            });
+
+            setAttendance(data.attendance);
+
+            setStatistics(data.statistics);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
+
+    /*
+|--------------------------------------------------------------------------
+| Apply Filter
+|--------------------------------------------------------------------------
+*/
+
+    const applyFilter = (changes = {}) => {
+        const newFilters = {
+            ...filters,
+            ...changes,
+        };
+
+        setFilters(newFilters);
+
+        loadAttendance(newFilters, 1);
+    };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            loadAttendance(filters);
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [filters]);
+    /*
+    |--------------------------------------------------------------------------
+    | Components
+    |--------------------------------------------------------------------------
+    */
 
     const SelectChevron = () => (
         <svg
@@ -50,7 +116,7 @@ export default function Monitoring() {
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="m19 9-7 7-7-7"
+                d="M19 9l-7 7-7-7"
             />
         </svg>
     );
@@ -269,13 +335,29 @@ export default function Monitoring() {
 
                                     <input
                                         type="text"
-                                        value={search}
-                                        onChange={(e) =>
-                                            setSearch(e.target.value)
-                                        }
+                                        value={filters.search}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+
+                                            setFilters((current) => ({
+                                                ...current,
+                                                search: value,
+                                            }));
+
+                                            clearTimeout(searchTimeout.current);
+
+                                            searchTimeout.current = setTimeout(
+                                                () => {
+                                                    applyFilter({
+                                                        search: value,
+                                                    });
+                                                },
+                                                300,
+                                            );
+                                        }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                applyFilter();
+                                                applyFilter(filters);
                                             }
                                         }}
                                         placeholder="Cari NISN atau nama siswa..."
@@ -302,11 +384,12 @@ export default function Monitoring() {
                                     </svg>
 
                                     <select
-                                        value={kelas}
-                                        onChange={(e) => {
-                                            setKelas(e.target.value);
-                                            applyFilter();
-                                        }}
+                                        value={filters.kelas}
+                                        onChange={(e) =>
+                                            applyFilter({
+                                                kelas: e.target.value,
+                                            })
+                                        }
                                         className="h-12 w-full appearance-none rounded-2xl border border-white bg-white/70 pl-11 pr-9 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
                                     >
                                         <option value="">Semua Kelas</option>
@@ -328,11 +411,12 @@ export default function Monitoring() {
                                 <div className="relative">
                                     <input
                                         type="date"
-                                        value={tanggal}
-                                        onChange={(e) => {
-                                            setTanggal(e.target.value);
-                                            applyFilter();
-                                        }}
+                                        value={filters.tanggal}
+                                        onChange={(e) =>
+                                            applyFilter({
+                                                tanggal: e.target.value,
+                                            })
+                                        }
                                         className="h-12 w-full rounded-2xl border border-white bg-white/70 px-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
                                     />
                                 </div>
@@ -379,81 +463,121 @@ export default function Monitoring() {
                                     </thead>
 
                                     <tbody className="divide-y divide-slate-100 bg-white/40">
-                                        {attendance.data.map((student, idx) => (
-                                            <motion.tr
-                                                key={student.id}
-                                                initial={{ opacity: 0, y: 12 }}
-                                                whileInView={{
-                                                    opacity: 1,
-                                                    y: 0,
-                                                }}
-                                                viewport={{ once: true }}
-                                                transition={{
-                                                    ...motionTheme.normal,
-                                                    delay: Math.min(
-                                                        idx * 0.03,
-                                                        0.3,
-                                                    ),
-                                                }}
-                                                className="transition-colors hover:bg-emerald-50/40"
-                                            >
-                                                <td className="px-6 py-4 font-mono text-sm text-slate-600">
-                                                    {student.nisn}
+                                        {loading ? (
+                                            <tr>
+                                                <td
+                                                    colSpan={8}
+                                                    className="px-6 py-16 text-center text-slate-500"
+                                                >
+                                                    Memuat data...
                                                 </td>
-
-                                                <td className="px-6 py-4">
-                                                    <div>
-                                                        <p className="font-bold text-slate-900">
-                                                            {student.nama}
-                                                        </p>
-
-                                                        <p className="text-xs text-slate-500">
-                                                            {student.kelas}
-                                                        </p>
-                                                    </div>
-                                                </td>
-
-                                                <td className="px-6 py-4">
-                                                    {student.jam_datang ?? "-"}
-                                                </td>
-
-                                                <td className="px-6 py-4">
-                                                    {student.jam_dhuha ?? "-"}
-                                                </td>
-
-                                                <td className="px-6 py-4">
-                                                    {student.jam_dzuhur ?? "-"}
-                                                </td>
-
-                                                <td className="px-6 py-4">
-                                                    {student.jam_pulang ?? "-"}
-                                                </td>
-
-                                                <td className="px-6 py-4">
-                                                    <Badge
-                                                        variant={
-                                                            student.status.color
-                                                        }
+                                            </tr>
+                                        ) : (
+                                            attendance.data.map(
+                                                (student, idx) => (
+                                                    <motion.tr
+                                                        key={student.id}
+                                                        initial={{
+                                                            opacity: 0,
+                                                            y: 12,
+                                                        }}
+                                                        whileInView={{
+                                                            opacity: 1,
+                                                            y: 0,
+                                                        }}
+                                                        viewport={{
+                                                            once: true,
+                                                        }}
+                                                        transition={{
+                                                            ...motionTheme.normal,
+                                                            delay: Math.min(
+                                                                idx * 0.03,
+                                                                0.3,
+                                                            ),
+                                                        }}
+                                                        className="transition-colors hover:bg-emerald-50/40"
                                                     >
-                                                        {student.status.icon}{" "}
-                                                        {student.status.label}
-                                                    </Badge>
-                                                </td>
+                                                        <td className="px-6 py-4 font-mono text-sm text-slate-600">
+                                                            {student.nisn}
+                                                        </td>
 
-                                                <td className="px-6 py-4">
-                                                    <Badge
-                                                        variant={
-                                                            student.rfid
-                                                                .code === "rfid"
-                                                                ? "primary"
-                                                                : "secondary"
-                                                        }
-                                                    >
-                                                        {student.rfid.label}
-                                                    </Badge>
-                                                </td>
-                                            </motion.tr>
-                                        ))}
+                                                        <td className="px-6 py-4">
+                                                            <div>
+                                                                <p className="font-bold text-slate-900">
+                                                                    {
+                                                                        student.nama
+                                                                    }
+                                                                </p>
+
+                                                                <p className="text-xs text-slate-500">
+                                                                    {
+                                                                        student.kelas
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            {student.jam_datang ??
+                                                                "-"}
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            {student.jam_dhuha ??
+                                                                "-"}
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            {student.jam_dzuhur ??
+                                                                "-"}
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            {student.jam_pulang ??
+                                                                "-"}
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            <Badge
+                                                                variant={
+                                                                    student
+                                                                        .status
+                                                                        .color
+                                                                }
+                                                            >
+                                                                {
+                                                                    student
+                                                                        .status
+                                                                        .icon
+                                                                }{" "}
+                                                                {
+                                                                    student
+                                                                        .status
+                                                                        .label
+                                                                }
+                                                            </Badge>
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            <Badge
+                                                                variant={
+                                                                    student.rfid
+                                                                        .code ===
+                                                                    "rfid"
+                                                                        ? "primary"
+                                                                        : "secondary"
+                                                                }
+                                                            >
+                                                                {
+                                                                    student.rfid
+                                                                        .label
+                                                                }
+                                                            </Badge>
+                                                        </td>
+                                                    </motion.tr>
+                                                ),
+                                            )
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -486,15 +610,27 @@ export default function Monitoring() {
                                 <button
                                     key={index}
                                     type="button"
-                                    disabled={!link.url}
-                                    onClick={() => {
-                                        if (!link.url) return;
+                                    disabled={!link.url || loading}
+                                    onClick={async () => {
+                                        if (!link.url || loading) {
+                                            return;
+                                        }
 
-                                        router.visit(link.url, {
-                                            preserveScroll: true,
-                                            preserveState: true,
-                                            replace: true,
-                                        });
+                                        setLoading(true);
+
+                                        try {
+                                            const { data } = await axios.get(
+                                                link.url,
+                                            );
+
+                                            setAttendance(data.attendance);
+
+                                            setStatistics(data.statistics);
+                                        } catch (error) {
+                                            console.error(error);
+                                        } finally {
+                                            setLoading(false);
+                                        }
                                     }}
                                     className={cn(
                                         "flex h-11 min-w-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold transition-all duration-300",

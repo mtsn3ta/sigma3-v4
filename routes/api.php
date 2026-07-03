@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RFID\SchoolRfidController;
 use App\Http\Controllers\Api\RFID\IbadahRfidController;
 use App\Http\Controllers\API\RFID\EkstrakurikulerRfidController;
+use App\Http\Controllers\Api\MonitoringAttendanceController;
 
 Route::post(
     '/rfid/sekolah',
@@ -16,4 +17,8 @@ Route::post(
 Route::post(
     '/rfid/ekskul',
     [EkstrakurikulerRfidController::class, 'scan']
+);
+Route::get(
+    '/monitoring',
+    MonitoringAttendanceController::class
 );

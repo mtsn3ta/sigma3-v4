@@ -167,6 +167,103 @@ export default function Landing() {
                     </div>
                 </Container>
             </section>
+            <section
+                id="fitur-modul"
+                className={cn("relative z-10", spacing.sectionY)}
+            >
+                <Container>
+                    <div className="mb-16 text-center">
+                        <Badge variant="primary" className="mb-4">
+                            Modul Sistem
+                        </Badge>
+
+                        <h2 className="text-3xl font-black tracking-tight text-slate-900 md:text-5xl">
+                            Ekosistem Digital
+                            <br />
+                            <span className="text-emerald-500">SIGMA-3</span>
+                        </h2>
+
+                        <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-slate-500">
+                            Seluruh layanan madrasah terintegrasi dalam satu
+                            platform, mulai dari kehadiran, pembelajaran,
+                            bimbingan konseling, ekstrakurikuler, hingga
+                            publikasi informasi.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                        {[
+                            {
+                                icon: "💳",
+                                title: "eKartu Pelajar",
+                                desc: "RFID, kehadiran sekolah, serta monitoring ibadah.",
+                            },
+                            {
+                                icon: "📊",
+                                title: "Monitoring Absensi",
+                                desc: "Monitoring kehadiran siswa secara realtime.",
+                            },
+                            {
+                                icon: "🎓",
+                                title: "Ekstrakurikuler",
+                                desc: "Manajemen anggota, kegiatan, proposal, dan laporan.",
+                            },
+                            {
+                                icon: "🧠",
+                                title: "BK Digital",
+                                desc: "Konseling, permasalahan siswa, dan tindak lanjut.",
+                            },
+                            {
+                                icon: "👨‍🏫",
+                                title: "Jurnal Mengajar",
+                                desc: "Presensi pembelajaran dan jurnal guru.",
+                            },
+                            {
+                                icon: "🏆",
+                                title: "Prestasi",
+                                desc: "Publikasi prestasi akademik maupun non akademik.",
+                            },
+                            {
+                                icon: "🖼️",
+                                title: "Galeri",
+                                desc: "Dokumentasi kegiatan dan publikasi madrasah.",
+                            },
+                            {
+                                icon: "📢",
+                                title: "Pengumuman",
+                                desc: "Informasi penting dan urgent alert madrasah.",
+                            },
+                        ].map((fitur, index) => (
+                            <GlassCard
+                                key={index}
+                                className="
+                        group
+                        border-white
+                        bg-white/60
+                        p-6
+                        transition-all
+                        duration-300
+                        hover:-translate-y-2
+                        hover:border-emerald-200
+                        hover:bg-white
+                    "
+                            >
+                                <div className="mb-5 text-5xl transition-transform duration-300 group-hover:scale-110">
+                                    {fitur.icon}
+                                </div>
+
+                                <h3 className="mb-3 text-lg font-black text-slate-900">
+                                    {fitur.title}
+                                </h3>
+
+                                <p className="text-sm leading-relaxed text-slate-500">
+                                    {fitur.desc}
+                                </p>
+                            </GlassCard>
+                        ))}
+                    </div>
+                </Container>
+            </section>
             {/* ==========================================================
                 BENTO GRID FEATURES
             ========================================================== */}
@@ -540,103 +637,6 @@ export default function Landing() {
                                 </div>
                             </GlassCard>
                         </Link>
-                    </div>
-                </Container>
-            </section>
-            <section
-                id="fitur-modul"
-                className={cn("relative z-10", spacing.sectionY)}
-            >
-                <Container>
-                    <div className="mb-16 text-center">
-                        <Badge variant="primary" className="mb-4">
-                            Modul Sistem
-                        </Badge>
-
-                        <h2 className="text-3xl font-black tracking-tight text-slate-900 md:text-5xl">
-                            Ekosistem Digital
-                            <br />
-                            <span className="text-emerald-500">SIGMA-3</span>
-                        </h2>
-
-                        <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-slate-500">
-                            Seluruh layanan madrasah terintegrasi dalam satu
-                            platform, mulai dari kehadiran, pembelajaran,
-                            bimbingan konseling, ekstrakurikuler, hingga
-                            publikasi informasi.
-                        </p>
-                    </div>
-
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {[
-                            {
-                                icon: "💳",
-                                title: "eKartu Pelajar",
-                                desc: "RFID, kehadiran sekolah, serta monitoring ibadah.",
-                            },
-                            {
-                                icon: "📊",
-                                title: "Monitoring Absensi",
-                                desc: "Monitoring kehadiran siswa secara realtime.",
-                            },
-                            {
-                                icon: "🎓",
-                                title: "Ekstrakurikuler",
-                                desc: "Manajemen anggota, kegiatan, proposal, dan laporan.",
-                            },
-                            {
-                                icon: "🧠",
-                                title: "BK Digital",
-                                desc: "Konseling, permasalahan siswa, dan tindak lanjut.",
-                            },
-                            {
-                                icon: "👨‍🏫",
-                                title: "Jurnal Mengajar",
-                                desc: "Presensi pembelajaran dan jurnal guru.",
-                            },
-                            {
-                                icon: "🏆",
-                                title: "Prestasi",
-                                desc: "Publikasi prestasi akademik maupun non akademik.",
-                            },
-                            {
-                                icon: "🖼️",
-                                title: "Galeri",
-                                desc: "Dokumentasi kegiatan dan publikasi madrasah.",
-                            },
-                            {
-                                icon: "📢",
-                                title: "Pengumuman",
-                                desc: "Informasi penting dan urgent alert madrasah.",
-                            },
-                        ].map((fitur, index) => (
-                            <GlassCard
-                                key={index}
-                                className="
-                        group
-                        border-white
-                        bg-white/60
-                        p-6
-                        transition-all
-                        duration-300
-                        hover:-translate-y-2
-                        hover:border-emerald-200
-                        hover:bg-white
-                    "
-                            >
-                                <div className="mb-5 text-5xl transition-transform duration-300 group-hover:scale-110">
-                                    {fitur.icon}
-                                </div>
-
-                                <h3 className="mb-3 text-lg font-black text-slate-900">
-                                    {fitur.title}
-                                </h3>
-
-                                <p className="text-sm leading-relaxed text-slate-500">
-                                    {fitur.desc}
-                                </p>
-                            </GlassCard>
-                        ))}
                     </div>
                 </Container>
             </section>

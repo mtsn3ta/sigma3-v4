@@ -33,11 +33,7 @@ class KehadiranSekolah extends Model
 
     protected $casts = [
 
-        'tanggal'     => 'date',
-
-        'jam_datang'  => 'datetime:H:i',
-
-        'jam_pulang'  => 'datetime:H:i',
+        'tanggal' => 'date',
 
     ];
 
