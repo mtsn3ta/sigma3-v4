@@ -136,7 +136,7 @@ export default function Monitoring() {
                     className={cn(
                         background.hero,
                         spacing.pageHeroTop,
-                        spacing.pageHeroBottom,
+                        spacing.pageHeroBottomMonitoring,
                         "relative overflow-hidden",
                     )}
                 >
@@ -309,12 +309,14 @@ export default function Monitoring() {
     FILTER
 ======================================================= */}
 
-                <section className={cn("relative z-10", spacing.sectionY)}>
+                <section
+                    className={cn("relative z-10", spacing.sectionYMonitoring)}
+                >
                     <Container>
-                        <GlassCard className="relative overflow-hidden border border-white/70 bg-white/55 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-xl">
+                        <GlassCard className="relative overflow-hidden border border-white/70 bg-white/55 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-xl">
                             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-emerald-400/50 to-transparent" />
 
-                            <div className="grid gap-4 lg:grid-cols-[1fr_220px_220px]">
+                            <div className="grid items-center gap-3 lg:grid-cols-[1fr_200px_190px]">
                                 {/* Search */}
 
                                 <div className="relative">
@@ -361,7 +363,7 @@ export default function Monitoring() {
                                             }
                                         }}
                                         placeholder="Cari NISN atau nama siswa..."
-                                        className="h-12 w-full rounded-2xl border border-white bg-white/70 pl-12 pr-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                                        className="h-11 w-full rounded-2xl border border-white bg-white/70 pl-12 pr-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
                                     />
                                 </div>
 
@@ -390,7 +392,7 @@ export default function Monitoring() {
                                                 kelas: e.target.value,
                                             })
                                         }
-                                        className="h-12 w-full appearance-none rounded-2xl border border-white bg-white/70 pl-11 pr-9 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                                        className="h-11 w-full appearance-none rounded-2xl border border-white bg-white/70 pl-11 pr-9 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
                                     >
                                         <option value="">Semua Kelas</option>
 
@@ -417,7 +419,7 @@ export default function Monitoring() {
                                                 tanggal: e.target.value,
                                             })
                                         }
-                                        className="h-12 w-full rounded-2xl border border-white bg-white/70 px-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                                        className="h-11 w-full rounded-2xl border border-white bg-white/70 px-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
                                     />
                                 </div>
                             </div>
@@ -432,48 +434,60 @@ export default function Monitoring() {
                 <section className={spacing.sectionBottom}>
                     <Container>
                         <GlassCard className="overflow-hidden border border-white/70 bg-white/60 backdrop-blur-xl">
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-slate-100">
-                                    <thead className="bg-slate-50/80">
-                                        <tr className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            <th className="px-6 py-4">NISN</th>
+                            {/* =========================
+        Desktop
+    ========================= */}
+                            <div className="hidden lg:block overflow-x-auto">
+                                {loading ? (
+                                    <div className="py-16 text-center text-slate-500">
+                                        Memuat data...
+                                    </div>
+                                ) : attendance.data.length === 0 ? (
+                                    <div className="py-20 text-center">
+                                        <div className="text-6xl">📡</div>
 
-                                            <th className="px-6 py-4">Nama</th>
+                                        <h3 className="mt-6 text-2xl font-black text-slate-900">
+                                            Tidak ada data monitoring.
+                                        </h3>
 
-                                            <th className="px-6 py-4">
-                                                Datang
-                                            </th>
-
-                                            <th className="px-6 py-4">Dhuha</th>
-
-                                            <th className="px-6 py-4">
-                                                Dzuhur
-                                            </th>
-
-                                            <th className="px-6 py-4">
-                                                Pulang
-                                            </th>
-
-                                            <th className="px-6 py-4">
-                                                Status
-                                            </th>
-
-                                            <th className="px-6 py-4">RFID</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody className="divide-y divide-slate-100 bg-white/40">
-                                        {loading ? (
-                                            <tr>
-                                                <td
-                                                    colSpan={8}
-                                                    className="px-6 py-16 text-center text-slate-500"
-                                                >
-                                                    Memuat data...
-                                                </td>
+                                        <p className="mt-3 text-slate-500">
+                                            Belum terdapat data kehadiran untuk
+                                            filter yang dipilih.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <table className="min-w-full divide-y divide-slate-100">
+                                        <thead className="bg-slate-50/80">
+                                            <tr className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                                <th className="px-6 py-4">
+                                                    NISN
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Nama
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Datang
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Dhuha
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Dzuhur
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Pulang
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Status
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    RFID
+                                                </th>
                                             </tr>
-                                        ) : (
-                                            attendance.data.map(
+                                        </thead>
+
+                                        <tbody className="divide-y divide-slate-100 bg-white/40">
+                                            {attendance.data.map(
                                                 (student, idx) => (
                                                     <motion.tr
                                                         key={student.id}
@@ -576,26 +590,132 @@ export default function Monitoring() {
                                                         </td>
                                                     </motion.tr>
                                                 ),
-                                            )
-                                        )}
-                                    </tbody>
-                                </table>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                )}
                             </div>
 
-                            {attendance.data.length === 0 && (
-                                <div className="py-20 text-center">
-                                    <div className="text-6xl">📡</div>
+                            {/* =========================
+        Mobile
+    ========================= */}
 
-                                    <h3 className="mt-6 text-2xl font-black text-slate-900">
-                                        Tidak ada data monitoring.
-                                    </h3>
+                            <div className="space-y-4 p-4 lg:hidden">
+                                {loading ? (
+                                    <div className="py-16 text-center text-slate-500">
+                                        Memuat data...
+                                    </div>
+                                ) : attendance.data.length === 0 ? (
+                                    <div className="py-20 text-center">
+                                        <div className="text-6xl">📡</div>
 
-                                    <p className="mt-3 text-slate-500">
-                                        Belum terdapat data kehadiran untuk
-                                        filter yang dipilih.
-                                    </p>
-                                </div>
-                            )}
+                                        <h3 className="mt-6 text-xl font-black text-slate-900">
+                                            Tidak ada data monitoring.
+                                        </h3>
+
+                                        <p className="mt-3 text-slate-500">
+                                            Belum terdapat data kehadiran untuk
+                                            filter yang dipilih.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    attendance.data.map((student) => (
+                                        <GlassCard
+                                            key={student.id}
+                                            className="rounded-3xl border border-white/70 bg-white/60 p-5 backdrop-blur-xl"
+                                        >
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <h3 className="text-lg font-black text-slate-900">
+                                                        {student.nama}
+                                                    </h3>
+
+                                                    <p className="mt-1 text-sm text-slate-500">
+                                                        {student.nisn} •{" "}
+                                                        {student.kelas}
+                                                    </p>
+                                                </div>
+
+                                                <Badge
+                                                    variant={
+                                                        student.status.color
+                                                    }
+                                                >
+                                                    {student.status.icon}{" "}
+                                                    {student.status.label}
+                                                </Badge>
+                                            </div>
+
+                                            <div className="my-5 border-t border-slate-100" />
+
+                                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                                <div>
+                                                    <p className="text-slate-400">
+                                                        Datang
+                                                    </p>
+
+                                                    <p className="mt-1 font-semibold text-slate-900">
+                                                        {student.jam_datang ??
+                                                            "-"}
+                                                    </p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="text-slate-400">
+                                                        Pulang
+                                                    </p>
+
+                                                    <p className="mt-1 font-semibold text-slate-900">
+                                                        {student.jam_pulang ??
+                                                            "-"}
+                                                    </p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="text-slate-400">
+                                                        Dhuha
+                                                    </p>
+
+                                                    <p className="mt-1 font-semibold text-slate-900">
+                                                        {student.jam_dhuha ??
+                                                            "-"}
+                                                    </p>
+                                                </div>
+
+                                                <div>
+                                                    <p className="text-slate-400">
+                                                        Dzuhur
+                                                    </p>
+
+                                                    <p className="mt-1 font-semibold text-slate-900">
+                                                        {student.jam_dzuhur ??
+                                                            "-"}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="my-5 border-t border-slate-100" />
+
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-slate-500">
+                                                    Sumber Kehadiran
+                                                </span>
+
+                                                <Badge
+                                                    variant={
+                                                        student.rfid.code ===
+                                                        "rfid"
+                                                            ? "primary"
+                                                            : "secondary"
+                                                    }
+                                                >
+                                                    {student.rfid.label}
+                                                </Badge>
+                                            </div>
+                                        </GlassCard>
+                                    ))
+                                )}
+                            </div>
                         </GlassCard>
                     </Container>
                 </section>
