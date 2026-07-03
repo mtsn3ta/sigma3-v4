@@ -6,16 +6,20 @@ use App\Models\AnggotaEkskul;
 use App\Models\SesiKegiatan;
 use App\Models\Siswa;
 use App\Services\Kehadiran\KehadiranEkskulService;
+use App\Services\RFID\RfidFailedLogger;
 use RuntimeException;
 
 class EkstrakurikulerRfidService
 {
+    protected ?string $uid = null;
     public function __construct(
         protected KehadiranEkskulService $attendance,
+        protected RfidFailedLogger $logger,
     ) {}
 
     public function scan(string $uid): array
     {
+        $this->uid = $uid;
         try {
 
             $student = $this->findStudent($uid);
@@ -225,7 +229,13 @@ class EkstrakurikulerRfidService
         string $type,
         ?Siswa $student = null,
     ): array {
-
+        $this->logger->store(
+            mode: 'ekskul',
+            uid: $this->uid,
+            error: $type,
+            message: $this->errorMessage($type),
+            student: $student,
+        );
         return [
 
             'status' => false,

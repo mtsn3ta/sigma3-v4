@@ -1181,17 +1181,17 @@ Status:
 
 ### RFID Sekolah
 
-- [ ] Scan Datang
-- [ ] Scan Pulang
+- [x] Scan Datang
+- [x] Scan Pulang
 
 ### RFID Ibadah
 
-- [ ] Scan Dhuha
-- [ ] Scan Dzuhur
+- [x] Scan Dhuha
+- [x] Scan Dzuhur
 
 ### RFID Ekstrakurikuler
 
-- [ ] Scan Kehadiran Ekstrakurikuler
+- [x] Scan Kehadiran Ekstrakurikuler
 
 ### Monitoring Device
 

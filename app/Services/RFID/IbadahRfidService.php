@@ -5,18 +5,21 @@ namespace App\Services\RFID;
 use App\Models\Siswa;
 use App\Services\Kehadiran\KehadiranIbadahService;
 use App\Support\SettingHelper;
+use App\Services\RFID\RfidFailedLogger;
 use RuntimeException;
 
 class IbadahRfidService
 {
+    protected ?string $uid = null;
     public function __construct(
         protected KehadiranIbadahService $attendance,
+        protected RfidFailedLogger $logger,
     ) {}
 
     public function scan(string $uid): array
     {
         try {
-
+            $this->uid = $uid;
             $this->validateSetting();
 
             $student = $this->findStudent($uid);
@@ -205,7 +208,13 @@ class IbadahRfidService
         string $type,
         ?Siswa $student = null,
     ): array {
-
+        $this->logger->store(
+            mode: 'ibadah',
+            uid: $this->uid,
+            error: $type,
+            message: $this->errorMessage($type),
+            student: $student,
+        );
         return [
 
             'status' => false,
