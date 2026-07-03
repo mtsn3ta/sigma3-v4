@@ -4,12 +4,36 @@ import { motion } from "motion/react";
 import ScanFrame from "./ScanFrame";
 import Avatar from "@/Components/UI/Avatar";
 
-export default function SuccessScreen({ data }) {
+export default function SuccessScreen({ mode = "school", data }) {
     if (!data?.student) {
         return null;
     }
 
-    const { student, action, message } = data;
+    const { student, action, activity, message, serverTime } = data;
+
+    const title = (() => {
+        switch (mode) {
+            case "ibadah":
+                switch (action) {
+                    case "dhuha":
+                        return "Sholat Dhuha Berhasil";
+
+                    case "dzuhur":
+                        return "Sholat Dzuhur Berhasil";
+
+                    default:
+                        return "Ibadah Berhasil";
+                }
+
+            case "ekskul":
+                return "Kehadiran Berhasil";
+
+            default:
+                return action === "checkin"
+                    ? "Absen Berhasil"
+                    : "Hati-Hati Di Jalan";
+        }
+    })();
 
     return (
         <motion.div
@@ -49,10 +73,17 @@ export default function SuccessScreen({ data }) {
                 </svg>
             </motion.div>
 
-            <p className="rk-mono text-[clamp(0.62rem,1.6vh,0.95rem)] font-semibold uppercase tracking-[0.35em] text-(--rk-emerald)">
-                {action === "checkout"
-                    ? "Absen Berhasil"
-                    : "Hati-Hati Di Jalan"}
+            <p
+                className="
+                    rk-mono
+                    text-[clamp(0.62rem,1.6vh,0.95rem)]
+                    font-semibold
+                    uppercase
+                    tracking-[0.35em]
+                    text-(--rk-emerald)
+                "
+            >
+                {title}
             </p>
 
             <ScanFrame size="0.7rem" offset="0.45rem" color="var(--rk-emerald)">
@@ -64,7 +95,7 @@ export default function SuccessScreen({ data }) {
                         w-[clamp(5.25rem,17vh,9rem)]
                         rounded-3xl
                         border
-                        border-(--rk-line)]
+                        border-(--rk-line)
                         shadow-2xl
                     "
                 />
@@ -86,13 +117,24 @@ export default function SuccessScreen({ data }) {
             <p className="text-[clamp(0.78rem,1.65vh,1.05rem)] font-medium text-(--rk-emerald)">
                 {message}
             </p>
+            {mode === "ekskul" && activity && (
+                <div className="rounded-full border border-(--rk-line) bg-(--rk-panel)/50 px-5 py-2">
+                    <div className="text-[0.58rem] font-semibold uppercase tracking-[0.3em] text-(--rk-muted)">
+                        Ekstrakurikuler
+                    </div>
+
+                    <div className="font-bold text-(--rk-emerald)">
+                        {activity.nama}
+                    </div>
+                </div>
+            )}
 
             <div className="mt-[clamp(0.2rem,0.6vh,0.5rem)] rounded-2xl border border-(--rk-line) bg-(--rk-panel)/50 px-7 py-2.5">
                 <div className="text-[0.58rem] font-semibold uppercase tracking-[0.3em] text-(--rk-muted)">
                     Waktu Scan
                 </div>
                 <div className="rk-mono mt-0.5 text-[clamp(1.2rem,3.1vh,1.85rem)] font-bold text-(--rk-emerald)">
-                    {student.jam}
+                    {serverTime}
                 </div>
             </div>
         </motion.div>

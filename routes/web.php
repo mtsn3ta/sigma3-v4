@@ -36,7 +36,7 @@ Route::prefix('absensi')
         })->name('ibadah');
 
         Route::get('/ekskul', function () {
-            return Inertia::render('RFID/Extracurricular');
+            return Inertia::render('RFID/Ekskul');
         })->name('ekskul');
     });
 Route::get('/prestasi', [PrestasiController::class, 'index'])

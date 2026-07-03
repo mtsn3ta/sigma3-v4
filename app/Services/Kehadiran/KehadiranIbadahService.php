@@ -82,4 +82,41 @@ class KehadiranIbadahService
 
         );
     }
+
+    public function findToday(
+        Siswa $student,
+        string $jenis,
+    ): ?KehadiranIbadah {
+
+        return KehadiranIbadah::query()
+
+            ->where('siswa_id', $student->id)
+
+            ->whereDate('tanggal', today())
+
+            ->where('jenis', $jenis)
+
+            ->first();
+    }
+    public function markRfidHadir(
+        Siswa $student,
+        string $jenis,
+    ): KehadiranIbadah {
+
+        return KehadiranIbadah::create([
+
+            'siswa_id' => $student->id,
+
+            'tanggal' => today(),
+
+            'jenis' => $jenis,
+
+            'status' => 'hadir',
+
+            'jam_scan' => now(),
+
+            'metode' => 'rfid',
+
+        ]);
+    }
 }

@@ -139,15 +139,16 @@ export default function School() {
 
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                 {scanResult.screen === RFID_SCREEN.IDLE && (
-                    <IdleScreen time={time} date={date} />
+                    <IdleScreen mode="school" time={time} date={date} />
                 )}
 
                 {scanResult.screen === RFID_SCREEN.SUCCESS && (
-                    <SuccessScreen data={scanResult} />
+                    <SuccessScreen mode="school" data={scanResult} />
                 )}
 
                 {scanResult.screen === RFID_SCREEN.ERROR && (
                     <ErrorScreen
+                        mode="school"
                         type={scanResult.error?.type}
                         student={scanResult.student}
                     />
