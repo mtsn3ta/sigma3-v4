@@ -27,4 +27,12 @@ class TahunAjaran extends Model
     {
         return $this->hasMany(AnggotaEkskul::class);
     }
+    public static function aktifId(): ?int
+    {
+        return static::query()
+
+            ->where('aktif', true)
+
+            ->value('id');
+    }
 }

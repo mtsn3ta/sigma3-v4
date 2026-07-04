@@ -1,85 +1,77 @@
 @php
-
     use App\Support\LaporanBulananHelper;
 
     /** @var \App\Models\LaporanBulanan $record */
-
     $sessions = LaporanBulananHelper::sesi($record);
-
 @endphp
 
-<h3 class="text-lg font-semibold mt-6 mb-3">
-    2.2 Program Latihan
-</h3>
+<div>
+    <h3 style="font-size: 1rem; font-weight: 600; color: #374151; margin-top: 1.5rem; margin-bottom: 0.75rem;">
+        2.2 Program Latihan
+    </h3>
 
-<div class="overflow-x-auto">
+    {{-- Table Container --}}
+    <div
+        style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; text-align: left; font-size: 0.875rem; border-collapse: collapse;">
 
-    <table class="min-w-full border border-gray-300 text-sm">
+                {{-- Table Header --}}
+                <thead style="background-color: #f9fafb; color: #4b5563; font-weight: 600;">
+                    <tr>
+                        <th
+                            style="padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; text-align: center; width: 60px;">
+                            No
+                        </th>
+                        <th
+                            style="padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; width: 140px;">
+                            Tanggal
+                        </th>
+                        <th
+                            style="padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; width: 200px;">
+                            Pelatih
+                        </th>
+                        <th style="padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb;">
+                            Program Latihan
+                        </th>
+                    </tr>
+                </thead>
 
-        <thead>
+                {{-- Table Body --}}
+                <tbody>
+                    @forelse ($sessions as $session)
+                        <tr style="background-color: #ffffff; border-bottom: 1px solid #e5e7eb;">
 
-            <tr class="bg-gray-100">
+                            <td
+                                style="padding: 0.75rem 1rem; border-right: 1px solid #e5e7eb; text-align: center; color: #6b7280;">
+                                {{ $loop->iteration }}
+                            </td>
 
-                <th class="border px-2 py-2" width="40">
-                    No
-                </th>
+                            <td
+                                style="padding: 0.75rem 1rem; border-right: 1px solid #e5e7eb; font-weight: 500; color: #111827;">
+                                {{ \Carbon\Carbon::parse($session->tanggal)->translatedFormat('d M Y') }}
+                            </td>
 
-                <th class="border px-2 py-2" width="120">
-                    Tanggal
-                </th>
+                            <td style="padding: 0.75rem 1rem; border-right: 1px solid #e5e7eb; color: #374151;">
+                                {{ $session->pelatih?->nama ?? '-' }}
+                            </td>
 
-                <th class="border px-2 py-2" width="180">
-                    Pelatih
-                </th>
+                            <td style="padding: 0.75rem 1rem; color: #374151; line-height: 1.6;">
+                                {!! $session->program_latihan ?: '<span style="color: #9ca3af; font-style: italic;">Belum diisi</span>' !!}
+                            </td>
 
-                <th class="border px-2 py-2">
-                    Program Latihan
-                </th>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4"
+                                style="padding: 2rem 1rem; text-align: center; color: #6b7280; font-style: italic;">
+                                Belum ada sesi kegiatan pada periode ini.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
 
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            @forelse ($sessions as $session)
-                <tr>
-
-                    <td class="border px-2 py-2 text-center">
-                        {{ $loop->iteration }}
-                    </td>
-
-                    <td class="border px-2 py-2">
-                        {{ \Carbon\Carbon::parse($session->tanggal)->translatedFormat('d M Y') }}
-                    </td>
-
-                    <td class="border px-2 py-2">
-                        {{ $session->pelatih?->nama ?? '-' }}
-                    </td>
-
-                    <td class="border px-2 py-2">
-
-                        {!! $session->program_latihan ?: '<span class="text-gray-500">Belum diisi</span>' !!}
-
-                    </td>
-
-                </tr>
-
-            @empty
-
-                <tr>
-
-                    <td colspan="4" class="border py-4 text-center">
-
-                        Belum ada sesi kegiatan pada periode ini.
-
-                    </td>
-
-                </tr>
-            @endforelse
-
-        </tbody>
-
-    </table>
-
+            </table>
+        </div>
+    </div>
 </div>

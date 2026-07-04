@@ -22,13 +22,19 @@ class Kelas extends Model
         return $this->hasMany(KelasSiswa::class);
     }
 
-    // Tambahkan relasi ini
     public function siswa()
     {
-        // Menyambungkan Kelas ke Siswa melalui tabel kelas_siswa
-        return $this->belongsToMany(Siswa::class, 'kelas_siswa', 'kelas_id', 'siswa_id')
-            // Opsional: Hanya mengambil siswa yang statusnya aktif di kelas tersebut
-            ->wherePivot('status', 'aktif');
+        return $this->belongsToMany(
+            Siswa::class,
+            'kelas_siswa',
+            'kelas_id',
+            'siswa_id',
+        )->wherePivot(
+            'tahun_ajaran_id',
+            TahunAjaran::query()
+                ->where('aktif', true)
+                ->value('id'),
+        );
     }
 
     public function getNamaAttribute(): string

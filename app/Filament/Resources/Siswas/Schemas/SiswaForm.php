@@ -35,20 +35,13 @@ class SiswaForm
                                         ->options(['L' => 'Laki-laki', 'P' => 'Perempuan'])
                                         ->inline()
                                         ->required(),
-                                    TextInput::make('tempat_lahir')
-                                        ->required(),
+                                    TextInput::make('tempat_lahir'),
+
                                     DatePicker::make('tanggal_lahir')
-                                        ->native(false)
-                                        ->required(),
-                                    Radio::make('status')
-                                        ->options(['aktif' => 'Aktif', 'mutasi' => 'Mutasi', 'lulus' => 'Lulus'])
-                                        ->inline()
-                                        ->default('aktif')
-                                        ->required(),
+                                        ->native(false),
                                 ]),
                                 Textarea::make('alamat')
-                                    ->rows(3)
-                                    ->required(),
+                                    ->rows(3),
                             ]),
 
                         Tab::make('Orang Tua')

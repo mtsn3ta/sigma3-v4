@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\KelasSiswa;
 use App\Models\Siswa;
 use App\Models\KehadiranSekolah;
+use App\Models\TahunAjaran;
 
 class SiswaHelper
 {
@@ -19,7 +20,12 @@ class SiswaHelper
 
         return KelasSiswa::query()
             ->where('kelas_id', $kelasId)
-            ->where('status', 'aktif')
+            ->where(
+                'tahun_ajaran_id',
+                TahunAjaran::query()
+                    ->where('aktif', true)
+                    ->value('id')
+            )
             ->with('siswa')
             ->get()
             ->pluck('siswa.nama', 'siswa.id')
@@ -213,5 +219,37 @@ class SiswaHelper
 
             'persentase' => $persentase,
         ];
+    }
+    public static function belumMemilikiKelas(): array
+    {
+        $tahunAjaranAktif = TahunAjaran::query()
+            ->where('aktif', true)
+            ->value('id');
+
+        return Siswa::query()
+
+            ->where('status', 'aktif')
+
+            ->whereDoesntHave(
+
+                'kelasSiswa',
+
+                fn($query) =>
+
+                $query->where(
+                    'tahun_ajaran_id',
+                    $tahunAjaranAktif
+                )
+
+            )
+
+            ->orderBy('nama')
+
+            ->pluck(
+                'nama',
+                'id'
+            )
+
+            ->toArray();
     }
 }

@@ -1,42 +1,18 @@
 <div>
 
-    <div style="
-            text-align:center;
-            margin-bottom:40px;
-        ">
-
-        <div
-            style="
-                font-size:22px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
-
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+        <h1 style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin: 0; letter-spacing: 0.05em;">
             BAB V
-
-        </div>
-
-        <div
-            style="
-                margin-top:10px;
-                font-size:18px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
-
+        </h1>
+        <h2
+            style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin: 0.25rem 0 0 0; letter-spacing: 0.05em;">
             PENUTUP
-
-        </div>
-
+        </h2>
     </div>
 
-    <div style="
-            text-align:justify;
-            line-height:1.8;
-        ">
-
+    {{-- Konten Penutup --}}
+    <div class="rich-text-content">
         {!! $record->penutup !!}
-
     </div>
 
 </div>

@@ -55,6 +55,7 @@ class SiswaResource extends Resource
             'index' => ListSiswas::route('/'),
             'create' => CreateSiswa::route('/create'),
             'edit' => EditSiswa::route('/{record}/edit'),
+            'import' => Pages\ImportSiswa::route('/import'),
         ];
     }
 }

@@ -1,76 +1,46 @@
 <div>
 
-    <div style="
-            text-align:center;
-            margin-bottom:40px;
-        ">
-
-        <div
-            style="
-                font-size:22px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
-
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+        <h1 style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin: 0; letter-spacing: 0.05em;">
             BAB IV
-
-        </div>
-
-        <div
-            style="
-                margin-top:10px;
-                font-size:18px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
-
+        </h1>
+        <h2
+            style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin: 0.25rem 0 0 0; letter-spacing: 0.05em;">
             EVALUASI PEMBINAAN
+        </h2>
+    </div>
 
+    {{-- Sub BAB A --}}
+    <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">
+            A. Evaluasi
+        </h3>
+
+        <div class="rich-text-content">
+            {!! $record->evaluasi !!}
         </div>
-
     </div>
 
-    <h3>
-        A. Evaluasi
-    </h3>
+    {{-- Sub BAB B --}}
+    <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">
+            B. Kendala di Lapangan
+        </h3>
 
-    <div style="
-            text-align:justify;
-            line-height:1.8;
-        ">
-
-        {!! $record->evaluasi !!}
-
+        <div class="rich-text-content">
+            {!! $record->kendala !!}
+        </div>
     </div>
 
-    <br>
+    {{-- Sub BAB C --}}
+    <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">
+            C. Solusi dan Tindak Lanjut
+        </h3>
 
-    <h3>
-        B. Kendala
-    </h3>
-
-    <div style="
-            text-align:justify;
-            line-height:1.8;
-        ">
-
-        {!! $record->kendala !!}
-
-    </div>
-
-    <br>
-
-    <h3>
-        C. Solusi
-    </h3>
-
-    <div style="
-            text-align:justify;
-            line-height:1.8;
-        ">
-
-        {!! $record->solusi !!}
-
+        <div class="rich-text-content">
+            {!! $record->solusi !!}
+        </div>
     </div>
 
 </div>

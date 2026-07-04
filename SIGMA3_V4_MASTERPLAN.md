@@ -1158,7 +1158,7 @@ Status:
 
 - [ ] Widget
 - [ ] Statistik
-- [ ] Monitoring Real Time
+- [x] Monitoring Real Time
 
 ---
 
@@ -1195,9 +1195,9 @@ Status:
 
 ### Monitoring Device
 
-- [ ] Device Validation
-- [ ] UID Mapping
-- [ ] Error Handling
+- [x] Device Validation
+- [x] UID Mapping
+- [x] Error Handling
 
 ---
 

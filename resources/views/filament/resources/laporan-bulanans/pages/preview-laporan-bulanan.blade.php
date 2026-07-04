@@ -112,19 +112,6 @@
 
             </div>
 
-            <div
-                style="
-                margin-top:90px;
-                text-align:center;
-                font-size:18px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
-
-                MTsN 3 Tulungagung
-
-            </div>
-
         </div>
 
 

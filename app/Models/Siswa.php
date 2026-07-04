@@ -52,7 +52,9 @@ class Siswa extends Model
 
         'status',
     ];
-
+    protected $attributes = [
+        'status' => 'aktif',
+    ];
     protected $casts = [
         'tanggal_lahir' => 'date',
     ];
@@ -63,7 +65,11 @@ class Siswa extends Model
     }
     public function kelasSiswa()
     {
-        return $this->hasMany(KelasSiswa::class);
+        return $this->hasMany(KelasSiswa::class)
+            ->orderBy(
+                TahunAjaran::select('tahun')
+                    ->whereColumn('tahun_ajaran.id', 'kelas_siswa.tahun_ajaran_id')
+            );
     }
     public function anggotaEkskul()
     {
@@ -76,11 +82,7 @@ class Siswa extends Model
     public function kelasAktif()
     {
         return $this->hasOne(KelasSiswa::class)
-
-            ->where('status', 'aktif')
-
             ->whereHas('tahunAjaran', function ($query) {
-
                 $query->where('aktif', true);
             });
     }

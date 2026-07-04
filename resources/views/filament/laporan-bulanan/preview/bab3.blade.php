@@ -1,346 +1,211 @@
 @php
-
     use Carbon\Carbon;
+    use App\Support\LaporanBulananHelper;
 
-    $proposal = App\Support\LaporanBulananHelper::proposal($record);
-
-    $kegiatan = App\Support\LaporanBulananHelper::kegiatan($record);
-
-    $prestasi = App\Support\LaporanBulananHelper::prestasi($record);
-
+    /** @var \App\Models\LaporanBulanan $record */
+    $proposal = LaporanBulananHelper::proposal($record);
+    $kegiatan = LaporanBulananHelper::kegiatan($record);
+    $prestasi = LaporanBulananHelper::prestasi($record);
 @endphp
 
 <div
     style="
-        width:210mm;
-        min-height:297mm;
-        margin:30px auto;
-        background:white;
-        padding:25mm;
-        box-shadow:0 0 15px rgba(0,0,0,.15);
-    ">
+    width: 210mm;
+    min-height: 297mm;
+    margin: 2rem auto;
+    background: #ffffff;
+    padding: 25mm;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    color: #111827;
+">
 
-    <div style="
-            text-align:center;
-            margin-bottom:40px;
-        ">
-
-        <div
-            style="
-                font-size:22px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
-
+    {{-- Judul BAB --}}
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+        <h1 style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin: 0; letter-spacing: 0.05em;">
             BAB III
-        </div>
-
-        <div
-            style="
-                margin-top:10px;
-                font-size:18px;
-                font-weight:bold;
-                text-transform:uppercase;
-            ">
-
+        </h1>
+        <h2
+            style="font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin: 0.25rem 0 0 0; letter-spacing: 0.05em;">
             KEGIATAN DAN PRESTASI EKSTRAKURIKULER
-
-        </div>
-
+        </h2>
     </div>
 
     {{-- ========================================================= --}}
-    {{-- 3.1 Proposal --}}
+    {{-- 3.1 Proposal Kegiatan --}}
     {{-- ========================================================= --}}
+    <div style="margin-bottom: 2.5rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">
+            3.1 Proposal Kegiatan
+        </h3>
 
-    <h4 style="margin-top:25px;">
-        3.1 Proposal Kegiatan
-    </h4>
-
-    <table
-        style="
-        width:100%;
-        border-collapse:collapse;
-        font-size:13px;
-        margin-top:10px;
-    ">
-
-        <thead>
-
-            <tr>
-
-                <th class="border" width="5%">No</th>
-
-                <th class="border">Nama Kegiatan</th>
-
-                <th class="border" width="20%">Jenis</th>
-
-                <th class="border" width="15%">Tanggal</th>
-
-                <th class="border" width="15%">Status</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            @forelse($proposal as $item)
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
+            <thead style="background-color: #f3f4f6;">
                 <tr>
-
-                    <td class="border" align="center">
-
-                        {{ $loop->iteration }}
-
-                    </td>
-
-                    <td class="border">
-
-                        {{ $item->nama_kegiatan }}
-
-                    </td>
-
-                    <td class="border">
-
-                        {{ $item->jenis_kegiatan_label }}
-
-                    </td>
-
-                    <td class="border" align="center">
-
-                        {{ Carbon::parse($item->tanggal_mulai)->translatedFormat('d M Y') }}
-
-                    </td>
-
-                    <td class="border" align="center">
-
-                        {{ ucfirst($item->status) }}
-
-                    </td>
-
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 5%; text-align: center;">No</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; text-align: left;">Nama Kegiatan</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 20%; text-align: center;">Jenis</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 15%; text-align: center;">Tanggal</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 15%; text-align: center;">Status</th>
                 </tr>
-
-            @empty
-
-                <tr>
-
-                    <td colspan="5" class="border" align="center">
-
-                        Tidak ada proposal kegiatan.
-
-                    </td>
-
-                </tr>
-            @endforelse
-
-        </tbody>
-
-    </table>
+            </thead>
+            <tbody>
+                @forelse($proposal as $item)
+                    <tr>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $loop->iteration }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem;">
+                            {{ $item->nama_kegiatan }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $item->jenis_kegiatan_label }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $item->tanggal_mulai ? Carbon::parse($item->tanggal_mulai)->translatedFormat('d M Y') : '-' }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ ucfirst($item->status) }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5"
+                            style="border: 1px solid #374151; padding: 1rem; text-align: center; font-style: italic;">
+                            Tidak ada proposal kegiatan.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     {{-- ========================================================= --}}
     {{-- 3.2 Laporan Kegiatan --}}
     {{-- ========================================================= --}}
+    <div style="margin-bottom: 2.5rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">
+            3.2 Laporan Kegiatan
+        </h3>
 
-    <h4 style="margin-top:35px;">
-        3.2 Laporan Kegiatan
-    </h4>
-
-    <table
-        style="
-        width:100%;
-        border-collapse:collapse;
-        font-size:13px;
-        margin-top:10px;
-    ">
-
-        <thead>
-
-            <tr>
-
-                <th class="border" width="5%">No</th>
-
-                <th class="border">Nama Kegiatan</th>
-
-                <th class="border" width="20%">Tanggal</th>
-
-                <th class="border" width="15%">Status</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            @forelse($kegiatan as $item)
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
+            <thead style="background-color: #f3f4f6;">
                 <tr>
-
-                    <td class="border" align="center">
-
-                        {{ $loop->iteration }}
-
-                    </td>
-
-                    <td class="border">
-
-                        {{ $item->proposal?->nama_kegiatan }}
-
-                    </td>
-
-                    <td class="border" align="center">
-
-                        {{ Carbon::parse($item->proposal?->tanggal_mulai)->translatedFormat('d M Y') }}
-
-                    </td>
-
-                    <td class="border" align="center">
-
-                        {{ ucfirst($item->status) }}
-
-                    </td>
-
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 5%; text-align: center;">No</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; text-align: left;">Nama Kegiatan</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 20%; text-align: center;">Tanggal</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 15%; text-align: center;">Status</th>
                 </tr>
-
-            @empty
-
-                <tr>
-
-                    <td colspan="4" class="border" align="center">
-
-                        Tidak ada laporan kegiatan.
-
-                    </td>
-
-                </tr>
-            @endforelse
-
-        </tbody>
-
-    </table>
+            </thead>
+            <tbody>
+                @forelse($kegiatan as $item)
+                    <tr>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $loop->iteration }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem;">
+                            {{ $item->proposal?->nama_kegiatan ?? '-' }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $item->proposal?->tanggal_mulai ? Carbon::parse($item->proposal->tanggal_mulai)->translatedFormat('d M Y') : '-' }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ ucfirst($item->status) }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4"
+                            style="border: 1px solid #374151; padding: 1rem; text-align: center; font-style: italic;">
+                            Tidak ada laporan kegiatan.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     {{-- ========================================================= --}}
     {{-- 3.3 Prestasi --}}
     {{-- ========================================================= --}}
+    <div>
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">
+            3.3 Prestasi
+        </h3>
 
-    <h4 style="margin-top:35px;">
-        3.3 Prestasi
-    </h4>
-
-    <table
-        style="
-        width:100%;
-        border-collapse:collapse;
-        font-size:13px;
-        margin-top:10px;
-    ">
-
-        <thead>
-
-            <tr>
-
-                <th class="border" width="5%">No</th>
-
-                <th class="border">Nama Lomba</th>
-
-                <th class="border">Prestasi</th>
-
-                <th class="border" width="12%">Jenis</th>
-
-                <th class="border" width="15%">Tingkat</th>
-
-                <th class="border" width="15%">Tanggal</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            @forelse($prestasi as $item)
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
+            <thead style="background-color: #f3f4f6;">
                 <tr>
-
-                    <td class="border" align="center">
-                        {{ $loop->iteration }}
-                    </td>
-
-                    <td class="border">
-                        {{ $item->nama_lomba }}
-                    </td>
-
-                    <td class="border">
-
-                        <strong>{{ $item->nama_prestasi }}</strong>
-
-                        @if ($item->siswa->isNotEmpty())
-                            <br>
-
-                            <small>
-
-                                {{ $item->siswa->pluck('nama')->join(', ') }}
-
-                            </small>
-                        @endif
-
-                    </td>
-
-                    <td class="border" align="center">
-
-                        {{ $item->jenis_label }}
-
-                    </td>
-
-                    <td class="border" align="center">
-
-                        {{ $item->tingkat }}
-
-                    </td>
-
-                    <td class="border" align="center">
-
-                        {{ $item->tanggal->translatedFormat('d M Y') }}
-
-                    </td>
-
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 5%; text-align: center;">No</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; text-align: left;">Nama Lomba</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; text-align: left;">Prestasi</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 12%; text-align: center;">Jenis</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 15%; text-align: center;">Tingkat</th>
+                    <th style="border: 1px solid #374151; padding: 0.5rem; width: 15%; text-align: center;">Tanggal</th>
                 </tr>
+            </thead>
+            <tbody>
+                @forelse($prestasi as $item)
+                    <tr>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $loop->iteration }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem;">
+                            {{ $item->nama_lomba }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem;">
+                            <strong>{{ $item->nama_prestasi }}</strong>
+                            @if ($item->siswa->isNotEmpty())
+                                <br>
+                                <span style="font-size: 0.75rem; color: #4b5563;">
+                                    {{ $item->siswa->pluck('nama')->join(', ') }}
+                                </span>
+                            @endif
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $item->jenis_label }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $item->tingkat }}
+                        </td>
+                        <td style="border: 1px solid #374151; padding: 0.5rem; text-align: center;">
+                            {{ $item->tanggal ? Carbon::parse($item->tanggal)->translatedFormat('d M Y') : '-' }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6"
+                            style="border: 1px solid #374151; padding: 1rem; text-align: center; font-style: italic;">
+                            Belum ada prestasi pada bulan ini.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-            @empty
+        {{-- Kesimpulan Prestasi --}}
+        @if ($prestasi->isNotEmpty())
+            @php
+                $individu = $prestasi->where('jenis', 'individu')->count();
+                $tim = $prestasi->where('jenis', 'tim')->count();
+            @endphp
+            <div
+                style="
+                margin-top: 1.5rem;
+                padding: 1rem;
+                border: 1px solid #d1d5db;
+                border-left: 4px solid #374151;
+                background-color: #f9fafb;
+                font-size: 0.875rem;
+                line-height: 1.6;
+                text-align: justify;
+            ">
+                Pada bulan ini ekstrakurikuler <strong>{{ $record->ekstrakurikuler->nama }}</strong>
+                memperoleh <strong>{{ $prestasi->count() }}</strong> prestasi,
+                terdiri dari <strong>{{ $individu }}</strong> prestasi individu
+                dan <strong>{{ $tim }}</strong> prestasi tim.
+            </div>
+        @endif
+    </div>
 
-                <tr>
-
-                    <td colspan="6" class="border" align="center">
-
-                        Belum ada prestasi pada bulan ini.
-
-                    </td>
-
-                </tr>
-            @endforelse
-
-        </tbody>
-
-    </table>
-    @if ($prestasi->isNotEmpty())
-        @php
-
-            $individu = $prestasi->where('jenis', 'individu')->count();
-
-            $tim = $prestasi->where('jenis', 'tim')->count();
-
-        @endphp
-
-        <p style="margin-top:18px; text-align:justify;">
-
-            Pada bulan ini ekstrakurikuler
-            <strong>{{ $record->ekstrakurikuler->nama }}</strong>
-            memperoleh
-            <strong>{{ $prestasi->count() }}</strong>
-            prestasi,
-            terdiri dari
-            <strong>{{ $individu }}</strong>
-            prestasi individu
-            dan
-            <strong>{{ $tim }}</strong>
-            prestasi tim.
-
-        </p>
-    @endif
 </div>

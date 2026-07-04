@@ -4,7 +4,6 @@ namespace App\Filament\Resources\KelasSiswas\Schemas;
 
 use App\Models\TahunAjaran;
 use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -48,18 +47,6 @@ class KelasSiswaForm
                                 ->default(TahunAjaran::where('aktif', true)->value('id'))
                                 ->required(),
                         ]),
-
-                        // Status di bawah sendiri dengan tampilan horizontal
-                        Radio::make('status')
-                            ->label('Status Penempatan')
-                            ->options([
-                                'aktif' => 'Aktif',
-                                'naik' => 'Naik',
-                                'lulus' => 'Lulus',
-                            ])
-                            ->inline()
-                            ->default('aktif')
-                            ->required(),
                     ])
                     ->columnSpanFull(),
             ]);

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\KelasSiswas;
 
-use App\Filament\Resources\KelasSiswas\Pages\CreateKelasSiswa;
 use App\Filament\Resources\KelasSiswas\Pages\EditKelasSiswa;
 use App\Filament\Resources\KelasSiswas\Pages\ListKelasSiswas;
 use App\Filament\Resources\KelasSiswas\Schemas\KelasSiswaForm;
@@ -13,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use App\Filament\Resources\KelasSiswas\Widgets\KelasSiswaOverview;
 
 class KelasSiswaResource extends Resource
 {
@@ -34,7 +34,10 @@ class KelasSiswaResource extends Resource
     {
         return KelasSiswaForm::configure($schema);
     }
-
+    public static function canCreate(): bool
+    {
+        return false;
+    }
     public static function table(Table $table): Table
     {
         return KelasSiswasTable::configure($table);
@@ -46,12 +49,16 @@ class KelasSiswaResource extends Resource
             //
         ];
     }
-
+    public static function getWidgets(): array
+    {
+        return [
+            KelasSiswaOverview::class,
+        ];
+    }
     public static function getPages(): array
     {
         return [
             'index' => ListKelasSiswas::route('/'),
-            'create' => CreateKelasSiswa::route('/create'),
             'edit' => EditKelasSiswa::route('/{record}/edit'),
         ];
     }
