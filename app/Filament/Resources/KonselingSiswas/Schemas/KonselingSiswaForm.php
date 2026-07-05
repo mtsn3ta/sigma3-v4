@@ -32,15 +32,24 @@ class KonselingSiswaForm
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->dehydrated(false)
+                            ->dehydrated(false) // Tetap false karena kolom ini tidak ada di tabel konseling_siswa
                             ->afterStateUpdated(fn($set) => $set('siswa_id', null))
                             ->required(),
 
                         Select::make('siswa_id')
                             ->label('Siswa')
-                            ->options(fn($get) => SiswaHelper::byKelas($get('kelas_id')))
+                            // Tambahkan kondisi: ambil pilihan dari helper, atau ambil dari relasi jika mode edit
+                            ->options(function ($get, $record) {
+                                $options = SiswaHelper::byKelas($get('kelas_id'));
+
+                                // Jika mode edit dan record ada, pastikan siswa tersebut masuk dalam opsi
+                                if ($record && $record->siswa_id && !isset($options[$record->siswa_id])) {
+                                    $options[$record->siswa_id] = $record->siswa->nama;
+                                }
+
+                                return $options;
+                            })
                             ->searchable()
-                            ->disabled(fn($get) => blank($get('kelas_id')))
                             ->placeholder('Pilih siswa')
                             ->required(),
 

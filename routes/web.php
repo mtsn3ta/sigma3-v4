@@ -20,9 +20,14 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\MonitoringAttendanceController;
 use App\Http\Controllers\PengumumanController;
 use Inertia\Inertia;
+use App\Http\Controllers\Auth\LoginController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
+});
 Route::prefix('absensi')
     ->name('absensi.')
     ->group(function () {

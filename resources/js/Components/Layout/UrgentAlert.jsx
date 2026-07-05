@@ -49,7 +49,9 @@ export default function UrgentAlert({ visible, onClose }) {
     }
 
     const announcement = urgentAnnouncements[index];
-    const style = TYPE_STYLES[announcement?.tipe] ?? TYPE_STYLES.info;
+    if (!announcement) {
+        return null;
+    }
 
     return (
         <AnimatePresence mode="wait">

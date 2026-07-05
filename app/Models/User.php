@@ -41,11 +41,49 @@ class User extends Authenticatable implements FilamentUser, HasName
     }
     public function getFilamentName(): string
     {
+        // Kalau punya relasi siswa → tampilkan nama siswa
+        if ($this->siswa) {
+            return $this->siswa->nama;
+        }
+
+        // Kalau punya relasi pegawai → tampilkan nama pegawai
+        if ($this->pegawai) {
+            return $this->pegawai->nama;
+        }
+
+        // Fallback ke username kalau tidak ada relasi
         return $this->username;
     }
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->status === 'aktif';
+        // Gerbang pertama: akun harus aktif, apapun panelnya
+        if ($this->status !== 'aktif') {
+            return false;
+        }
+
+        // Panel siswa: hanya role 'siswa' yang boleh masuk
+        if ($panel->getId() === 'siswa') {
+            return $this->hasRole('siswa');
+        }
+
+        // Panel admin: semua role staff, TAPI bukan siswa
+        if ($panel->getId() === 'admin') {
+            return $this->hasAnyRole([
+                'super_admin',
+                'kepala_madrasah',
+                'guru',
+                'waka_kesiswaan',
+                'waka_kurikulum',
+                'waka_humas',
+                'waka_sarpras',
+                'bk',
+                'piket',
+                'pembina',
+                'pelatih',
+            ]);
+        }
+
+        return false;
     }
     public function pegawai()
     {

@@ -5,9 +5,14 @@ namespace App\Filament\Auth;
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
+use Filament\Facades\Filament;
 
 class Login extends BaseLogin
 {
+    public function mount(): void
+    {
+        $this->redirect('/login', navigate: false);
+    }
     public function getHeading(): string
     {
         return 'SIGMA-3';
@@ -48,5 +53,16 @@ class Login extends BaseLogin
             'username' => $data['email'],
             'password' => $data['password'],
         ];
+    }
+    protected function getRedirectUrl(): string
+    {
+        /** @var \App\Models\User|null $user */
+        $user = Filament::auth()->user();
+
+        if ($user?->hasRole('siswa')) {
+            return Filament::getPanel('siswa')->getUrl();
+        }
+
+        return Filament::getPanel('admin')->getUrl();
     }
 }

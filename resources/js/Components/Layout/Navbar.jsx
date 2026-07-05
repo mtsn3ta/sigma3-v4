@@ -104,10 +104,10 @@ export default function Navbar({ hasUrgentAlert = false }) {
     return (
         <>
             <header
-                className={cn(
-                    "fixed inset-x-0 z-50 transition-all duration-300",
-                    hasUrgentAlert ? "top-18" : "top-2",
-                )}
+                style={{
+                    top: hasUrgentAlert ? 72 : 0,
+                }}
+                className="fixed inset-x-0 z-50 transition-all duration-300"
             >
                 <Container>
                     <motion.nav
@@ -208,8 +208,7 @@ export default function Navbar({ hasUrgentAlert = false }) {
 
                         <div className="flex items-center gap-3">
                             <Button
-                                href="/admin/login"
-                                external
+                                href="/login"
                                 variant="primary"
                                 className="hidden h-10 px-6 md:inline-flex"
                             >
@@ -332,8 +331,7 @@ export default function Navbar({ hasUrgentAlert = false }) {
 
                             <div className="mt-auto pb-4">
                                 <Button
-                                    href="/admin/login"
-                                    external
+                                    href="/login"
                                     variant="primary"
                                     className="w-full py-4 text-lg"
                                 >
