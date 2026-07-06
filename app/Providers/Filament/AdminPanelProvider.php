@@ -134,6 +134,27 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\BK\BKRawanAlpaWidget::class,
                 \App\Filament\Widgets\BK\BKKasusTerbaruWidget::class,
                 \App\Filament\Widgets\BK\BKIzinKeluarWidget::class,
+                // Guru
+                \App\Filament\Widgets\Guru\GuruStatsWidget::class,
+                \App\Filament\Widgets\Guru\GuruJurnalWidget::class,
+                \App\Filament\Widgets\Guru\GuruTugasIzinWidget::class,
+                // Guru Piket
+                \App\Filament\Widgets\Piket\PiketStatsWidget::class,
+                \App\Filament\Widgets\Piket\PiketKehadiranWidget::class,
+                \App\Filament\Widgets\Piket\PiketIzinKeluarWidget::class,
+                \App\Filament\Widgets\Piket\PiketTugasGuruWidget::class,
+                \App\Filament\Widgets\Piket\PiketQuickMenuWidget::class,
+                // Pembina
+                \App\Filament\Widgets\Pembina\PembinaStatsWidget::class,
+                \App\Filament\Widgets\Pembina\PembinaEkskulWidget::class,
+                \App\Filament\Widgets\Pembina\PembinaKegiatanWidget::class,
+                \App\Filament\Widgets\Pembina\PembinaQuickMenuWidget::class,
+                // Pelatih
+                \App\Filament\Widgets\Pelatih\PelatihStatsWidget::class,
+                \App\Filament\Widgets\Pelatih\PelatihEkskulWidget::class,
+                \App\Filament\Widgets\Pelatih\PelatihLatihanWidget::class,
+                \App\Filament\Widgets\Pelatih\PelatihPrestasiWidget::class,
+                \App\Filament\Widgets\Pelatih\PelatihQuickMenuWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
