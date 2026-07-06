@@ -82,8 +82,12 @@ class SiswaForm
                                 FileUpload::make('foto')
                                     ->image()
                                     ->imageEditor()
-                                    ->circleCropper()
-                                    ->directory('siswa/foto'),
+                                    ->circleCropper() // ✨ Memaksa pengguna memotong gambar menjadi lingkaran saat upload
+                                    ->directory('siswa') // 📁 Diubah dari 'siswa/foto' menjadi 'siswa' agar sinkron dengan DB Anda
+                                    ->disk('public') // 💾 Pastikan disimpan ke disk public agar bisa diakses browser
+                                    ->visibility('public')
+                                    ->maxSize(2048) // Opsional: Membatasi ukuran maksimal file (misal: 2MB)
+                                    ->required(),
                             ]),
                     ])
                     ->contained(false)

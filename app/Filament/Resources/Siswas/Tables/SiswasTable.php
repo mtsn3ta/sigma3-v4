@@ -24,8 +24,15 @@ class SiswasTable
     {
         return $table
             ->columns([
-                ImageColumn::make('foto')
-                    ->circular(),
+                ImageColumn::make('foto') // ✨ Cukup 'foto', jangan 'siswa.foto'
+                    ->label('Foto')
+                    ->circular() // Membuat bentuk lingkaran sempurna
+                    ->disk('public') // Membaca folder public/storage
+                    ->visibility('public')
+                    ->placeholder(function ($record) {
+                        // Jika kolom foto kosong/null di DB, tampilkan inisial huruf depan namanya (Ahmad -> A)
+                        return strtoupper(substr($record->nama, 0, 1));
+                    }),
 
                 TextColumn::make('nisn')
                     ->label('NISN')

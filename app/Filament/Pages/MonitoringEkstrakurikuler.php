@@ -70,7 +70,7 @@ class MonitoringEkstrakurikuler extends Page
         $user = Auth::user();
 
         return $user?->can(
-            'ekstrakurikuler.view'
+            'ekskul.view'
         ) ?? false;
     }
 

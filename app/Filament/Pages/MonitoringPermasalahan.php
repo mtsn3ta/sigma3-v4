@@ -60,7 +60,7 @@ class MonitoringPermasalahan extends Page
         $user = Auth::user();
 
         return $user?->can(
-            'permasalahan.view'
+            'masalah.view'
         ) ?? false;
     }
 

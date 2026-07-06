@@ -56,7 +56,7 @@ class MonitoringTugasGuruIzin extends Page
         $user = Auth::user();
 
         return $user?->can(
-            'tugas_guru_izin.view'
+            'tugas_izin.view'
         ) ?? false;
     }
 

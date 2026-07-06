@@ -10,8 +10,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -113,8 +111,29 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                // SuperAdmin
+                \App\Filament\Widgets\SuperAdmin\SuperAdminStatsWidget::class,
+                \App\Filament\Widgets\SuperAdmin\SuperAdminMasterDataWidget::class,
+                \App\Filament\Widgets\SuperAdmin\SuperAdminQuickMenuWidget::class,
+                \App\Filament\Widgets\SuperAdmin\SuperAdminActivityWidget::class,
+                // Kepala Madrasah
+                \App\Filament\Widgets\KepMad\KepMadStatsWidget::class,
+                \App\Filament\Widgets\KepMad\KepMadApprovalWidget::class,
+                \App\Filament\Widgets\KepMad\KepMadInformasiWidget::class,
+                \App\Filament\Widgets\KepMad\KepMadQuickMenuWidget::class,
+                \App\Filament\Widgets\KepMad\KepMadTugasGuruWidget::class,
+                // Waka Kesiswaan
+                \App\Filament\Widgets\Waka\WakaStatsWidget::class,
+                \App\Filament\Widgets\Waka\WakaApprovalWidget::class,
+                \App\Filament\Widgets\Waka\WakaIzinKeluarWidget::class,
+                \App\Filament\Widgets\Waka\WakaPrestasiWidget::class,
+                \App\Filament\Widgets\Waka\WakaQuickMenuWidget::class,
+                // BK
+                \App\Filament\Widgets\BK\BKStatsWidget::class,
+                \App\Filament\Widgets\BK\BKRankingPoinWidget::class,
+                \App\Filament\Widgets\BK\BKRawanAlpaWidget::class,
+                \App\Filament\Widgets\BK\BKKasusTerbaruWidget::class,
+                \App\Filament\Widgets\BK\BKIzinKeluarWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
