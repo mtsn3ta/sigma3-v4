@@ -25,7 +25,19 @@ class ListLaporanBulanans extends ListRecords
                 ->label('Buat Laporan Bulanan')
 
                 ->icon('heroicon-o-document-text')
+                ->visible(function () {
 
+                    /** @var User|null $user */
+                    $user = Auth::user();
+
+                    if (! $user || ! $user->pegawai) {
+                        return false;
+                    }
+
+                    return $user->pegawai
+                        ->pengampus()
+                        ->exists();
+                })
                 ->color('primary')
 
                 ->modalHeading('Buat Laporan Bulanan')

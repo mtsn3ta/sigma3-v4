@@ -17,6 +17,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class SiswasTable
 {
@@ -77,6 +78,13 @@ class SiswasTable
                     ->label('Status')
                     ->icon('heroicon-o-arrow-path')
                     ->color('warning')
+                    ->visible(function () {
+
+                        /** @var \App\Models\User|null $user */
+                        $user = Auth::user();
+
+                        return $user?->hasRole('super_admin') ?? false;
+                    })
                     ->modalWidth('md')
                     ->schema([
 

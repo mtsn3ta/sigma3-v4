@@ -7,13 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class RevisionLog extends Model
 {
     protected $fillable = [
-
+        'revisionable_type',
+        'revisionable_id',
         'user_id',
-
         'status_from',
-
         'status_to',
-
         'notes',
     ];
 

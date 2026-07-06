@@ -4,9 +4,11 @@ namespace App\Filament\Resources\ProposalKegiatans\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Filament\Resources\ProposalKegiatans\ProposalKegiatanResource;
+use Filament\Actions\Action;
+use Illuminate\Support\Facades\Auth;
 
 class ProposalKegiatansTable
 {
@@ -25,25 +27,9 @@ class ProposalKegiatansTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('jenis_kegiatan_label')
-                    ->label('Jenis')
-                    ->badge()
-                    ->color('gray'),
-
-                TextColumn::make('peserta_count')
-                    ->label('Peserta')
-                    ->counts('peserta')
-                    ->badge()
-                    ->color('primary'),
-
                 TextColumn::make('total_anggaran')
                     ->label('Anggaran')
                     ->money('IDR', divideBy: 1)
-                    ->sortable(),
-
-                TextColumn::make('tanggal_mulai')
-                    ->label('Tanggal')
-                    ->date('d M Y')
                     ->sortable(),
 
                 TextColumn::make('createdBy.pegawai.nama')
@@ -77,7 +63,56 @@ class ProposalKegiatansTable
             ->filters([])
 
             ->recordActions([
-                EditAction::make(),
+                Action::make('open')
+
+                    ->visible(function ($record) {
+
+                        /** @var \App\Models\User|null $user */
+                        $user = Auth::user();
+
+                        if (! $user) {
+                            return false;
+                        }
+
+                        // Draft & Revision hanya Pelatih dan Pembina
+                        if (
+                            in_array($record->status, ['draft', 'revision']) &&
+                            (
+                                $user->isPelatihEkskul($record->ekstrakurikuler_id)
+                                || $user->isPembinaEkskul($record->ekstrakurikuler_id)
+                            )
+                        ) {
+                            return true;
+                        }
+
+                        // Setelah submit semua role yang memiliki akses dapat membuka Preview
+                        return ! in_array($record->status, ['draft', 'revision']);
+                    })
+
+                    ->label(function ($record) {
+
+                        return in_array($record->status, ['draft', 'revision'])
+                            ? 'Edit'
+                            : 'Preview';
+                    })
+
+                    ->icon(function ($record) {
+
+                        return in_array($record->status, ['draft', 'revision'])
+                            ? 'heroicon-o-pencil-square'
+                            : 'heroicon-o-eye';
+                    })
+
+                    ->url(function ($record) {
+
+                        return in_array($record->status, ['draft', 'revision'])
+                            ? ProposalKegiatanResource::getUrl('edit', [
+                                'record' => $record,
+                            ])
+                            : ProposalKegiatanResource::getUrl('preview', [
+                                'record' => $record,
+                            ]);
+                    }),
             ])
 
             ->toolbarActions([
