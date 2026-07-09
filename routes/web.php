@@ -23,6 +23,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ActiveRoleController;
 use App\Http\Controllers\IntelligenceController;
+use App\Http\Controllers\ParentPortalController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
@@ -51,6 +52,10 @@ Route::prefix('absensi')
         })->name('ekskul');
     });
 Route::get('/intelligence', [IntelligenceController::class, 'index'])->name('intelligence');
+Route::get(
+    '/wali_murid/{nisn}',
+    ParentPortalController::class
+)->name('wali_murid');
 Route::get('/prestasi', [PrestasiController::class, 'index'])
     ->name('prestasi');
 Route::get('/galeri', [GalleryController::class, 'index'])

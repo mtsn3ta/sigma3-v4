@@ -7,7 +7,7 @@
     <title>Sistem Informasi Global Madrasah</title>
 
     {{-- Memanggil Tailwind bawaan project Laravel Anda --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -176,7 +176,7 @@
                     <div class="grid grid-cols-2 gap-2 w-full mt-4">
                         <div class="data-card">
                             <div class="text-[10px] text-slate-400 uppercase">NISN</div>
-                            <div id="nis" class="font-bold text-sm text-white">-</div>
+                            <div id="nisn" class="font-bold text-sm text-white">-</div>
                         </div>
                         <div class="data-card">
                             <div class="text-[10px] text-slate-400 uppercase">Jenis Kelamin</div>
@@ -345,7 +345,7 @@
             }
 
             // 3. Reset Data Text
-            ['nama', 'nis', 'kelas', 'jk', 'ttl', 'hp', 'alamat', 'asal', 'ayah', 'ibu', 'ortu_hp', 'wali'].forEach(id => {
+            ['nama', 'nisn', 'kelas', 'jk', 'ttl', 'hp', 'alamat', 'asal', 'ayah', 'ibu', 'ortu_hp', 'wali'].forEach(id => {
                 document.getElementById(id).innerText = (id === 'nama') ? 'MENUNGGU PEMINDAIAN' : '-';
             });
 
@@ -410,7 +410,7 @@
                 // Cari baris ini di dalam loadSiswa:
                 document.getElementById('foto').src = d.foto || DEFAULT_AVATAR;
                 document.getElementById('nama').innerText = d.nama || '-';
-                document.getElementById('nis').innerText = d.nis || '-';
+                document.getElementById('nisn').innerText = d.nisn || '-';
                 document.getElementById('kelas').innerText = d.kelas || '-';
                 document.getElementById('jk').innerText = d.jenis_kelamin || '-';
                 document.getElementById('ttl').innerText = (d.tempat_lahir || '-').toUpperCase() + ', ' +
@@ -462,11 +462,11 @@
                         </div>
                         <div class="hidden mt-3 pt-3 border-t border-slate-700 space-y-1">
                             ${item.detail.map(m => `
-                                                                                                                                                                        <div class="flex justify-between text-xs">
-                                                                                                                                                                            <span class="text-slate-300 truncate w-3/4">${m.mapel}</span>
-                                                                                                                                                                            <span class="font-bold text-yellow-400">${m.nilai}</span>
-                                                                                                                                                                        </div>
-                                                                                                                                                                    `).join('')}
+                                                                                                                                                                                            <div class="flex justify-between text-xs">
+                                                                                                                                                                                                <span class="text-slate-300 truncate w-3/4">${m.mapel}</span>
+                                                                                                                                                                                                <span class="font-bold text-yellow-400">${m.nilai}</span>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        `).join('')}
                         </div>
                     </div>
                 `).join('') : '<div class="text-sm text-slate-500 italic">Belum ada data nilai e-Rapor</div>';
