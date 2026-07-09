@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\RFID;
+namespace App\Http\Controllers\Api\RFID;
 
 use App\Http\Controllers\Controller;
 use App\Services\RFID\EkstrakurikulerRfidService;
