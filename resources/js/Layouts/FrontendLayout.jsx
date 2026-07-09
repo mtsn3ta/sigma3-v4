@@ -5,9 +5,10 @@ import Navbar from "../Components/Layout/Navbar";
 import Footer from "../Components/Layout/Footer";
 import UrgentAlert from "../Components/Layout/UrgentAlert";
 import WelcomePopup from "../Components/Layout/WelcomePopup";
+import WhatsAppButton from "../Components/Layout/WhatsAppButton";
 
 export default function FrontendLayout({ children }) {
-    const { urgentAnnouncements = [] } = usePage().props;
+    const { urgentAnnouncements = [], url } = usePage(); // Ambil url dari usePage untuk pengecekan
 
     const [showUrgentAlert, setShowUrgentAlert] = useState(
         urgentAnnouncements.length > 0,
@@ -31,6 +32,10 @@ export default function FrontendLayout({ children }) {
             <main>{children}</main>
 
             <Footer />
+
+            {/* 2. Panggil tombol WhatsApp di sini */}
+            {/* Kita sembunyikan jika sedang di halaman intelligence agar layar scanner bersih */}
+            {!url.startsWith("/intelligence") && <WhatsAppButton />}
         </div>
     );
 }
