@@ -21,6 +21,8 @@ use App\Http\Controllers\MonitoringAttendanceController;
 use App\Http\Controllers\PengumumanController;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ActiveRoleController;
+use App\Http\Controllers\IntelligenceController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
@@ -28,6 +30,10 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
 });
+Route::middleware(['auth'])->post(
+    '/active-role/switch',
+    [ActiveRoleController::class, 'switch']
+)->name('active-role.switch');
 Route::prefix('absensi')
     ->name('absensi.')
     ->group(function () {
@@ -44,6 +50,7 @@ Route::prefix('absensi')
             return Inertia::render('RFID/Ekskul');
         })->name('ekskul');
     });
+Route::get('/intelligence', [IntelligenceController::class, 'index'])->name('intelligence');
 Route::get('/prestasi', [PrestasiController::class, 'index'])
     ->name('prestasi');
 Route::get('/galeri', [GalleryController::class, 'index'])

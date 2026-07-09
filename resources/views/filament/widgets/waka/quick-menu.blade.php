@@ -1,13 +1,13 @@
 <x-filament-widgets::widget>
-    {{-- CSS Khusus untuk Efek Hover Premium --}}
+    {{-- CSS Khusus untuk Efek Hover Premium (Violet Theme) --}}
     <style>
-        .kesiswaan-quick-grid {
+        .kesiswaan-menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
         }
 
-        .premium-quick-link-violet {
+        .premium-kesiswaan-link {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,7 +23,7 @@
             overflow: hidden;
         }
 
-        .premium-quick-link-violet::before {
+        .premium-kesiswaan-link::before {
             content: '';
             position: absolute;
             top: 0;
@@ -35,18 +35,18 @@
             transition: opacity 0.3s ease;
         }
 
-        .premium-quick-link-violet:hover {
+        .premium-kesiswaan-link:hover {
             transform: translateY(-4px);
             border-color: #ddd6fe;
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            background: linear-gradient(180deg, #ffffff 0%, #f5f3ff 100%);
             box-shadow: 0 12px 20px -8px rgba(139, 92, 246, 0.15), 0 4px 6px -4px rgba(139, 92, 246, 0.05);
         }
 
-        .premium-quick-link-violet:hover::before {
+        .premium-kesiswaan-link:hover::before {
             opacity: 1;
         }
 
-        .quick-icon-wrapper-violet {
+        .icon-wrapper-violet {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -59,14 +59,14 @@
             transition: all 0.3s ease;
         }
 
-        .premium-quick-link-violet:hover .quick-icon-wrapper-violet {
+        .premium-kesiswaan-link:hover .icon-wrapper-violet {
             background: #f5f3ff;
             color: #7c3aed;
             border-color: #ddd6fe;
             transform: scale(1.05);
         }
 
-        .quick-label-violet {
+        .label-violet {
             font-size: 0.85rem;
             font-weight: 600;
             color: #475569;
@@ -75,65 +75,51 @@
             line-height: 1.3;
         }
 
-        .premium-quick-link-violet:hover .quick-label-violet {
+        .premium-kesiswaan-link:hover .label-violet {
             color: #1e293b;
         }
     </style>
 
-    <x-filament::section style="padding: 0; background: transparent; box-shadow: none; border: none;">
-
+    {{-- Widget Container --}}
+    <div
+        style="
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 1rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    ">
+        {{-- Pendaran Halus (Violet Glow) --}}
         <div
             style="
-            padding: 2rem;
-            background: #ffffff;
-            border-radius: 1rem;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
+            position: absolute; top: -50px; right: -50px; width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; pointer-events: none; filter: blur(20px);
         ">
-            {{-- Pendaran Halus di Pojok (Warna Violet/Fuchsia) --}}
-            <div
-                style="
-                position: absolute; top: -50px; right: -50px; width: 250px; height: 250px;
-                background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(255,255,255,0) 70%);
-                border-radius: 50%; pointer-events: none; filter: blur(20px);
-            ">
-            </div>
-
-            {{-- Header Title --}}
-            <div
-                style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.75rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 1rem; position: relative; z-index: 10;">
-                <div
-                    style="
-                    display: flex; align-items: center; justify-content: center;
-                    width: 36px; height: 36px; background: #f5f3ff; border-radius: 0.5rem; color: #7c3aed;
-                    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.15);
-                ">
-                    {{-- Grid / App Icon --}}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                        stroke="currentColor" style="width: 20px; height: 20px;">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 20.25 18v-2.25Z" />
-                    </svg>
-                </div>
-                <h2 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">
-                    Manajemen Kesiswaan
-                </h2>
-            </div>
-
-            {{-- Grid Menu Container --}}
-            <div class="kesiswaan-quick-grid" style="position: relative; z-index: 10;">
-                @foreach ([['label' => 'Monitoring Kehadiran', 'icon' => 'heroicon-o-clipboard-document-list', 'url' => '/admin/rekap-kehadiran-sekolahs'], ['label' => 'Approval Proposal', 'icon' => 'heroicon-o-document-check', 'url' => '/admin/proposal-kegiatans'], ['label' => 'Approval Laporan', 'icon' => 'heroicon-o-clipboard-document-check', 'url' => '/admin/laporan-kegiatans'], ['label' => 'Laporan Bulanan', 'icon' => 'heroicon-o-calendar-days', 'url' => '/admin/laporan-bulanans'], ['label' => 'Prestasi', 'icon' => 'heroicon-o-trophy', 'url' => '/admin/prestasis'], ['label' => 'Ekstrakurikuler', 'icon' => 'heroicon-o-puzzle-piece', 'url' => '/admin/ekstrakurikulers']] as $menu)
-                    <a href="{{ $menu['url'] }}" class="premium-quick-link-violet">
-                        <div class="quick-icon-wrapper-violet">
-                            <x-filament::icon :icon="$menu['icon']" style="width: 24px; height: 24px;" />
-                        </div>
-                        <span class="quick-label-violet">{{ $menu['label'] }}</span>
-                    </a>
-                @endforeach
-            </div>
-
         </div>
-    </x-filament::section>
+
+        {{-- Header --}}
+        <div
+            style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.75rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 1rem; position: relative; z-index: 10;">
+            <div
+                style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #f5f3ff; border-radius: 0.5rem; color: #7c3aed; box-shadow: 0 2px 10px rgba(139, 92, 246, 0.15);">
+                <x-filament::icon icon="heroicon-o-puzzle-piece" style="width: 20px; height: 20px;" />
+            </div>
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">Manajemen Kesiswaan</h2>
+        </div>
+
+        {{-- Grid Menu --}}
+        <div class="kesiswaan-menu-grid" style="position: relative; z-index: 10;">
+            @foreach ([['label' => 'Monitoring Kehadiran', 'icon' => 'heroicon-o-clipboard-document-list', 'url' => '/admin/rekap-kehadiran-sekolahs'], ['label' => 'Approval Proposal', 'icon' => 'heroicon-o-document-check', 'url' => '/admin/proposal-kegiatans'], ['label' => 'Approval Laporan', 'icon' => 'heroicon-o-clipboard-document-check', 'url' => '/admin/laporan-kegiatans'], ['label' => 'Laporan Bulanan', 'icon' => 'heroicon-o-calendar-days', 'url' => '/admin/laporan-bulanans'], ['label' => 'Prestasi', 'icon' => 'heroicon-o-trophy', 'url' => '/admin/prestasis'], ['label' => 'Ekstrakurikuler', 'icon' => 'heroicon-o-puzzle-piece', 'url' => '/admin/ekstrakurikulers']] as $menu)
+                <a href="{{ $menu['url'] }}" class="premium-kesiswaan-link">
+                    <div class="icon-wrapper-violet">
+                        <x-filament::icon :icon="$menu['icon']" style="width: 24px; height: 24px;" />
+                    </div>
+                    <span class="label-violet">{{ $menu['label'] }}</span>
+                </a>
+            @endforeach
+        </div>
+    </div>
 </x-filament-widgets::widget>

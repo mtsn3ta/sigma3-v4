@@ -13,14 +13,12 @@ use Illuminate\Support\Carbon;
 
 class PelatihLatihanWidget extends BaseWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
     protected int|string|array $columnSpan = 1;
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('pelatih') ?? false;
+        return \App\Support\ActiveRole::is('pelatih');
     }
 
     public function table(Table $table): Table

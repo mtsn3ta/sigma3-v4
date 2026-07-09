@@ -23,32 +23,103 @@
                 linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px) !important;
         }
 
+
         /* =========================================
-           1. SIDEBAR MENGAMBANG (Balanced Glass)
-           ========================================= */
+   1. SIDEBAR MENGAMBANG (Balanced Glass - Responsive)
+   ========================================= */
         .fi-main-sidebar {
-            height: calc(100vh - 2rem) !important;
-            margin: 1rem 0 1rem 1rem !important;
+            /* 🔽 Mengurangi tinggi total dari 2rem ke 2.5rem agar bagian bawah tidak jebol saat atasnya diturunkan */
+            height: calc(100vh - 2.5rem) !important;
+
+            /* 🔽 Menurunkan batas atas sidebar dari 1rem menjadi 1.25rem (Sejajar presisi dengan topbar) */
+            margin: 1.25rem 1rem 1.25rem 1rem !important;
             border-radius: 24px !important;
 
-            /* Glassmorphism yang menonjol namun tidak berlebihan */
-            background-color: rgba(255, 255, 255, 0.6) !important;
-            backdrop-filter: blur(16px) !important;
-            -webkit-backdrop-filter: blur(16px) !important;
+            /* Glassmorphism */
+            background:
+                linear-gradient(180deg,
+                    rgba(255, 255, 255, .82),
+                    rgba(255, 255, 255, .68)) !important;
 
-            /* Border halus untuk memisahkan dari background */
-            border: 1px solid rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, .75);
 
-            /* Shadow lembut agar menonjol selaras dengan topbar */
-            box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.1) !important;
+            box-shadow:
+                0 20px 45px rgba(15, 23, 42, .08),
+                0 8px 18px rgba(34, 197, 94, .04),
+                inset 0 1px rgba(255, 255, 255, .8);
 
             overflow: hidden !important;
+            transition: transform 0.3s ease, width 0.3s ease !important;
         }
 
+        /* =========================================
+   PENEGAKAN JARAK KONTEN (Anti-Tabrakan Topbar)
+   ========================================= */
+
+        /* 1. Mendorong Konten Utama (Kanal Kanan) Turun ke Bawah */
+        .fi-main {
+            padding-top: 5.5rem !important;
+            /* Memberikan ruang kosong yang pas di bawah topbar */
+        }
+
+        /* 2. Mendorong Isi Menu Sidebar agar Tidak Tertutup Header Topbar */
+        .fi-sidebar-nav {
+            padding-top: 1.5rem !important;
+            /* Dirapatkan kembali karena tidak ada tabrakan lagi */
+            background: transparent !important;
+        }
+
+        /* 💻 PENYESUAIAN KHUSUS LAYAR BESAR (Desktop) */
+        @media (min-width: 1024px) {
+            .fi-main {
+                padding-top: 5.5rem !important;
+                /* Tetap menjaga jarak dari sidebar desktop Anda */
+            }
+        }
+
+        /* 📱 PENYESUAIAN KHUSUS LAYAR KECIL (Mobile) */
+        @media (max-width: 1023px) {
+            .fi-main {
+                padding-top: 6rem !important;
+                /* Sedikit lebih longgar di mobile agar header halaman aman */
+                margin-left: 0 !important;
+            }
+        }
+
+        /* 💻 ATURAN KHUSUS UNTUK LAYAR BESAR (Desktop / Min-width: 1024px) */
+        @media (min-width: 1024px) {
+            .fi-main-sidebar {
+                width: 320px !important;
+                /* Lebar ekstra hanya aktif di desktop */
+                max-width: 320px !important;
+                margin: 1rem 0 1rem 1rem !important;
+                /* Mengembalikan margin asal */
+            }
+        }
+
+        /* 📱 ATURAN KHUSUS UNTUK LAYAR KECIL / DRAWER (Tablet & Mobile / Max-width: 1023px) */
+        @media (max-width: 1023px) {
+            .fi-main-sidebar {
+                width: 280px !important;
+                /* Ukuran proporsional saat menjadi drawer laci di mobile */
+                max-width: 280px !important;
+                height: calc(100vh - 2rem) !important;
+                z-index: 50 !important;
+                /* Memastikan melayang di atas konten utama */
+            }
+        }
+
+        /* Mode Gelap Tetap Sama */
         .dark .fi-main-sidebar {
-            background-color: rgba(15, 23, 42, 0.7) !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+            background:
+                linear-gradient(180deg,
+                    rgba(15, 23, 42, .86),
+                    rgba(2, 6, 23, .78)) !important;
+            border: 1px solid rgba(255, 255, 255, .08);
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, .45),
+                inset 0 1px rgba(255, 255, 255, .04);
         }
 
         .fi-main-sidebar::before {
@@ -62,173 +133,441 @@
         }
 
         /* =========================================
-           2. LAYOUT MENU (Spasi & Tipografi)
+           2. SIDEBAR NAVIGATION (Premium)
            ========================================= */
+        .fi-sidebar-nav {
+            background: transparent !important;
+        }
+
         .fi-sidebar-nav-groups {
-            padding: 1rem 0.5rem !important;
+            padding: 1rem .6rem 1.25rem !important;
             display: flex !important;
             flex-direction: column !important;
-            gap: 1.25rem !important;
+            gap: 1.5rem !important;
             overflow-x: hidden !important;
-            /* Mencegah overflow horizontal dari animasi teks */
         }
 
         .fi-sidebar-group-items {
             display: flex !important;
             flex-direction: column !important;
-            gap: 0.15rem !important;
-        }
-
-        .fi-sidebar-group-label {
-            font-size: 0.65rem !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.05em !important;
-            text-transform: uppercase !important;
-            margin-bottom: 0.25rem !important;
-            padding-left: 0.75rem !important;
-            color: #64748b !important;
-        }
-
-        .fi-sidebar-item>a {
-            border-radius: 0.75rem !important;
-            padding: 0.5rem 0.75rem !important;
-            font-size: 0.875rem !important;
-            font-weight: 600 !important;
-            color: #4b5563 !important;
-            transition: all 0.2s ease !important;
-            overflow: hidden;
-            /* Penting untuk efek marquee */
-        }
-
-        .fi-sidebar-item-icon {
-            color: #94a3b8 !important;
-            transition: color 0.2s ease !important;
-            flex-shrink: 0;
-            /* Mencegah ikon menyusut saat teks memanjang */
-        }
-
-        .fi-sidebar-nav {
-            background: transparent !important;
-        }
-
-        .fi-sidebar-footer {
-            background: rgba(255, 255, 255, 0.4) !important;
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.7) !important;
-        }
-
-        .dark .fi-sidebar-footer {
-            background: rgba(0, 0, 0, 0.2) !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-        }
-
-        .dark .fi-sidebar-group-label {
-            color: #71717a !important;
-        }
-
-        .dark .fi-sidebar-item>a {
-            color: #a1a1aa !important;
-        }
-
-        .dark .fi-sidebar-item-icon {
-            color: #71717a !important;
+            gap: .25rem !important;
         }
 
         /* =========================================
-           3. HOVER & ACTIVE STATE
+           GROUP TITLE
            ========================================= */
-        .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover {
-            background-color: rgba(13, 148, 136, 0.08) !important;
-            /* Teal sangat pudar agar elegan */
-            color: #0891b2 !important;
+        .fi-sidebar-group-label {
+            position: relative;
+            padding-left: .9rem !important;
+            margin-bottom: .6rem !important;
+            font-size: .62rem !important;
+            font-weight: 800 !important;
+            letter-spacing: .14em !important;
+            text-transform: uppercase !important;
+            color: #94a3b8 !important;
+            opacity: .9;
         }
 
-        .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover .fi-sidebar-item-icon {
-            color: #0891b2 !important;
+        .fi-sidebar-group-label::after {
+            content: "";
+            display: block;
+            width: 24px;
+            height: 2px;
+            margin-top: 6px;
+            border-radius: 999px;
+            background: linear-gradient(90deg,
+                    #16a34a,
+                    /* Hijau Premium */
+                    #14b8a6) !important;
+            opacity: .35;
         }
 
+        .dark .fi-sidebar-group-label {
+            color: #64748b !important;
+        }
+
+        /* =========================================
+           MENU ITEM
+           ========================================= */
+        .fi-sidebar-item>a {
+            display: flex !important;
+            align-items: center !important;
+            gap: .8rem !important;
+            padding: .72rem .9rem !important;
+            border-radius: 14px !important;
+            border: 1px solid transparent !important;
+            background: transparent !important;
+            color: #475569 !important;
+            font-size: .88rem !important;
+            font-weight: 600 !important;
+            transition: all .25s cubic-bezier(.4, 0, .2, 1) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* =========================================
+           ICON
+           ========================================= */
+        .fi-sidebar-item-icon {
+            width: 18px !important;
+            height: 18px !important;
+            flex-shrink: 0;
+            color: #94a3b8 !important;
+            transition: all .25s ease !important;
+        }
+
+        /* =========================================
+           LABEL
+           ========================================= */
+        .fi-sidebar-item-label {
+            transition: all .25s ease;
+        }
+
+        /* =========================================
+           HOVER (Light Mode)
+           ========================================= */
+        .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover,
+        .fi-sidebar-item:not(.fi-active)>a:hover {
+            transform: translateX(3px);
+            background: rgba(255, 255, 255, .65) !important;
+            border-color: rgba(34, 197, 94, .12) !important;
+            /* Border hijau transparan */
+            box-shadow: 0 8px 18px rgba(15, 23, 42, .03);
+            color: #15803d !important;
+            /* Teks hijau gelap saat hover */
+        }
+
+        .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover .fi-sidebar-item-icon,
+        .fi-sidebar-item:not(.fi-active)>a:hover .fi-sidebar-item-icon {
+            color: #16a34a !important;
+            /* Icon hijau saat hover */
+        }
+
+        /* =========================================
+           ACTIVE (Light Mode)
+           ========================================= */
         .fi-sidebar-item-active>a,
         .fi-sidebar-item.fi-active>a {
-            background-color: rgba(8, 145, 178, 0.2) !important;
-            border: 1px solid #ffffff !important;
-            color: #0d9488 !important;
-            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.08) !important;
+            background: linear-gradient(135deg, #f0fdf4, #fcfdfd) !important;
+            /* Gradasi Hijau Premium Lembut */
+            border: 1px solid rgba(34, 197, 94, .2) !important;
+            color: #15803d !important;
+            box-shadow:
+                0 8px 20px rgba(34, 197, 94, .08),
+                inset 0 1px rgba(255, 255, 255, .85);
         }
 
         .fi-sidebar-item-active>a .fi-sidebar-item-icon,
         .fi-sidebar-item.fi-active>a .fi-sidebar-item-icon {
-            color: #0d9488 !important;
+            color: #16a34a !important;
+            transform: scale(1.08);
         }
 
-        .dark .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover {
-            background-color: rgba(8, 145, 178, 0.1) !important;
-            color: #22d3ee !important;
+        /* =========================================
+           FOOTER
+           ========================================= */
+        .fi-sidebar-footer {
+            background: transparent !important;
+            border-top: 1px solid rgba(148, 163, 184, .12) !important;
+            backdrop-filter: none !important;
+            padding-top: .85rem;
         }
 
-        .dark .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover .fi-sidebar-item-icon {
-            color: #22d3ee !important;
+        /* =========================================
+           DARK MODE
+           ========================================= */
+        .dark .fi-sidebar-item>a {
+            color: #cbd5e1 !important;
         }
 
+        .dark .fi-sidebar-item-icon {
+            color: #64748b !important;
+        }
+
+        /* Hover (Dark Mode) */
+        .dark .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover,
+        .dark .fi-sidebar-item:not(.fi-active)>a:hover {
+            background: rgba(255, 255, 255, .04) !important;
+            border-color: rgba(34, 197, 94, .15) !important;
+            color: #4ade80 !important;
+            /* Teks hijau terang neon di dark mode */
+        }
+
+        .dark .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover .fi-sidebar-item-icon,
+        .dark .fi-sidebar-item:not(.fi-active)>a:hover .fi-sidebar-item-icon {
+            color: #4ade80 !important;
+        }
+
+        /* Active (Dark Mode) */
         .dark .fi-sidebar-item-active>a,
         .dark .fi-sidebar-item.fi-active>a {
-            background-color: rgba(8, 145, 178, 0.2) !important;
-            border: 1px solid rgba(34, 211, 238, 0.15) !important;
-            color: #2dd4bf !important;
-            box-shadow: none !important;
+            background:
+                linear-gradient(135deg,
+                    rgba(34, 197, 94, .15),
+                    rgba(34, 197, 94, .04)) !important;
+            /* Gradasi hijau gelap transparan */
+            border: 1px solid rgba(34, 197, 94, .25) !important;
+            color: #4ade80 !important;
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, .3),
+                inset 0 1px rgba(255, 255, 255, .03);
         }
 
         .dark .fi-sidebar-item-active>a .fi-sidebar-item-icon,
         .dark .fi-sidebar-item.fi-active>a .fi-sidebar-item-icon {
-            color: #2dd4bf !important;
+            color: #4ade80 !important;
         }
 
         /* =========================================
-           4. CUSTOM SCROLLBAR MODERN
+   3. HOVER & ACTIVE STATE (Premium - Green Edition)
+   ========================================= */
+
+        /* ---------- Hover (Light Mode) ---------- */
+        .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover,
+        .fi-sidebar-item:not(.fi-active)>a:hover {
+            transform: translateX(3px);
+            background: rgba(255, 255, 255, .60) !important;
+            border-color: rgba(34, 197, 94, .12) !important;
+            /* Border hijau muda transparan */
+            color: #15803d !important;
+            /* Teks hijau gelap premium */
+            box-shadow: 0 8px 18px rgba(15, 23, 42, .03);
+        }
+
+        .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover .fi-sidebar-item-icon,
+        .fi-sidebar-item:not(.fi-active)>a:hover .fi-sidebar-item-icon {
+            color: #16a34a !important;
+            /* Ikon hijau */
+            transform: scale(1.08);
+        }
+
+        /* ---------- Active (Light Mode) ---------- */
+        .fi-sidebar-item-active>a,
+        .fi-sidebar-item.fi-active>a {
+            background: linear-gradient(135deg, #f0fdf4, #fcfdfd) !important;
+            /* Gradasi Emerald 50 premium */
+            border: 1px solid rgba(34, 197, 94, .20) !important;
+            color: #15803d !important;
+            box-shadow:
+                0 10px 24px rgba(34, 197, 94, .08),
+                /* Bayangan berpendar hijau tipis */
+                inset 0 1px rgba(255, 255, 255, .85);
+        }
+
+        .fi-sidebar-item-active>a .fi-sidebar-item-icon,
+        .fi-sidebar-item.fi-active>a .fi-sidebar-item-icon {
+            color: #16a34a !important;
+            transform: scale(1.1);
+        }
+
+        /* =========================================
+           DARK MODE (Green Edition)
            ========================================= */
-        .fi-sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-            /* Sangat ramping */
-            height: 4px;
+
+        /* ---------- Hover (Dark Mode) ---------- */
+        .dark .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover,
+        .dark .fi-sidebar-item:not(.fi-active)>a:hover {
+            background: rgba(255, 255, 255, .05) !important;
+            border-color: rgba(74, 222, 128, .12) !important;
+            color: #4ade80 !important;
+            /* Teks hijau emerald cerah */
+            box-shadow: 0 8px 18px rgba(0, 0, 0, .25);
         }
 
-        .fi-sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-            margin: 1rem 0;
+        .dark .fi-sidebar-item:not(.fi-sidebar-item-active)>a:hover .fi-sidebar-item-icon,
+        .dark .fi-sidebar-item:not(.fi-active)>a:hover .fi-sidebar-item-icon {
+            color: #4ade80 !important;
+            transform: scale(1.08);
         }
 
-        .fi-sidebar-nav::-webkit-scrollbar-thumb {
-            background: rgba(13, 148, 136, 0.15);
-            border-radius: 10px;
-            transition: background 0.3s ease;
+        /* ---------- Active (Dark Mode) ---------- */
+        .dark .fi-sidebar-item-active>a,
+        .dark .fi-sidebar-item.fi-active>a {
+            background:
+                linear-gradient(135deg,
+                    rgba(34, 197, 94, .16),
+                    rgba(34, 197, 94, .05)) !important;
+            border: 1px solid rgba(74, 222, 128, .20) !important;
+            color: #bbf7d0 !important;
+            /* Teks hijau mint lembut */
+            box-shadow:
+                inset 0 1px rgba(255, 255, 255, .05),
+                0 10px 24px rgba(0, 0, 0, .30);
         }
 
-        .fi-sidebar-nav:hover::-webkit-scrollbar-thumb {
-            background: rgba(13, 148, 136, 0.4);
-        }
-
-        .fi-sidebar-nav::-webkit-scrollbar-thumb:hover {
-            background: rgba(13, 148, 136, 0.7);
-        }
-
-        .dark .fi-sidebar-nav::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .dark .fi-sidebar-nav:hover::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .dark .fi-sidebar-nav::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .fi-sidebar-nav {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(13, 148, 136, 0.4) transparent;
+        .dark .fi-sidebar-item-active>a .fi-sidebar-item-icon,
+        .dark .fi-sidebar-item.fi-active>a .fi-sidebar-item-icon {
+            color: #4ade80 !important;
+            transform: scale(1.1);
         }
 
         /* =========================================
-           5. PENANGANAN TEKS TERPOTONG (ELEGANT WRAP)
+   4. PREMIUM SCROLLBAR (Ultra Thin & Clean Force)
+   ========================================= */
+
+        /* Target universal untuk sidebar navigasi Filament */
+        .fi-sidebar-nav,
+        .fi-sidebar-nav *,
+        [aria-label="Sidebar navigation"] {
+            scrollbar-width: thin !important;
+            scrollbar-color: rgba(34, 197, 94, .25) transparent !important;
+        }
+
+        /* Mengunci ukuran scrollbar Chrome / Safari / Edge secara absolut */
+        .fi-sidebar-nav::-webkit-scrollbar,
+        .fi-sidebar-nav *::-webkit-scrollbar,
+        [aria-label="Sidebar navigation"]::-webkit-scrollbar {
+            width: 3px !important;
+            /* Memaksa lebar 3px */
+            height: 3px !important;
+        }
+
+        /* Menyembunyikan tombol panah atas/bawah scrollbar yang membuat tebal */
+        .fi-sidebar-nav::-webkit-scrollbar-button,
+        [aria-label="Sidebar navigation"]::-webkit-scrollbar-button {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        /* Jalur lintasan scrollbar */
+        .fi-sidebar-nav::-webkit-scrollbar-track,
+        [aria-label="Sidebar navigation"]::-webkit-scrollbar-track {
+            background: transparent !important;
+            margin: .5rem 6px !important;
+            /* Menambah jarak kosong dari tepi */
+        }
+
+        /* Batang scrollbar utama */
+        .fi-sidebar-nav::-webkit-scrollbar-thumb,
+        [aria-label="Sidebar navigation"]::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, .20) !important;
+            border-radius: 999px !important;
+            border: none !important;
+        }
+
+        /* Efek Hover Navigasi */
+        .fi-sidebar-nav:hover::-webkit-scrollbar-thumb,
+        [aria-label="Sidebar navigation"]:hover::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, .45) !important;
+        }
+
+        /* ---------- Dark Mode Force ---------- */
+        .dark .fi-sidebar-nav,
+        .dark [aria-label="Sidebar navigation"] {
+            scrollbar-color: rgba(74, 222, 128, .25) transparent !important;
+        }
+
+        .dark .fi-sidebar-nav::-webkit-scrollbar-thumb,
+        .dark [aria-label="Sidebar navigation"]::-webkit-scrollbar-thumb {
+            background: rgba(74, 222, 128, .20) !important;
+        }
+
+        .dark .fi-sidebar-nav:hover::-webkit-scrollbar-thumb,
+        .dark [aria-label="Sidebar navigation"]:hover::-webkit-scrollbar-thumb {
+            background: rgba(74, 222, 128, .45) !important;
+        }
+
+        /* =========================================
+   5. RESPONSIVE GLASS FIX (For Mobile Drawer Wrapper)
+   ========================================= */
+        @media (max-width: 1023px) {
+
+            /* Memaksa elemen pembungkus terluar sidebar mobile menjadi transparan */
+            aside.fi-sidebar,
+            .fi-sidebar,
+            [fixed-sidebar="false"] aside {
+                background-color: transparent !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+
+            /* Memastikan elemen navigasi internal tidak memblokir efek kaca */
+            .fi-sidebar-nav {
+                background: transparent !important;
+            }
+
+            /* Opsional: Jika backdrop (area gelap di luar sidebar) terlalu pekat,
+           bisa kita buat efek blur yang selaras */
+            .fi-sidebar-close-overlay {
+                backdrop-filter: blur(4px) !important;
+                background-color: rgba(15, 23, 42, 0.3) !important;
+                /* Kegelapan latar belakang luar dikurangi */
+            }
+        }
+
+        /* 📱 RESPONSIVE PREMIUM GLASSMOPHISM (Max-width: 1023px) */
+        @media (max-width: 1023px) {
+
+            /* 1. Mengatur ulang kontainer bawaan Filament agar efek kaca tidak tertutup */
+            aside.fi-sidebar,
+            .fi-sidebar,
+            [fixed-sidebar="false"] aside {
+                background: transparent !important;
+                background-color: transparent !important;
+                box-shadow: none !important;
+            }
+
+            /* 2. Mengaktifkan Kaca Transparan Mewah dengan Blur Tinggi di Mobile */
+            .fi-main-sidebar {
+                width: 280px !important;
+                max-width: 280px !important;
+                height: calc(100vh - 2rem) !important;
+                margin: 1rem !important;
+                border-radius: 24px !important;
+
+                /* Lapisan putih transparan agar teks di atas tabel tetap terbaca */
+                background: rgba(255, 255, 255, 0.85) !important;
+
+                /* Menghalangi/memburamkan data tabel di belakangnya */
+                backdrop-filter: blur(20px) saturate(160%) !important;
+                -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+
+                border: 1px solid rgba(255, 255, 255, 0.6) !important;
+                box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15) !important;
+                z-index: 50 !important;
+                overflow: hidden !important;
+            }
+
+            /* 3. Pengaturan Kaca untuk Mode Gelap (Dark Mode) */
+            .dark .fi-main-sidebar {
+                background: rgba(15, 23, 42, 0.85) !important;
+                backdrop-filter: blur(20px) saturate(160%) !important;
+                -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
+            }
+
+            /* 4. Warna Teks Menu Utama (Dibuat Gelap Tajam agar Kontras di atas Kaca Putih) */
+            .fi-main-sidebar .fi-sidebar-item>a {
+                color: #1e293b !important;
+                /* Warna Slate 800 yang tegas */
+            }
+
+            .fi-main-sidebar .fi-sidebar-item-icon {
+                color: #475569 !important;
+            }
+
+            .fi-main-sidebar .fi-sidebar-group-label {
+                color: #64748b !important;
+            }
+
+            /* 5. Menjaga Warna Menu AKTIF (Tetap Hijau Premium) */
+            .fi-main-sidebar .fi-sidebar-item-active>a,
+            .fi-main-sidebar .fi-sidebar-item.fi-active>a {
+                background: linear-gradient(135deg, #f0fdf4, #fcfdfd) !important;
+                border: 1px solid rgba(34, 197, 94, 0.25) !important;
+                color: #15803d !important;
+            }
+
+            .fi-main-sidebar .fi-sidebar-item-active>a .fi-sidebar-item-icon,
+            .fi-main-sidebar .fi-sidebar-item.fi-active>a .fi-sidebar-item-icon {
+                color: #16a34a !important;
+            }
+        }
+
+        /* =========================================
+           7. PENANGANAN TEKS TERPOTONG (ELEGANT WRAP)
            ========================================= */
         /* Kondisi Normal: Teks panjang dirapikan dengan titik-titik (...) */
         .fi-sidebar-item-label {
@@ -397,14 +736,6 @@
                         <div class="sigma-brand-title">
                             <span>SIGMA</span>
                             <span>3</span>
-                        </div>
-
-                        <div class="sigma-brand-subtitle">
-                            SISTEM INFORMASI GLOBAL
-                        </div>
-
-                        <div class="sigma-brand-school">
-                            MTsN 3 TULUNGAGUNG
                         </div>
                     </div>
                 </div>

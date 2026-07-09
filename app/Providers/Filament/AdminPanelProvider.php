@@ -18,9 +18,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Resources\IzinKeluars\IzinKeluarResource;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Support\SettingHelper;
+use Filament\View\PanelsRenderHook;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -69,13 +68,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Izin Keluar')
                     ->group('BK')
                     ->icon('heroicon-o-arrow-right-start-on-rectangle')
-                    ->visible(function (): bool {
-
-                        /** @var User|null $user */
-                        $user = Auth::user();
-
-                        return $user?->hasRole('bk') ?? false;
-                    })
+                    ->visible(fn() => \App\Support\ActiveRole::is('bk'))
                     ->url(fn(): string => IzinKeluarResource::getUrl())
                     ->isActiveWhen(
                         fn() =>
@@ -87,13 +80,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Izin Keluar')
                     ->group('Guru Piket')
                     ->icon('heroicon-o-arrow-right-start-on-rectangle')
-                    ->visible(function (): bool {
-
-                        /** @var User|null $user */
-                        $user = Auth::user();
-
-                        return $user?->hasRole('piket') ?? false;
-                    })
+                    ->visible(fn() => \App\Support\ActiveRole::is('piket'))
                     ->url(fn(): string => IzinKeluarResource::getUrl())
                     ->isActiveWhen(
                         fn() =>
@@ -103,6 +90,10 @@ class AdminPanelProvider extends PanelProvider
                     ),
 
             ])
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_NAV_START,
+                fn() => view('filament.sidebar.role-switcher')
+            )
 
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

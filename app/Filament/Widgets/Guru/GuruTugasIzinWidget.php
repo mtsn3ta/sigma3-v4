@@ -18,9 +18,7 @@ class GuruTugasIzinWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('guru') ?? false;
+        return \App\Support\ActiveRole::is('guru');
     }
 
     public function table(Table $table): Table

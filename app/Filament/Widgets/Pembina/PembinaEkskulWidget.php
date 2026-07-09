@@ -10,14 +10,12 @@ use Illuminate\Support\Facades\Auth;
 class PembinaEkskulWidget extends Widget
 {
     protected string $view = 'filament.widgets.pembina.ekskul-list';
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
     protected static ?int $sort = 2;
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('pembina') ?? false;
+        return \App\Support\ActiveRole::is('pembina');
     }
 
     public function getViewData(): array

@@ -7,17 +7,14 @@ use App\Models\KehadiranSekolah;
 use App\Models\TugasGuruIzin;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\Auth;
 
 class PiketStatsWidget extends StatsOverviewWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 3;
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('piket') ?? false;
+        return \App\Support\ActiveRole::is('piket');
     }
 
     protected function getStats(): array

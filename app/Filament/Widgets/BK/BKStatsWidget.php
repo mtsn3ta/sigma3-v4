@@ -7,7 +7,6 @@ use App\Models\KonselingSiswa;
 use App\Models\PermasalahanSiswa;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\Auth;
 
 class BKStatsWidget extends StatsOverviewWidget
 {
@@ -15,9 +14,7 @@ class BKStatsWidget extends StatsOverviewWidget
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('bk') ?? false;
+        return \App\Support\ActiveRole::is('bk');
     }
 
     protected function getStats(): array

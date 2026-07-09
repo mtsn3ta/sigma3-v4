@@ -2,43 +2,60 @@
 
     <style>
         /* =========================================
-           1. GAYA TOPBAR (Floating Oval / Pill)
-           ========================================= */
-        .fi-topbar {
-            /* MENGAMBANG & OVAL */
-            top: 1.5rem !important;
-            /* Turun dari atas agar mengambang */
-            margin-left: 1.5rem !important;
-            /* Jarak dari kiri */
-            margin-right: 1.5rem !important;
-            /* Jarak dari kanan */
-            width: calc(100% - 3rem) !important;
-            /* Menyesuaikan lebar setelah dikurangi margin */
-            border-radius: 9999px !important;
-            /* Bentuk Kapsul/Oval Penuh */
-            padding-left: 0.5rem !important;
-            /* Jarak aman konten ke lengkungan kiri */
-            padding-right: 0.5rem !important;
-            /* Jarak aman konten ke lengkungan kanan */
+       1. GAYA TOPBAR (Floating Oval / Pill)
+       ========================================= */
+        /* 1. Tambahkan ini untuk mengatur container pembungkusnya */
+        .fi-topbar-ctn {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50 !important;
+            pointer-events: none;
+            /* Penting: Agar area kosong di luar topbar tidak menghalangi klik ke halaman utama */
+        }
 
-            /* Mode Terang: Kaca Transparan Premium */
+        /* 2. Ubah sedikit .fi-topbar milikmu */
+        .fi-topbar {
+            /* GANTI dari fixed menjadi absolute */
+            position: absolute !important;
+
+            /* Aktifkan kembali fungsi klik khusus untuk elemen topbar */
+            pointer-events: auto;
+
+            /* === SISA KODEMU TETAP SAMA PERSIS DI BAWAH INI === */
+            top: 1.25rem !important;
+            border-radius: 9999px !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
             background-color: rgba(255, 255, 255, 0.7) !important;
             backdrop-filter: blur(24px) saturate(150%) !important;
             -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-
-            /* Border luar keliling + Inner Highlight untuk efek kaca 3D */
             border: 1px solid rgba(255, 255, 255, 0.8) !important;
-
-            /* Bayangan yang lebih dalam ke bawah agar terlihat melayang (Floating) */
             box-shadow:
-                0 10px 30px -10px rgba(13, 148, 136, 0.25),
-                /* Bayangan hijau teal lembut */
+                0 10px 30px -10px rgba(34, 197, 94, 0.15),
                 inset 0 1px 1px rgba(255, 255, 255, 0.9) !important;
-
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            left: 1.5rem !important;
+            width: calc(100% - 3rem) !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
         }
 
-        /* Mode Gelap untuk Topbar (Cyber Slate Floating) */
+        /* (Media queries dan dark mode milikmu biarkan seperti semula) */
+
+        /* Mode Desktop: Topbar di sebelah kanan Sidebar */
+        @media (min-width: 1024px) {
+            .fi-topbar {
+                /* 320px (Lebar Sidebar) + 1rem (Margin Kiri Sidebar) + 1rem (Jarak antar elemen) */
+                left: calc(320px + 2rem) !important;
+
+                /* Sisa ruang layar dikurangi lebar sidebar dan margin */
+                width: calc(100% - 320px - 3.5rem) !important;
+            }
+        }
+
+        /* Mode Gelap untuk Topbar */
         .dark .fi-topbar {
             background-color: rgba(15, 23, 42, 0.7) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -191,14 +208,6 @@
                 <div class="sigma-brand-title">
                     <span>SIGMA</span>
                     <span>3</span>
-                </div>
-
-                <div class="sigma-brand-subtitle">
-                    SISTEM INFORMASI GLOBAL
-                </div>
-
-                <div class="sigma-brand-school">
-                    MTsN 3 TULUNGAGUNG
                 </div>
             </div>
 

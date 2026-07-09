@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\RFID\SchoolRfidController;
 use App\Http\Controllers\Api\RFID\IbadahRfidController;
 use App\Http\Controllers\API\RFID\EkstrakurikulerRfidController;
 use App\Http\Controllers\Api\MonitoringAttendanceController;
+use App\Http\Controllers\IntelligenceController;
 
 Route::post(
     '/rfid/sekolah',
@@ -22,3 +23,4 @@ Route::get(
     '/monitoring',
     MonitoringAttendanceController::class
 );
+Route::get('/scan-siswa', [IntelligenceController::class, 'scanSiswa']);

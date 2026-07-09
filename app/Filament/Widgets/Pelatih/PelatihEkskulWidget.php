@@ -10,14 +10,12 @@ use Illuminate\Support\Facades\Auth;
 class PelatihEkskulWidget extends Widget
 {
     protected string $view = 'filament.widgets.pelatih.ekskul-list';
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
     protected static ?int $sort = 2;
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('pelatih') ?? false;
+        return \App\Support\ActiveRole::is('pelatih');
     }
 
     public function getViewData(): array

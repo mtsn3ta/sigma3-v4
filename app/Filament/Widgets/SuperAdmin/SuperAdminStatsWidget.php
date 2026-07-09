@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SuperAdminStatsWidget extends StatsOverviewWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 2;
 
     protected function getStats(): array
     {

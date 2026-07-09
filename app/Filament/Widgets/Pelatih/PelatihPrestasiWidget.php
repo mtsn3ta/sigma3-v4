@@ -18,9 +18,7 @@ class PelatihPrestasiWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('pelatih') ?? false;
+        return \App\Support\ActiveRole::is('pelatih');
     }
 
     public function table(Table $table): Table

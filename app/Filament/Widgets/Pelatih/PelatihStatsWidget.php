@@ -13,13 +13,11 @@ use Illuminate\Support\Facades\Auth;
 
 class PelatihStatsWidget extends StatsOverviewWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 3;
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('pelatih') ?? false;
+        return \App\Support\ActiveRole::is('pelatih');
     }
 
     protected function getStats(): array

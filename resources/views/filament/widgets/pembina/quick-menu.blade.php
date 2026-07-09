@@ -79,31 +79,46 @@
         }
     </style>
 
-    <x-filament::section style="padding: 0; background: transparent; box-shadow: none; border: none;">
+    {{-- Widget Container Premium --}}
+    <div
+        style="
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 1rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    ">
+        {{-- Pendaran Halus (Emerald Glow) --}}
         <div
-            style="padding: 2rem; background: #ffffff; border-radius: 1rem; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-
-            {{-- Header --}}
-            <div
-                style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 1rem;">
-                <div
-                    style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #d1fae5; border-radius: 0.5rem; color: #059669;">
-                    <x-filament::icon icon="heroicon-o-command-line" style="width: 20px; height: 20px;" />
-                </div>
-                <h2 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">Kontrol Ekskul</h2>
-            </div>
-
-            {{-- Grid Menu --}}
-            <div class="pembina-menu-grid">
-                @foreach ([['label' => 'Input Kegiatan', 'icon' => 'heroicon-o-calendar-days', 'url' => '/admin/sesi-kegiatans/create'], ['label' => 'Anggota Ekskul', 'icon' => 'heroicon-o-user-group', 'url' => '/admin/anggota-ekskuls'], ['label' => 'Proposal', 'icon' => 'heroicon-o-document-text', 'url' => '/admin/proposal-kegiatans'], ['label' => 'Laporan Bulanan', 'icon' => 'heroicon-o-document-chart-bar', 'url' => '/admin/laporan-bulanans']] as $menu)
-                    <a href="{{ $menu['url'] }}" class="premium-pembina-link">
-                        <div class="icon-wrapper-emerald">
-                            <x-filament::icon :icon="$menu['icon']" style="width: 24px; height: 24px;" />
-                        </div>
-                        <span class="label-emerald">{{ $menu['label'] }}</span>
-                    </a>
-                @endforeach
-            </div>
+            style="
+            position: absolute; top: -50px; right: -50px; width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; pointer-events: none; filter: blur(20px);
+        ">
         </div>
-    </x-filament::section>
+
+        {{-- Header --}}
+        <div
+            style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 1rem; position: relative; z-index: 10;">
+            <div
+                style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #d1fae5; border-radius: 0.5rem; color: #059669; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15);">
+                <x-filament::icon icon="heroicon-o-command-line" style="width: 20px; height: 20px;" />
+            </div>
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">Kontrol Ekskul</h2>
+        </div>
+
+        {{-- Grid Menu --}}
+        <div class="pembina-menu-grid" style="position: relative; z-index: 10;">
+            @foreach ([['label' => 'Input Kegiatan', 'icon' => 'heroicon-o-calendar-days', 'url' => '/admin/sesi-kegiatans/create'], ['label' => 'Anggota Ekskul', 'icon' => 'heroicon-o-user-group', 'url' => '/admin/anggota-ekskuls'], ['label' => 'Proposal', 'icon' => 'heroicon-o-document-text', 'url' => '/admin/proposal-kegiatans'], ['label' => 'Laporan Bulanan', 'icon' => 'heroicon-o-document-chart-bar', 'url' => '/admin/laporan-bulanans']] as $menu)
+                <a href="{{ $menu['url'] }}" class="premium-pembina-link">
+                    <div class="icon-wrapper-emerald">
+                        <x-filament::icon :icon="$menu['icon']" style="width: 24px; height: 24px;" />
+                    </div>
+                    <span class="label-emerald">{{ $menu['label'] }}</span>
+                </a>
+            @endforeach
+        </div>
+    </div>
 </x-filament-widgets::widget>

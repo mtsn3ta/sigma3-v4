@@ -7,19 +7,16 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Support\Facades\Auth;
 
 class PiketTugasGuruWidget extends BaseWidget
 {
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 2;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('piket') ?? false;
+        return \App\Support\ActiveRole::is('piket');
     }
 
     public function table(Table $table): Table

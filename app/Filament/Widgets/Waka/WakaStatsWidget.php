@@ -9,17 +9,14 @@ use App\Models\KehadiranSekolah;
 use App\Models\Prestasi;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\Auth;
 
 class WakaStatsWidget extends StatsOverviewWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 4;
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('waka_kesiswaan') ?? false;
+        return \App\Support\ActiveRole::is('waka_kesiswaan');
     }
 
     protected function getStats(): array

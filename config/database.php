@@ -114,6 +114,20 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'erapor' => [
+            'driver' => 'mysql',
+            'host' => env('DB_ERAPOR_HOST', '127.0.0.1'),
+            'port' => env('DB_ERAPOR_PORT', '3306'),
+            'database' => env('DB_ERAPOR_DATABASE', 'mtsntul1_erapor'),
+            'username' => env('DB_ERAPOR_USERNAME', 'mtsntul1_erapor'),
+            'password' => env('DB_ERAPOR_PASSWORD', 'Killdisk_3'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
+
     ],
 
     /*
@@ -149,7 +163,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-database-'),
+            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')) . '-database-'),
             'persistent' => env('REDIS_PERSISTENT', false),
         ],
 

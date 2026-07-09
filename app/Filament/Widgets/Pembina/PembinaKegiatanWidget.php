@@ -13,14 +13,12 @@ use Illuminate\Support\Carbon;
 
 class PembinaKegiatanWidget extends BaseWidget
 {
-    protected static ?int $sort = 3;
-    protected int|string|array $columnSpan = 1;
+    protected static ?int $sort = 4;
+    protected int|string|array $columnSpan = 'full';
 
     public static function canView(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        return $user?->hasRole('pembina') ?? false;
+        return \App\Support\ActiveRole::is('pembina');
     }
 
     public function table(Table $table): Table

@@ -11,7 +11,7 @@ class SuperAdminQuickMenuWidget extends Widget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 1;
     public static function canView(): bool
     {
         /** @var \App\Models\User|null $user */

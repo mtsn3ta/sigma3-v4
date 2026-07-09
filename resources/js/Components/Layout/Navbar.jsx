@@ -14,19 +14,20 @@ const MENUS = [
     },
     {
         title: "Fitur",
-        href: "/#fitur-modul", // Tambahkan '/' di depan agar kembali ke beranda dari halaman lain
+        href: "/#fitur-modul",
     },
     {
         title: "Layanan Unggulan",
         href: "/#features",
     },
     {
-        title: "Monitoring Absensi",
+        title: "Monitoring",
         href: "/monitoring",
     },
     {
         title: "Student Intelligence",
-        href: "/#student-intelligence",
+        href: "/intelligence",
+        native: true, // Tambahkan flag ini untuk rute non-Inertia
     },
 ];
 
@@ -34,7 +35,6 @@ const MENUS = [
 const SECTIONS = {
     "fitur-modul": "Fitur",
     features: "Layanan Unggulan",
-    "student-intelligence": "Student Intelligence",
 };
 
 export default function Navbar({ hasUrgentAlert = false }) {
@@ -51,13 +51,16 @@ export default function Navbar({ hasUrgentAlert = false }) {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
 
-            // Jika sedang berada di halaman monitoring, set aktif statis tanpa cek scroll section
-            if (url && url.startsWith("/monitoring")) {
-                setActive("Monitoring Absensi");
+            if (url.startsWith("/monitoring")) {
+                setActive("Monitoring");
                 return;
             }
 
-            // Jika di halaman beranda, jalankan scroll spy
+            if (url.startsWith("/intelligence")) {
+                setActive("Student Intelligence");
+                return;
+            }
+
             let current = "Beranda";
 
             Object.entries(SECTIONS).forEach(([id, title]) => {
@@ -73,13 +76,12 @@ export default function Navbar({ hasUrgentAlert = false }) {
             setActive(current);
         };
 
-        window.addEventListener("scroll", handleScroll);
-
-        // Jalankan saat pertama kali mount atau URL berubah
         handleScroll();
 
+        window.addEventListener("scroll", handleScroll);
+
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [url]); // Tambahkan url sebagai dependency agar update saat pindah halaman
+    }, [url]);
 
     // Efek untuk mengunci scroll body saat mobile menu terbuka
     useEffect(() => {
@@ -172,9 +174,11 @@ export default function Navbar({ hasUrgentAlert = false }) {
                         >
                             {MENUS.map((menu) => {
                                 const isActive = active === menu.title;
+                                // Tentukan komponen: gunakan <a> jika native: true, sebaliknya <Link> Inertia
+                                const NavComponent = menu.native ? "a" : Link;
 
                                 return (
-                                    <Link
+                                    <NavComponent
                                         key={menu.title}
                                         href={menu.href}
                                         className={cn(
@@ -198,10 +202,11 @@ export default function Navbar({ hasUrgentAlert = false }) {
                                                 )}
                                             />
                                         )}
-                                    </Link>
+                                    </NavComponent>
                                 );
                             })}
                         </div>
+
                         {/* ==========================
                             RIGHT ACTION
                         ========================== */}
@@ -304,9 +309,13 @@ export default function Navbar({ hasUrgentAlert = false }) {
                             <div className="flex flex-col gap-2">
                                 {MENUS.map((menu) => {
                                     const isActive = active === menu.title;
+                                    // Tentukan komponen untuk mobile menu
+                                    const NavComponent = menu.native
+                                        ? "a"
+                                        : Link;
 
                                     return (
-                                        <Link
+                                        <NavComponent
                                             key={menu.title}
                                             href={menu.href}
                                             onClick={() => setMobileOpen(false)}
@@ -324,7 +333,7 @@ export default function Navbar({ hasUrgentAlert = false }) {
                                             )}
                                         >
                                             {menu.title}
-                                        </Link>
+                                        </NavComponent>
                                     );
                                 })}
                             </div>
