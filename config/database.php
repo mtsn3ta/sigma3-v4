@@ -128,6 +128,28 @@ return [
             'engine' => null,
         ],
 
+        'legacy' => [
+
+            'driver' => 'mysql',
+
+            'host' => env('LEGACY_DB_HOST'),
+
+            'port' => env('LEGACY_DB_PORT'),
+
+            'database' => env('LEGACY_DB_DATABASE'),
+
+            'username' => env('LEGACY_DB_USERNAME'),
+
+            'password' => env('LEGACY_DB_PASSWORD'),
+
+            'charset' => 'utf8mb4',
+
+            'collation' => 'utf8mb4_unicode_ci',
+
+            'prefix' => '',
+
+        ],
+
     ],
 
     /*

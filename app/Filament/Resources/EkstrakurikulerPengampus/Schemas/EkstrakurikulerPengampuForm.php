@@ -33,7 +33,7 @@ class EkstrakurikulerPengampuForm
                             ->preload()
                             ->required(),
 
-                        CheckboxList::make('role') // Disesuaikan: biasanya 'role' (singular) di model
+                        CheckboxList::make('roles') // Disesuaikan: biasanya 'role' (singular) di model
                             ->label('Jabatan / Role')
                             ->options([
                                 'pembina' => 'Pembina',
