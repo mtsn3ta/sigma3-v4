@@ -22,116 +22,120 @@
 
     {{-- Tanda Tangan: Mode Pelatih Merangkap Pembina (3 Orang) --}}
     @if ($record->isPelatihMerangkapPembina())
-        <table
-            style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9375rem; line-height: 1.5;">
+        <table class="table-ttd">
+
             <tr>
-                <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
+
+                <td width="50%">
                     Disusun dan Diperiksa oleh,<br>
                     Pelatih / Pembina Ekstrakurikuler
                 </td>
-                <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
+
+                <td width="50%">
                     Disetujui oleh,<br>
                     Wakil Kepala Madrasah<br>
                     Bidang Kesiswaan
                 </td>
+
             </tr>
+
             <tr>
-                <td style="height: 100px;"></td>
-                <td></td>
+
+                <td class="ttd-space">{!! $renderTtdPdf($pelatihTtd, $pembinaApproved, -4) !!}</td>
+
+                <td class="ttd-space">{!! $renderTtdPdf($wakaTtd, $wakaApproved, 4) !!}</td>
+
             </tr>
+
             <tr>
-                <td style="padding: 0 1rem;">
-                    <strong style="text-decoration: underline;">
-                        {{ $record->pelatih()?->pegawai?->nama ?? '........................................' }}
-                    </strong>
+
+                <td class="font-bold">
+
+                    <u>
+                        {{ $record->pelatih()?->pegawai?->nama ?? '................................' }}
+                    </u>
+
                 </td>
-                <td style="padding: 0 1rem;">
-                    <strong style="text-decoration: underline;">
-                        {{ $record->wakaKesiswaan()?->name ?? '........................................' }}
-                    </strong>
+
+                <td class="font-bold">
+
+                    <u>
+                        {{ $record->wakaKesiswaan()?->pegawai?->nama ?? '................................' }}
+                    </u>
+
                 </td>
+
             </tr>
+
         </table>
 
-        <table
-            style="width: 100%; margin-top: 3rem; border-collapse: collapse; text-align: center; font-size: 0.9375rem; line-height: 1.5;">
+        <table class="table-ttd">
+
             <tr>
+
                 <td>
+
                     Mengetahui,<br>
                     Kepala MTsN 3 Tulungagung
-                </td>
-            </tr>
-            <tr>
-                <td style="height: 100px;"></td>
-            </tr>
-            <tr>
-                <td>
-                    <strong style="text-decoration: underline;">
-                        {{ $record->kepalaMadrasah()?->name ?? '........................................' }}
-                    </strong>
-                </td>
-            </tr>
-        </table>
 
-        {{-- Tanda Tangan: Mode Normal (4 Orang) --}}
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="ttd-space">{!! $renderTtdPdf($kepalaTtd, $kepalaApproved, -2) !!}</td>
+
+            </tr>
+
+            <tr>
+
+                <td class="font-bold">
+
+                    <u>
+                        {{ $record->kepalaMadrasah()?->pegawai?->nama ?? '................................' }}
+                    </u>
+
+                </td>
+
+            </tr>
+
+        </table>
     @else
-        <table
-            style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9375rem; line-height: 1.5;">
+        <table class="table-ttd">
             <tr>
-                <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                    Disusun oleh,<br>
-                    Pelatih
-                </td>
-                <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                    Diperiksa oleh,<br>
-                    Pembina Ekstrakurikuler
-                </td>
+                <td width="50%">Disusun oleh,<br>Pelatih</td>
+                <td width="50%">Diperiksa oleh,<br>Pembina Ekstrakurikuler</td>
             </tr>
             <tr>
-                <td style="height: 100px;"></td>
-                <td></td>
+                <td class="ttd-space"></td>
+                <td class="ttd-space">{!! $renderTtdPdf($pembinaTtd, $pembinaApproved, 4) !!}</td>
             </tr>
             <tr>
-                <td style="padding: 0 1rem;">
-                    <strong style="text-decoration: underline;">
-                        {{ $record->pelatih()?->pegawai?->nama ?? '........................................' }}
-                    </strong>
+                <td class="font-bold">
+                    <u>{{ $record->pelatih()?->pegawai?->nama ?? '................................' }}</u>
                 </td>
-                <td style="padding: 0 1rem;">
-                    <strong style="text-decoration: underline;">
-                        {{ $record->pembina()?->pegawai?->nama ?? '........................................' }}
-                    </strong>
+                <td class="font-bold">
+                    <u>{{ $record->pembina()?->pegawai?->nama ?? '................................' }}</u>
                 </td>
             </tr>
         </table>
 
-        <table
-            style="width: 100%; margin-top: 3rem; border-collapse: collapse; text-align: center; font-size: 0.9375rem; line-height: 1.5;">
+        <table class="table-ttd">
             <tr>
-                <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                    Disetujui oleh,<br>
-                    Wakil Kepala Madrasah<br>
-                    Bidang Kesiswaan
-                </td>
-                <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                    Mengetahui,<br>
-                    Kepala MTsN 3 Tulungagung
-                </td>
+                <td width="50%">Disetujui oleh,<br>Wakil Kepala Madrasah<br>Bidang Kesiswaan</td>
+                <td width="50%">Mengetahui,<br>Kepala MTsN 3 Tulungagung</td>
             </tr>
             <tr>
-                <td style="height: 100px;"></td>
-                <td></td>
+                <td class="ttd-space">{!! $renderTtdPdf($wakaTtd, $wakaApproved, -4) !!}</td>
+                <td class="ttd-space">{!! $renderTtdPdf($kepalaTtd, $kepalaApproved, 3) !!}</td>
             </tr>
             <tr>
-                <td style="padding: 0 1rem;">
-                    <strong style="text-decoration: underline;">
-                        {{ $record->wakaKesiswaan()?->name ?? '........................................' }}
-                    </strong>
+                <td class="font-bold">
+                    <u>{{ $record->wakaKesiswaan()?->pegawai?->nama ?? '................................' }}</u>
                 </td>
-                <td style="padding: 0 1rem;">
-                    <strong style="text-decoration: underline;">
-                        {{ $record->kepalaMadrasah()?->name ?? '........................................' }}
-                    </strong>
+                <td class="font-bold">
+                    <u>{{ $record->kepalaMadrasah()?->pegawai?->nama ?? '................................' }}</u>
                 </td>
             </tr>
         </table>

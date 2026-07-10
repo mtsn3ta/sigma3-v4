@@ -90,6 +90,35 @@
 </head>
 
 <body>
+
+    @php
+        $pembinaApproved = in_array($record->status, ['pending_waka', 'pending_kepala', 'approved']);
+        $wakaApproved = in_array($record->status, ['pending_kepala', 'approved']);
+        $kepalaApproved = $record->status === 'approved';
+
+        $pelatihTtd = $record->pelatih()?->pegawai?->ttd_digital;
+        $pembinaTtd = $record->pembina()?->pegawai?->ttd_digital;
+        $wakaTtd = $record->wakaKesiswaan()?->pegawai?->ttd_digital;
+        $kepalaTtd = $record->kepalaMadrasah()?->pegawai?->ttd_digital;
+
+        $renderTtdPdf = function (?string $path, bool $isApproved, float $rotate = 0) {
+            if (!$isApproved || blank($path)) {
+                return '';
+            }
+
+            $fullPath = public_path('storage/' . $path);
+
+            if (!file_exists($fullPath)) {
+                return '';
+            }
+
+            return '<img src="' .
+                $fullPath .
+                '" style="display:block; margin:-32px auto -18px auto; max-width:190px; max-height:100px; transform:rotate(' .
+                $rotate .
+                'deg);">';
+        };
+    @endphp
     <div class="cover">
 
         <div class="text-center">

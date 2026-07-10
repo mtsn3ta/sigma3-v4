@@ -203,12 +203,42 @@
         }
 
         .ttd-space {
-            height: 90px;
+            height: 50px;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
+
+    @php
+        $pembinaApproved = in_array($record->status, ['pending_waka', 'pending_kepala', 'approved']);
+        $wakaApproved = in_array($record->status, ['pending_kepala', 'approved']);
+        $kepalaApproved = $record->status === 'approved';
+
+        $pelatihTtd = $record->pelatih()?->pegawai?->ttd_digital;
+        $pembinaTtd = $record->pembina()?->pegawai?->ttd_digital;
+        $wakaTtd = $record->wakaKesiswaan()?->pegawai?->ttd_digital;
+        $kepalaTtd = $record->kepalaMadrasah()?->pegawai?->ttd_digital;
+
+        $renderTtdPdf = function (?string $path, bool $isApproved, float $rotate = 0) {
+            if (!$isApproved || blank($path)) {
+                return '';
+            }
+
+            $fullPath = public_path('storage/' . $path);
+
+            if (!file_exists($fullPath)) {
+                return '';
+            }
+
+            return '<img src="' .
+                $fullPath .
+                '" style="display:block; margin:-32px auto -18px auto; max-width:190px; max-height:100px; transform:rotate(' .
+                $rotate .
+                'deg);">';
+        };
+    @endphp
     {{-- ========================= COVER ========================= --}}
 
     <div class="cover-container">
@@ -1113,7 +1143,7 @@
                 MTsN 3 Tulungagung <br> Tahun Pelajaran 2026/2027
             </div>
         </div>
-        @if ($record->proposal->isPelatihMerangkapPembina())
+        @if ($record->isPelatihMerangkapPembina())
             <table class="table-ttd">
 
                 <tr>
@@ -1133,9 +1163,9 @@
 
                 <tr>
 
-                    <td class="ttd-space"></td>
+                    <td class="ttd-space">{!! $renderTtdPdf($pelatihTtd, $pembinaApproved, -4) !!}</td>
 
-                    <td class="ttd-space"></td>
+                    <td class="ttd-space">{!! $renderTtdPdf($wakaTtd, $wakaApproved, 4) !!}</td>
 
                 </tr>
 
@@ -1144,7 +1174,7 @@
                     <td class="font-bold">
 
                         <u>
-                            {{ $record->proposal->pelatih()?->pegawai?->nama ?? '................................' }}
+                            {{ $record->pelatih()?->pegawai?->nama ?? '................................' }}
                         </u>
 
                     </td>
@@ -1152,7 +1182,7 @@
                     <td class="font-bold">
 
                         <u>
-                            {{ $record->proposal->wakaKesiswaan()?->name ?? '................................' }}
+                            {{ $record->wakaKesiswaan()?->pegawai?->nama ?? '................................' }}
                         </u>
 
                     </td>
@@ -1176,7 +1206,7 @@
 
                 <tr>
 
-                    <td class="ttd-space"></td>
+                    <td class="ttd-space">{!! $renderTtdPdf($kepalaTtd, $kepalaApproved, -2) !!}</td>
 
                 </tr>
 
@@ -1185,7 +1215,7 @@
                     <td class="font-bold">
 
                         <u>
-                            {{ $record->proposal->kepalaMadrasah()?->name ?? '................................' }}
+                            {{ $record->kepalaMadrasah()?->pegawai?->nama ?? '................................' }}
                         </u>
 
                     </td>
@@ -1201,14 +1231,14 @@
                 </tr>
                 <tr>
                     <td class="ttd-space"></td>
-                    <td class="ttd-space"></td>
+                    <td class="ttd-space">{!! $renderTtdPdf($pembinaTtd, $pembinaApproved, 4) !!}</td>
                 </tr>
                 <tr>
                     <td class="font-bold">
-                        <u>{{ $record->proposal->pelatih()?->pegawai?->nama ?? '................................' }}</u>
+                        <u>{{ $record->pelatih()?->pegawai?->nama ?? '................................' }}</u>
                     </td>
                     <td class="font-bold">
-                        <u>{{ $record->proposal->pembina()?->pegawai?->nama ?? '................................' }}</u>
+                        <u>{{ $record->pembina()?->pegawai?->nama ?? '................................' }}</u>
                     </td>
                 </tr>
             </table>
@@ -1219,15 +1249,15 @@
                     <td width="50%">Mengetahui,<br>Kepala MTsN 3 Tulungagung</td>
                 </tr>
                 <tr>
-                    <td class="ttd-space"></td>
-                    <td class="ttd-space"></td>
+                    <td class="ttd-space">{!! $renderTtdPdf($wakaTtd, $wakaApproved, -4) !!}</td>
+                    <td class="ttd-space">{!! $renderTtdPdf($kepalaTtd, $kepalaApproved, 3) !!}</td>
                 </tr>
                 <tr>
                     <td class="font-bold">
-                        <u>{{ $record->proposal->wakaKesiswaan()?->name ?? '................................' }}</u>
+                        <u>{{ $record->wakaKesiswaan()?->pegawai?->nama ?? '................................' }}</u>
                     </td>
                     <td class="font-bold">
-                        <u>{{ $record->proposal->kepalaMadrasah()?->name ?? '................................' }}</u>
+                        <u>{{ $record->kepalaMadrasah()?->pegawai?->nama ?? '................................' }}</u>
                     </td>
                 </tr>
             </table>

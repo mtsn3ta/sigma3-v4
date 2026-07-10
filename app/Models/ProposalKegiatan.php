@@ -153,13 +153,19 @@ class ProposalKegiatan extends Model
             ->where('role', 'pembina')
             ->first();
     }
+
     public function wakaKesiswaan()
     {
-        return User::role('waka_kesiswaan')->first();
+        return User::role('waka_kesiswaan')
+            ->with('pegawai')
+            ->first();
     }
+
     public function kepalaMadrasah()
     {
-        return User::role('kepala_madrasah')->first();
+        return User::role('kepala_madrasah')
+            ->with('pegawai')
+            ->first();
     }
 
     public function isPelatihMerangkapPembina(): bool

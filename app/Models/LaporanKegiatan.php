@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EkstrakurikulerPengampu;
 
 class LaporanKegiatan extends Model
 {
@@ -136,5 +137,51 @@ class LaporanKegiatan extends Model
             RevisionLog::class,
             'revisionable'
         )->latest();
+    }
+    public function ekstrakurikuler()
+    {
+        return $this->belongsTo(Ekstrakurikuler::class);
+    }
+    public function pelatih()
+    {
+        return EkstrakurikulerPengampu::query()
+            ->with('pegawai')
+            ->where('ekstrakurikuler_id', $this->proposal?->ekstrakurikuler_id)
+            ->where('role', 'pelatih')
+            ->first();
+    }
+
+    public function pembina()
+    {
+        return EkstrakurikulerPengampu::query()
+            ->with('pegawai')
+            ->where('ekstrakurikuler_id', $this->proposal?->ekstrakurikuler_id)
+            ->where('role', 'pembina')
+            ->first();
+    }
+
+    public function wakaKesiswaan()
+    {
+        return User::role('waka_kesiswaan')
+            ->with('pegawai')
+            ->first();
+    }
+
+    public function kepalaMadrasah()
+    {
+        return User::role('kepala_madrasah')
+            ->with('pegawai')
+            ->first();
+    }
+
+    public function isPelatihMerangkapPembina(): bool
+    {
+        $pelatih = $this->pelatih();
+        $pembina = $this->pembina();
+
+        return
+            $pelatih &&
+            $pembina &&
+            $pelatih->pegawai_id === $pembina->pegawai_id;
     }
 }

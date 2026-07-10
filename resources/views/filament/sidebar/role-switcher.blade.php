@@ -7,7 +7,7 @@
 
     <div
         style="
-        margin:14px 12px;
+        margin:0px 12px;
         padding-top:12px;
         border-top:1px solid rgba(148,163,184,.18);
     ">
@@ -137,3 +137,62 @@
     </div>
 
 @endif
+
+{{-- ===== MENU EDIT PROFIL ===== --}}
+<div id="sigma3-edit-profil-block"
+    style="
+    margin:0.5px 6px 0;
+    padding-top:0.5px;
+    padding-bottom:8px;
+    border-top:1px solid rgba(148,163,184,.18);
+">
+
+    <a href="{{ \App\Filament\Pages\EditProfile::getUrl() }}"
+        style="
+        width:100%;
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding:10px 12px;
+        border-radius:12px;
+        background:transparent;
+        color:#475569;
+        text-decoration:none;
+        cursor:pointer;
+        transition:all .2s ease;
+        border:1px solid transparent;
+        box-sizing:border-box;
+    "
+        onmouseover="
+        this.style.background='#f8fafc';
+        this.style.transform='translateX(2px)';
+    "
+        onmouseout="
+        this.style.background='transparent';
+        this.style.transform='translateX(0)';
+    ">
+
+        <x-filament::icon icon="heroicon-o-user-circle"
+            style="
+            width:18px;
+            height:18px;
+            flex-shrink:0;
+            color:#64748b;
+        " />
+
+        <span style="flex:1;text-align:left;font-size:13px;font-weight:500;">
+            Edit Profil
+        </span>
+
+    </a>
+
+</div>
+
+<style>
+    #sigma3-edit-profil-block+div,
+    #sigma3-edit-profil-block+nav,
+    #sigma3-edit-profil-block+ul {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+</style>

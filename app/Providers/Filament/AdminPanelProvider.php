@@ -20,6 +20,8 @@ use Filament\Navigation\NavigationItem;
 use App\Filament\Resources\IzinKeluars\IzinKeluarResource;
 use App\Support\SettingHelper;
 use Filament\View\PanelsRenderHook;
+use App\Filament\Pages\EditProfile;
+use Filament\Navigation\MenuItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -94,7 +96,14 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::SIDEBAR_NAV_START,
                 fn() => view('filament.sidebar.role-switcher')
             )
+            ->userMenuItems([
 
+                MenuItem::make()
+                    ->label('Edit Profil')
+                    ->icon('heroicon-o-user-circle')
+                    ->url(fn(): string => EditProfile::getUrl()),
+
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
