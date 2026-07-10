@@ -5,6 +5,8 @@ namespace App\Filament\Resources\AnggotaEkskuls\Tables;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Models\TahunAjaran;
+use Filament\Tables\Filters\SelectFilter;
 
 class AnggotaEkskulsTable
 {
@@ -36,7 +38,48 @@ class AnggotaEkskulsTable
 
             ])
 
-            ->filters([])
+            ->filters([
+
+                SelectFilter::make('tahun_ajaran_id')
+
+                    ->label('Tahun Ajaran')
+
+                    ->relationship(
+                        'tahunAjaran',
+                        'tahun'
+                    )
+
+                    ->searchable()
+
+                    ->preload()
+
+                    ->default(
+                        TahunAjaran::query()
+                            ->where('aktif', true)
+                            ->value('id')
+                    ),
+
+                SelectFilter::make('ekstrakurikuler_id')
+
+                    ->label('Ekstrakurikuler')
+
+                    ->relationship(
+                        'ekstrakurikuler',
+                        'nama'
+                    )
+
+                    ->searchable()
+
+                    ->preload(),
+
+                SelectFilter::make('status')
+
+                    ->options([
+                        'aktif' => 'Aktif',
+                        'nonaktif' => 'Nonaktif',
+                    ]),
+
+            ])
 
             ->recordActions([
                 EditAction::make(),
