@@ -24,12 +24,21 @@ use App\Models\Pegawai;
 use App\Services\Kehadiran\KehadiranSekolahService;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ParentLeaveRequest;
 
 class VerifikasiKehadiranForm extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
+    public string $tab = 'parent';
+    public ?ParentLeaveRequest $previewRequest = null;
 
+    public bool $showPreview = false;
+    public bool $showRejectModal = false;
+
+    public ?int $rejectId = null;
+
+    public string $verificationNote = '';
     public ?array $data = [];
 
     public function mount(): void
@@ -250,7 +259,132 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
 
         ]);
     }
+    public function approve(
+        int $id,
+        KehadiranSekolahService $service,
+    ) {
+        $request = ParentLeaveRequest::with('siswa')->findOrFail($id);
 
+        if ($request->status !== 'pending') {
+
+            Notification::make()
+                ->warning()
+                ->title('Pengajuan sudah diproses')
+                ->send();
+
+            return;
+        }
+        $user = Auth::user();
+
+        $petugas = Pegawai::where(
+            'user_id',
+            $user->id
+        )->firstOrFail();
+
+        if ($request->jenis === 'izin') {
+
+            $service->markIzin(
+
+                siswa: $request->siswa,
+
+                keterangan: $request->keterangan,
+
+                petugas: $petugas,
+
+            );
+        } else {
+
+            $service->markSakit(
+
+                siswa: $request->siswa,
+
+                keterangan: $request->keterangan,
+
+                petugas: $petugas,
+
+            );
+        }
+
+        $request->update([
+
+            'status' => 'approved',
+
+            'verified_by' => $petugas->id,
+
+            'verified_at' => now(),
+
+        ]);
+
+        Notification::make()
+
+            ->success()
+
+            ->title('Berhasil')
+
+            ->body('Pengajuan berhasil disetujui.')
+
+            ->send();
+        $this->dispatch('$refresh');
+    }
+    public function reject(): void
+    {
+        $request = ParentLeaveRequest::findOrFail(
+            $this->rejectId
+        );
+
+        $user = Auth::user();
+
+        $petugas = Pegawai::where(
+            'user_id',
+            $user->id
+        )->firstOrFail();
+
+        $request->update([
+
+            'status' => 'rejected',
+
+            'verified_by' => $petugas->id,
+
+            'verified_at' => now(),
+
+            'verification_note' => $this->verificationNote,
+
+        ]);
+
+        Notification::make()
+
+            ->danger()
+
+            ->title('Pengajuan ditolak')
+
+            ->send();
+
+        $this->showRejectModal = false;
+
+        $this->rejectId = null;
+
+        $this->verificationNote = '';
+
+        $this->dispatch('$refresh');
+    }
+    public function preview(int $id): void
+    {
+        $this->previewRequest = ParentLeaveRequest::with(
+            'siswa.kelasAktif.kelas'
+        )->findOrFail($id);
+
+        $this->showPreview = true;
+    }
+    public function openReject(
+        int $id,
+    ): void {
+
+        $this->rejectId = $id;
+
+        $this->verificationNote = '';
+
+        $this->showRejectModal = true;
+    }
     public function render(): ViewContract
     {
         return view('livewire.verifikasi-kehadiran-form');
