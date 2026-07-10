@@ -5,6 +5,7 @@ namespace App\Services\StudentPlacement;
 use App\Models\Kelas;
 use App\Models\KelasSiswa;
 use App\Models\Siswa;
+use App\Models\AnggotaEkskul;
 use App\Models\TahunAjaran;
 use App\Services\ActivityLogService;
 use Illuminate\Support\Facades\DB;
@@ -258,10 +259,10 @@ class StudentPromotionService
                 }
 
                 /*
-                |--------------------------------------------------------------------------
-                | Naik Kelas
-                |--------------------------------------------------------------------------
-                */
+|--------------------------------------------------------------------------
+| Naik Kelas
+|--------------------------------------------------------------------------
+*/
 
                 KelasSiswa::create([
 
@@ -272,6 +273,45 @@ class StudentPromotionService
                     'tahun_ajaran_id' => $tahunTujuan->id,
 
                 ]);
+
+                /*
+|--------------------------------------------------------------------------
+| Salin Anggota Ekstrakurikuler
+|--------------------------------------------------------------------------
+*/
+
+                $anggotaEkskul = AnggotaEkskul::query()
+
+                    ->where('tahun_ajaran_id', $tahunAsal->id)
+
+                    ->where('siswa_id', $placement['siswa_id'])
+
+                    ->get();
+
+                foreach ($anggotaEkskul as $anggota) {
+
+                    AnggotaEkskul::firstOrCreate(
+
+                        [
+
+                            'siswa_id' => $placement['siswa_id'],
+
+                            'ekstrakurikuler_id' => $anggota->ekstrakurikuler_id,
+
+                            'tahun_ajaran_id' => $tahunTujuan->id,
+
+                        ],
+
+                        [
+
+                            'tanggal_daftar' => $anggota->tanggal_daftar,
+
+                            'status' => 'aktif',
+
+                        ]
+
+                    );
+                }
 
                 $naik++;
             }
