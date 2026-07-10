@@ -24,6 +24,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ActiveRoleController;
 use App\Http\Controllers\IntelligenceController;
 use App\Http\Controllers\ParentPortalController;
+use App\Http\Controllers\ParentLeaveRequestController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
@@ -56,6 +57,10 @@ Route::get(
     '/wali_murid/{nisn}',
     ParentPortalController::class
 )->name('wali_murid');
+Route::post(
+    '/wali_murid/{nisn}/pengajuan',
+    [ParentLeaveRequestController::class, 'store']
+)->name('wali_murid.store');
 Route::get('/prestasi', [PrestasiController::class, 'index'])
     ->name('prestasi');
 Route::get('/galeri', [GalleryController::class, 'index'])

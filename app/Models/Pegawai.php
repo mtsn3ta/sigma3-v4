@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\ParentLeaveRequest;
 
 class Pegawai extends Model
 {
@@ -73,6 +75,13 @@ class Pegawai extends Model
         return $this->hasMany(
             TugasGuruIzin::class,
             'petugas_id'
+        );
+    }
+    public function verifiedParentLeaveRequests(): HasMany
+    {
+        return $this->hasMany(
+            ParentLeaveRequest::class,
+            'verified_by'
         );
     }
 }

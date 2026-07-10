@@ -3,44 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Siswa;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 
 class ParentPortalController extends Controller
 {
-    public function __invoke(
-        string $nisn,
-    ): Response {
-
+    public function __invoke(string $nisn): View
+    {
         $student = Siswa::with([
+
             'kelasAktif.kelas',
+
+            'parentLeaveRequests' => fn($q) => $q->latest(),
+
+            'permasalahan' => fn($q) => $q
+                ->with('pegawai')
+                ->latest('tanggal'),
+
+            'konseling' => fn($q) => $q
+                ->with('pegawai')
+                ->latest('tanggal'),
+
         ])
             ->where('nisn', $nisn)
             ->firstOrFail();
 
-        return Inertia::render(
-            'ParentPortal/Index',
-            [
+        return view('parent-portal.index', [
 
-                'student' => [
+            'student' => $student,
 
-                    'id' => $student->id,
-
-                    'nisn' => $student->nisn,
-
-                    'nama' => $student->nama,
-
-                    'foto' => $student->foto
-                        ? asset('storage/' . $student->foto)
-                        : null,
-
-                    'kelas' => $student->nama_kelas_aktif,
-
-                    'status' => $student->status,
-
-                ],
-
-            ]
-        );
+        ]);
     }
 }
