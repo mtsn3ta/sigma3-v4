@@ -20,19 +20,18 @@ class EkstrakurikulerRfidService
     public function scan(string $uid): array
     {
         $this->uid = $uid;
-        try {
+        $student = null; // Inisialisasi awal agar aman dibaca di dalam blok catch
 
+        try {
             $student = $this->findStudent($uid);
 
             if (! $student) {
-
                 return $this->error('unknown_card');
             }
 
             $member = $this->findMember($student);
 
             if (! $member) {
-
                 return $this->error(
                     'not_member',
                     $student,
@@ -42,7 +41,6 @@ class EkstrakurikulerRfidService
             $session = $this->findTodaySession($member);
 
             if (! $session) {
-
                 return $this->error(
                     'no_session',
                     $student,
@@ -54,119 +52,67 @@ class EkstrakurikulerRfidService
                 $session,
             );
         } catch (RuntimeException $e) {
-
+            // PERBAIKAN: Masukkan variabel $student sebagai parameter kedua di sini
             return $this->error(
-                $e->getMessage()
+                $e->getMessage(),
+                $student
             );
         }
     }
-    protected function findStudent(
-        string $uid,
-    ): ?Siswa {
 
+    protected function findStudent(string $uid): ?Siswa
+    {
         return Siswa::query()
-
             ->aktif()
-
-            ->where(
-                'rfid_uid',
-                $uid,
-            )
-
+            ->where('rfid_uid', $uid)
             ->first();
     }
-    protected function findMember(
-        Siswa $student,
-    ): ?AnggotaEkskul {
 
+    protected function findMember(Siswa $student): ?AnggotaEkskul
+    {
         return AnggotaEkskul::query()
-
-            ->where(
-                'siswa_id',
-                $student->id,
-            )
-
-            ->where(
-                'status',
-                'aktif',
-            )
-
-            ->whereHas(
-                'tahunAjaran',
-                fn($query) => $query->where(
-                    'aktif',
-                    true,
-                ),
-            )
-
+            ->where('siswa_id', $student->id)
+            ->where('status', 'aktif')
+            ->whereHas('tahunAjaran', function ($query) {
+                // PERBAIKAN: Kembalikan murni hanya mengecek kolom 'aktif' karena 'is_aktif' tidak ada di tabel Anda
+                $query->where('aktif', true);
+            })
             ->first();
     }
-    protected function findTodaySession(
-        AnggotaEkskul $member,
-    ): ?SesiKegiatan {
 
+    protected function findTodaySession(AnggotaEkskul $member): ?SesiKegiatan
+    {
         return SesiKegiatan::query()
-
             ->with([
                 'ekstrakurikuler',
                 'pelatih',
             ])
-
-            ->where(
-                'ekstrakurikuler_id',
-                $member->ekstrakurikuler_id,
-            )
-
-            ->whereDate(
-                'tanggal',
-                today(),
-            )
-
+            ->where('ekstrakurikuler_id', $member->ekstrakurikuler_id)
+            // PERBAIKAN: Mengunci pencarian tanggal sesi hari ini ke zona waktu Asia/Jakarta (WIB)
+            ->whereDate('tanggal', today('Asia/Jakarta'))
             ->first();
     }
-    protected function process(
-        Siswa $student,
-        SesiKegiatan $session,
-    ): array {
 
+    protected function process(Siswa $student, SesiKegiatan $session): array
+    {
         $attendance = $this->attendance->find(
             $session,
             $student,
         );
 
-        /*
-    |--------------------------------------------------------------------------
-    | Safety Check
-    |--------------------------------------------------------------------------
-    */
-
         if (! $attendance) {
-
             return $this->error(
                 'attendance_not_generated',
                 $student,
             );
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Sudah Hadir
-    |--------------------------------------------------------------------------
-    */
-
         if ($attendance->isHadir()) {
-
             return $this->error(
                 'already_scanned',
                 $student,
             );
         }
-
-        /*
-    |--------------------------------------------------------------------------
-    | Update Kehadiran
-    |--------------------------------------------------------------------------
-    */
 
         $attendance = $this->attendance
             ->markRfidHadir($attendance);
@@ -176,59 +122,42 @@ class EkstrakurikulerRfidService
             $session,
         );
     }
-    protected function success(
-        Siswa $student,
-        SesiKegiatan $session,
-    ): array {
+
+    protected function success(Siswa $student, SesiKegiatan $session): array
+    {
+        // PERBAIKAN: Mengunci response jam dan tanggal sukses ke zona waktu Asia/Jakarta (WIB)
+        $nowTime = now('Asia/Jakarta');
 
         return [
-
             'status' => true,
-
             'mode' => 'ekskul',
-
             'message' => 'Selamat Berlatih.',
-
-            'server_time' => now()->format('H:i:s'),
-
-            'server_date' => now()->toDateString(),
-
+            'server_time' => $nowTime->format('H:i:s'),
+            'server_date' => $nowTime->toDateString(),
             'student' => [
-
                 'id' => $student->id,
-
                 'uid' => $student->rfid_uid,
-
                 'nama' => $student->nama,
-
                 'kelas' => $student->nama_kelas_aktif,
-
                 'photo' => $student->foto
                     ? asset('storage/' . $student->foto)
                     : null,
-
             ],
-
             'activity' => [
-
                 'id' => $session->id,
-
                 'nama' => $session->ekstrakurikuler->nama,
-
                 'pelatih' => $session->pelatih?->nama,
-
                 'mulai' => $session->waktu_mulai,
-
                 'selesai' => $session->waktu_selesai,
-
             ],
-
         ];
     }
-    protected function error(
-        string $type,
-        ?Siswa $student = null,
-    ): array {
+
+    protected function error(string $type, ?Siswa $student = null): array
+    {
+        // PERBAIKAN: Mengunci response jam dan tanggal error log ke zona waktu Asia/Jakarta (WIB)
+        $nowTime = now('Asia/Jakarta');
+
         $this->logger->store(
             mode: 'ekskul',
             uid: $this->uid,
@@ -236,61 +165,35 @@ class EkstrakurikulerRfidService
             message: $this->errorMessage($type),
             student: $student,
         );
+
         return [
-
             'status' => false,
-
             'mode' => 'ekskul',
-
             'error' => $type,
-
             'message' => $this->errorMessage($type),
-
-            'server_time' => now()->format('H:i:s'),
-
-            'server_date' => now()->toDateString(),
-
+            'server_time' => $nowTime->format('H:i:s'),
+            'server_date' => $nowTime->toDateString(),
             'student' => $student ? [
-
                 'id' => $student->id,
-
                 'uid' => $student->rfid_uid,
-
                 'nama' => $student->nama,
-
                 'kelas' => $student->nama_kelas_aktif,
-
                 'photo' => $student->foto
                     ? asset('storage/' . $student->foto)
                     : null,
-
             ] : null,
-
         ];
     }
-    protected function errorMessage(
-        string $type,
-    ): string {
 
+    protected function errorMessage(string $type): string
+    {
         return match ($type) {
-
-            'unknown_card'
-            => 'Kartu RFID tidak terdaftar.',
-
-            'not_member'
-            => 'Siswa bukan anggota ekstrakurikuler.',
-
-            'no_session'
-            => 'Belum ada sesi kegiatan hari ini.',
-
-            'already_scanned'
-            => 'Kehadiran sudah tercatat.',
-
-            'attendance_not_generated'
-            => 'Data kehadiran belum tersedia.',
-
-            default
-            => 'Terjadi kesalahan.',
+            'unknown_card' => 'Kartu RFID tidak terdaftar.',
+            'not_member' => 'Siswa bukan anggota ekstrakurikuler.',
+            'no_session' => 'Belum ada sesi kegiatan hari ini.',
+            'already_scanned' => 'Kehadiran sudah tercatat.',
+            'attendance_not_generated' => 'Data kehadiran belum tersedia.',
+            default => 'Terjadi kesalahan.',
         };
     }
 }

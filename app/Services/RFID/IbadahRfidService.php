@@ -18,6 +18,9 @@ class IbadahRfidService
 
     public function scan(string $uid): array
     {
+        // Pindahkan deklarasi awal agar $student bisa diakses di blok catch
+        $student = null;
+
         try {
             $this->uid = $uid;
             $this->validateSetting();
@@ -25,7 +28,6 @@ class IbadahRfidService
             $student = $this->findStudent($uid);
 
             if (! $student) {
-
                 return $this->error('unknown_card');
             }
 
@@ -38,17 +40,18 @@ class IbadahRfidService
                 $jenis,
             );
         } catch (RuntimeException $e) {
-
+            // PERBAIKAN: Sertakan variabel $student sebagai parameter kedua di sini
             return $this->error(
-                $e->getMessage()
+                $e->getMessage(),
+                $student
             );
         }
     }
 
+
     protected function validateSetting(): void
     {
         if (! SettingHelper::rfidIbadahEnabled()) {
-
             throw new RuntimeException(
                 'disabled'
             );
@@ -58,26 +61,15 @@ class IbadahRfidService
     protected function validateFriday(
         string $jenis,
     ): void {
-
-        if (
-
-            $jenis !== 'dzuhur'
-
-        ) {
-
+        if ($jenis !== 'dzuhur') {
             return;
         }
 
+        // PERBAIKAN: Paksa pengecekan hari Jumat menggunakan zona waktu Asia/Jakarta
         if (
-
-            now()->isFriday()
-
-            &&
-
-            SettingHelper::rfidDisableFriday()
-
+            now('Asia/Jakarta')->isFriday()
+            && SettingHelper::rfidDisableFriday()
         ) {
-
             throw new RuntimeException(
                 'disabled_today'
             );
@@ -87,41 +79,27 @@ class IbadahRfidService
     protected function findStudent(string $uid): ?Siswa
     {
         return Siswa::query()
-
             ->aktif()
-
             ->where('rfid_uid', $uid)
-
             ->first();
     }
 
     protected function resolveJenis(): string
     {
-        $now = now()->format('H:i:s');
+        // PERBAIKAN: Ambil jam saat ini berbasis waktu Asia/Jakarta (WIB)
+        $now = now('Asia/Jakarta')->format('H:i:s');
 
         if (
-
             $now >= SettingHelper::rfidDhuhaStart()
-
-            &&
-
-            $now <= SettingHelper::rfidDhuhaEnd()
-
+            && $now <= SettingHelper::rfidDhuhaEnd()
         ) {
-
             return 'dhuha';
         }
 
         if (
-
             $now >= SettingHelper::rfidDzuhurStart()
-
-            &&
-
-            $now <= SettingHelper::rfidDzuhurEnd()
-
+            && $now <= SettingHelper::rfidDzuhurEnd()
         ) {
-
             return 'dzuhur';
         }
 
@@ -134,7 +112,6 @@ class IbadahRfidService
         Siswa $student,
         string $jenis,
     ): array {
-
         $today = $this->attendance
             ->findToday(
                 $student,
@@ -142,7 +119,6 @@ class IbadahRfidService
             );
 
         if ($today) {
-
             return $this->error(
                 'already_scanned',
                 $student,
@@ -165,42 +141,28 @@ class IbadahRfidService
         Siswa $student,
         string $jenis,
     ): array {
+        // PERBAIKAN: Gunakan waktu Asia/Jakarta untuk respon ke client
+        $nowTime = now('Asia/Jakarta');
 
         return [
-
             'status' => true,
-
             'mode' => 'ibadah',
-
             'jenis' => $jenis,
-
             'action' => $jenis,
-
-
             'message' => $jenis === 'dhuha'
                 ? 'Selamat Menunaikan Sholat Dhuha.'
                 : 'Selamat Menunaikan Sholat Dzuhur.',
-
-            'server_time' => now()->format('H:i:s'),
-
-            'server_date' => now()->toDateString(),
-
+            'server_time' => $nowTime->format('H:i:s'),
+            'server_date' => $nowTime->toDateString(),
             'student' => [
-
                 'id' => $student->id,
-
                 'uid' => $student->rfid_uid,
-
                 'nama' => $student->nama,
-
                 'kelas' => $student->nama_kelas_aktif,
-
                 'photo' => $student->foto
                     ? asset('storage/' . $student->foto)
                     : null,
-
             ],
-
         ];
     }
 
@@ -208,6 +170,9 @@ class IbadahRfidService
         string $type,
         ?Siswa $student = null,
     ): array {
+        // PERBAIKAN: Gunakan waktu Asia/Jakarta untuk pencatatan log error
+        $nowTime = now('Asia/Jakarta');
+
         $this->logger->store(
             mode: 'ibadah',
             uid: $this->uid,
@@ -215,62 +180,36 @@ class IbadahRfidService
             message: $this->errorMessage($type),
             student: $student,
         );
+
         return [
-
             'status' => false,
-
             'mode' => 'ibadah',
-
             'error' => $type,
-
             'message' => $this->errorMessage($type),
-
-            'server_time' => now()->format('H:i:s'),
-
-            'server_date' => now()->toDateString(),
-
+            'server_time' => $nowTime->format('H:i:s'),
+            'server_date' => $nowTime->toDateString(),
             'student' => $student ? [
-
                 'id' => $student->id,
-
                 'uid' => $student->rfid_uid,
-
                 'nama' => $student->nama,
-
                 'kelas' => $student->nama_kelas_aktif,
-
                 'photo' => $student->foto
                     ? asset('storage/' . $student->foto)
                     : null,
-
             ] : null,
-
         ];
     }
 
     protected function errorMessage(
         string $type,
     ): string {
-
         return match ($type) {
-
-            'disabled'
-            => 'RFID Ibadah sedang dinonaktifkan.',
-
-            'disabled_today'
-            => 'RFID Ibadah tidak digunakan hari ini.',
-
-            'unknown_card'
-            => 'Kartu RFID tidak terdaftar.',
-
-            'already_scanned'
-            => 'Ibadah sudah tercatat.',
-
-            'outside_time'
-            => 'Di luar jam ibadah.',
-
-            default
-            => 'Terjadi kesalahan.',
+            'disabled' => 'RFID Ibadah sedang dinonaktifkan.',
+            'disabled_today' => 'RFID Ibadah tidak digunakan hari ini.',
+            'unknown_card' => 'Kartu RFID tidak terdaftar.',
+            'already_scanned' => 'Ibadah sudah tercatat.',
+            'outside_time' => 'Di luar jam ibadah.',
+            default => 'Terjadi kesalahan.',
         };
     }
 }

@@ -29,7 +29,8 @@ class RfidFailedLogger
 
             'ip_address' => request()->ip(),
 
-            'created_at' => now(),
+            // PERBAIKAN: Mengunci waktu pencatatan log eror ke Asia/Jakarta (WIB)
+            'created_at' => now('Asia/Jakarta'),
 
         ]);
     }

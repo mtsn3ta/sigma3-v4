@@ -8,16 +8,21 @@
             </x-slot>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
-                @forelse($this->siswa->anggotaEkskul->where('status', 'aktif') as $item)
+                {{-- PERBAIKAN: Menyaring status aktif DAN Tahun Ajaran yang adaptif terhadap nama kolom aktif --}}
+                @forelse($this->siswa->anggotaEkskul->where('status', 'aktif')->filter(fn($item) => $item->tahunAjaran?->is_aktif == true || $item->tahunAjaran?->status === 'aktif' || $item->tahunAjaran?->aktif == true) as $item)
                     <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: #f9fafb;">
                         <h4 style="font-weight: 700; color: #111827;">{{ $item->ekstrakurikuler->nama }}</h4>
+                        <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+                            Tahun Ajaran: {{ $item->tahunAjaran?->tahun }}
+                        </p>
                         <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
                             Terdaftar sejak:
                             {{ \Carbon\Carbon::parse($item->tanggal_daftar)->translatedFormat('d F Y') }}
                         </p>
                     </div>
                 @empty
-                    <p style="color: #6b7280; font-style: italic;">Anda belum mengikuti ekstrakurikuler.</p>
+                    <p style="color: #6b7280; font-style: italic;">Anda belum mengikuti ekstrakurikuler di tahun ajaran
+                        ini.</p>
                 @endforelse
             </div>
         </x-filament::section>
@@ -38,15 +43,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($this->siswa->anggotaEkskul->where('status', 'nonaktif') as $item)
+                        {{-- PERBAIKAN: Mengecek tahun ajaran lama dengan logika kebalikan (bukan aktif) --}}
+                        @forelse($this->siswa->anggotaEkskul->filter(function($item) {
+                            $isAktif = $item->tahunAjaran?->is_aktif == true || $item->tahunAjaran?->status === 'aktif' || $item->tahunAjaran?->aktif == true;
+                            return $item->status === 'nonaktif' || !$isAktif;
+                        }) as $item)
                             <tr style="border-bottom: 1px solid #f3f4f6;">
                                 <td style="padding: 0.75rem;">{{ $item->ekstrakurikuler->nama }}</td>
-                                <td style="padding: 0.75rem;">{{ $item->tahunAjaran->tahun }}</td>
+                                <td style="padding: 0.75rem;">{{ $item->tahunAjaran?->tahun }}</td>
                                 <td style="padding: 0.75rem;">
-                                    <span
-                                        style="background: #fee2e2; color: #991b1b; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">
-                                        Nonaktif
-                                    </span>
+                                    {{-- Menentukan penanda apakah ekskul itu berstatus nonaktif manual atau bawaan tahun lalu --}}
+                                    @php
+                                        $isAktifTA =
+                                            $item->tahunAjaran?->is_aktif == true ||
+                                            $item->tahunAjaran?->status === 'aktif' ||
+                                            $item->tahunAjaran?->aktif == true;
+                                    @endphp
+                                    @if ($item->status === 'aktif' && !$isAktifTA)
+                                        <span
+                                            style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">
+                                            Selesai (Aktif Lampau)
+                                        </span>
+                                    @else
+                                        <span
+                                            style="background: #fee2e2; color: #991b1b; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">
+                                            Nonaktif
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

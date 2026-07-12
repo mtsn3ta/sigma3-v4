@@ -49,9 +49,8 @@ class IntelligenceController extends Controller
                 },
 
                 'anggotaEkskul' => function ($query) {
-                    $query
-                        ->where('status', 'aktif')
-                        ->with('ekstrakurikuler');
+                    $query->where('status', 'aktif')
+                        ->with(['ekstrakurikuler', 'tahunAjaran']); // Memuat ekstrakurikuler dan tahun ajaran
                 },
 
             ])
@@ -121,9 +120,8 @@ class IntelligenceController extends Controller
                 },
 
                 'anggotaEkskul' => function ($query) {
-                    $query
-                        ->where('status', 'aktif')
-                        ->with('ekstrakurikuler');
+                    $query->where('status', 'aktif')
+                        ->with(['ekstrakurikuler', 'tahunAjaran']); // Memuat ekstrakurikuler dan tahun ajaran
                 },
 
             ])
@@ -270,18 +268,28 @@ class IntelligenceController extends Controller
         */
 
         $ekskul = $siswa->anggotaEkskul
-            ->map(function ($anggota) {
+            ->filter(function ($anggota) {
+                // Mengambil properti tahun ajaran
+                $ta = $anggota->tahunAjaran;
 
-                return $anggota
-                    ->ekstrakurikuler
-                    ->nama
-                    ??
-                    $anggota
-                    ->ekstrakurikuler
-                    ->nama_ekskul
-                    ??
-                    'Unknown';
-            });
+                if (! $ta) {
+                    return false;
+                }
+
+                // Otomatis mencocokkan apa pun nama kolom aktif di database Anda
+                return ($ta->is_aktif == true)
+                    || ($ta->status === 'aktif')
+                    || ($ta->aktif == true)
+                    || ($ta->status === 'aktif_sekarang');
+            })
+            ->map(function ($anggota) {
+                return $anggota->ekstrakurikuler->nama
+                    ?? $anggota->ekstrakurikuler->nama_ekskul
+                    ?? 'Unknown';
+            })
+            ->unique()   // Menghapus duplikasi nama ekskul (Pramuka Pramuka -> Pramuka)
+            ->values()   // Mereset ulang index array agar berurutan dari 0
+            ->toArray();
 
         /*
         |--------------------------------------------------------------------------

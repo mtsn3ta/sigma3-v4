@@ -30,7 +30,8 @@ class SchoolRfidService
         $action = $this->resolveAction();
 
         if (! $action) {
-            return $this->error('outside_time');
+            // PERBAIKAN: Masukkan variabel $student di sini agar Nama dan Kelas ikut tercatat di Log
+            return $this->error('outside_time', $student);
         }
 
         return $this->process(
@@ -59,19 +60,49 @@ class SchoolRfidService
 
     protected function resolveAction(): ?string
     {
-        $now = now()->format('H:i:s');
+        // PERBAIKAN: Paksa Carbon menggunakan zona waktu Asia/Jakarta (WIB)
+        $nowTime = now('Asia/Jakarta');
 
-        if (
-            $now >= SettingHelper::rfidSchoolCheckinStart()
-            && $now <= SettingHelper::rfidSchoolCheckinEnd()
-        ) {
+        // 1. Ambil total detik dari jam server saat ini (00:00:00) berbasis WIB
+        $nowSeconds = ($nowTime->hour * 3600) + ($nowTime->minute * 60) + $nowTime->second;
+
+        // 2. Batas Waktu Masuk (Check-in)
+        $startStr = SettingHelper::rfidSchoolCheckinStart(); // '23:00:00'
+        $endStr = SettingHelper::rfidSchoolCheckinEnd();     // '06:59:00'
+
+        $startParts = explode(':', $startStr);
+        $endParts = explode(':', $endStr);
+
+        // Koreksi Indeks Array [0] = Jam, [1] = Menit, [2] = Detik
+        $checkinStartSec = ((int)$startParts[0] * 3600) + ((int)$startParts[1] * 60) + (isset($startParts[2]) ? (int)$startParts[2] : 0);
+        $checkinEndSec = ((int)$endParts[0] * 3600) + ((int)$endParts[1] * 60) + (isset($endParts[2]) ? (int)$endParts[2] : 0);
+
+        // Evaluasi apakah masuk jam Check-in (Mendukung lewat tengah malam)
+        $isCheckin = $checkinStartSec <= $checkinEndSec
+            ? ($nowSeconds >= $checkinStartSec && $nowSeconds <= $checkinEndSec)
+            : ($nowSeconds >= $checkinStartSec || $nowSeconds <= $checkinEndSec);
+
+        if ($isCheckin) {
             return 'checkin';
         }
 
-        if (
-            $now >= SettingHelper::rfidSchoolCheckoutStart()
-            && $now <= SettingHelper::rfidSchoolCheckoutEnd()
-        ) {
+        // 3. Batas Waktu Pulang (Check-out)
+        $outStartStr = SettingHelper::rfidSchoolCheckoutStart();
+        $outEndStr = SettingHelper::rfidSchoolCheckoutEnd();
+
+        $outStartParts = explode(':', $outStartStr);
+        $outEndParts = explode(':', $outEndStr);
+
+        // Koreksi Indeks Array [0] = Jam, [1] = Menit, [2] = Detik
+        $checkoutStartSec = ((int)$outStartParts[0] * 3600) + ((int)$outStartParts[1] * 60) + (isset($outStartParts[2]) ? (int)$outStartParts[2] : 0);
+        $checkoutEndSec = ((int)$outEndParts[0] * 3600) + ((int)$outEndParts[1] * 60) + (isset($outEndParts[2]) ? (int)$outEndParts[2] : 0);
+
+        // Evaluasi apakah masuk jam Check-out (Mendukung lewat tengah malam)
+        $isCheckout = $checkoutStartSec <= $checkoutEndSec
+            ? ($nowSeconds >= $checkoutStartSec && $nowSeconds <= $checkoutEndSec)
+            : ($nowSeconds >= $checkoutStartSec || $nowSeconds <= $checkoutEndSec);
+
+        if ($isCheckout) {
             return 'checkout';
         }
 
@@ -96,9 +127,10 @@ class SchoolRfidService
                 );
             }
 
+            // PERBAIKAN: Paksa simpan jam datang menggunakan Asia/Jakarta
             $this->attendance->markRfidDatang(
                 $student,
-                now(),
+                now('Asia/Jakarta'),
             );
 
             return $this->success(
@@ -126,9 +158,10 @@ class SchoolRfidService
             );
         }
 
+        // PERBAIKAN: Paksa simpan jam pulang menggunakan Asia/Jakarta
         $this->attendance->markRfidPulang(
             $student,
-            now(),
+            now('Asia/Jakarta'),
         );
 
         return $this->success(
@@ -142,6 +175,9 @@ class SchoolRfidService
         string $action,
     ): array {
 
+        // PERBAIKAN: Buat objek penanda waktu berbasis Asia/Jakarta untuk data JSON response
+        $nowTime = now('Asia/Jakarta');
+
         return [
 
             'status' => true,
@@ -154,9 +190,9 @@ class SchoolRfidService
                 ? 'Absen Berhasil.'
                 : 'Hati-hati di jalan.',
 
-            'server_time' => now()->format('H:i:s'),
+            'server_time' => $nowTime->format('H:i:s'),
 
-            'server_date' => now()->toDateString(),
+            'server_date' => $nowTime->toDateString(),
 
             'student' => [
 
@@ -176,6 +212,7 @@ class SchoolRfidService
 
         ];
     }
+
 
     protected function error(
         string $type,

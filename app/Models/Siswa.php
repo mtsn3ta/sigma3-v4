@@ -146,4 +146,8 @@ class Siswa extends Model
             ParentLeaveRequest::class
         );
     }
+    public function rfidFailedLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RfidFailedLog::class, 'siswa_id');
+    }
 }
