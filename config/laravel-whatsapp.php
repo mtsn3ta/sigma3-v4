@@ -138,7 +138,8 @@ return [
     'ui' => [
         'enabled' => env('WHATSAPP_UI_ENABLED', true),
         'route_prefix' => env('WHATSAPP_UI_PREFIX', 'whatsapp'),
-        'middleware' => ['web'],
+        // PERBAIKAN: Gunakan auth standar web bawaan Laravel agar tidak memicu error 500
+        'middleware' => ['web', 'auth'],
         'tailwind_cdn' => env('WHATSAPP_UI_TAILWIND_CDN', true),
         'default_session' => env('WHATSAPP_UI_DEFAULT_SESSION', 'main'),
         'poll_interval' => env('WHATSAPP_UI_POLL_INTERVAL', '5s'),
@@ -155,7 +156,7 @@ return [
         //                  plain CSS, or no framework at all. Brand colors baked in.
         //   'none'       — render UI HTML without injecting any CSS link. Use if you want to
         //                  bundle our views' styles into your own pipeline manually.
-        'css_mode' => env('WHATSAPP_UI_CSS_MODE', 'vite'),
+        'css_mode' => env('WHATSAPP_UI_CSS_MODE', 'standalone'),
 
         // Max number of chats rendered in the conversations list. WhatsApp users
         // often have hundreds — rendering them all would issue hundreds of

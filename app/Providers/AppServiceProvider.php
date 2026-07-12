@@ -75,11 +75,5 @@ class AppServiceProvider extends ServiceProvider
             );
         });
         Carbon::setLocale('id');
-
-        Gate::before(function ($user, string $ability) {
-            return $user->hasRole('super_admin')
-                ? true
-                : null;
-        });
     }
 }

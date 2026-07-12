@@ -129,7 +129,12 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                     ->required(),
                 Select::make('kelas_id')
                     ->label('Kelas')
-                    ->options(Kelas::query()->orderBy('tingkat')->orderBy('nama_kelas')->pluck('nama_kelas', 'id'))
+                    ->options(
+                        Kelas::query()
+                            ->orderBy('tingkat')
+                            ->orderBy('nama_kelas')
+                            ->pluck('nama_kelas', 'id')
+                    )
                     ->searchable()
                     ->live()
                     ->afterStateUpdated(fn() => $this->loadKehadiranSekolah())
@@ -146,10 +151,16 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                         '7' => '7',
                         '8' => '8',
                         '9' => '9',
+                        // Opsi gabungan bawaan awal
                         '1-2' => '1 - 2',
                         '3-4' => '3 - 4',
                         '5-6' => '5 - 6',
                         '7-8' => '7 - 8',
+                        // TAMBAHAN: Opsi gabungan baru untuk jam pelajaran silang
+                        '2-3' => '2 - 3',
+                        '4-5' => '4 - 5',
+                        '6-7' => '6 - 7',
+                        '8-9' => '8 - 9',
                     ])
                     ->required(),
                 TextInput::make('mapel')
@@ -242,7 +253,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
 
         $this->record = null;
         $this->form->fill([
-            'tanggal' => now()->toDateString(),
+            'tanggal' => now('Asia/Jakarta')->toDateString(),
             'kelas_id' => null,
             'jam_ke' => null,
             'mapel' => null,

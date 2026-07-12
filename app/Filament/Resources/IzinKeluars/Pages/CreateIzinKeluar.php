@@ -20,4 +20,8 @@ class CreateIzinKeluar extends CreateRecord
 
         return $data;
     }
+    public function getTitle(): string
+    {
+        return 'Tambah Izin Keluar';
+    }
 }

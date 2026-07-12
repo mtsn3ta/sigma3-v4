@@ -19,28 +19,26 @@ class KehadiranSekolahService
     |--------------------------------------------------------------------------
     */
 
-    public function findToday(
-        Siswa $siswa,
-    ): ?KehadiranSekolah {
+    public function findToday(Siswa $siswa, ?string $tanggal = null): ?KehadiranSekolah
+    {
+        // PERBAIKAN: Jika tanggal tidak dikirim, gunakan hari ini berbasis Asia/Jakarta
+        $targetTanggal = $tanggal ?? now('Asia/Jakarta')->toDateString();
+
         return KehadiranSekolah::query()
-
             ->where('siswa_id', $siswa->id)
-
-            ->whereDate('tanggal', today())
-
+            ->whereDate('tanggal', $targetTanggal)
             ->first();
     }
 
     public function today(): Builder
     {
+        // PERBAIKAN: Kunci query ringkasan data harian ke zona waktu Asia/Jakarta
         return KehadiranSekolah::query()
-
-            ->whereDate('tanggal', today());
+            ->whereDate('tanggal', now('Asia/Jakarta')->toDateString());
     }
 
-    public function belumRfid(
-        ?int $kelasId = null,
-    ): Collection {
+    public function belumRfid(?int $kelasId = null): Collection
+    {
         return SiswaHelper::belumRfid($kelasId);
     }
 
@@ -50,51 +48,34 @@ class KehadiranSekolahService
     |--------------------------------------------------------------------------
     */
 
-    public function markRfidDatang(
-        Siswa $siswa,
-        Carbon $waktu,
-    ): KehadiranSekolah {
-
+    public function markRfidDatang(Siswa $siswa, Carbon $waktu): KehadiranSekolah
+    {
         return KehadiranSekolah::firstOrCreate(
-
             [
-
                 'siswa_id' => $siswa->id,
-
                 'tanggal'  => $waktu->toDateString(),
-
             ],
-
             [
-
                 'status' => 'hadir',
-
                 'sumber' => 'rfid',
-
                 'jam_datang' => $waktu->format('H:i:s'),
-
             ]
         );
     }
 
-    public function markRfidPulang(
-        Siswa $siswa,
-        Carbon $waktu,
-    ): KehadiranSekolah {
-
-        $record = $this->findToday($siswa);
+    public function markRfidPulang(Siswa $siswa, Carbon $waktu): KehadiranSekolah
+    {
+        // Tetap mencari data berdasarkan tanggal RFID ditempel
+        $record = $this->findToday($siswa, $waktu->toDateString());
 
         if (! $record) {
-
             throw new RuntimeException(
                 'Data kehadiran datang belum ada.'
             );
         }
 
         $record->update([
-
             'jam_pulang' => $waktu->format('H:i:s'),
-
         ]);
 
         return $record->fresh();
@@ -102,156 +83,86 @@ class KehadiranSekolahService
 
     /*
     |--------------------------------------------------------------------------
-    | Guru Piket
+    | Guru Piket (Dukungan Parameter Tanggal Ditambahkan)
     |--------------------------------------------------------------------------
     */
 
-    public function markManualHadir(
-        Siswa $siswa,
-        string $jamDatang,
-        Pegawai $petugas,
-    ): KehadiranSekolah {
-
+    public function markManualHadir(Siswa $siswa, string $jamDatang, Pegawai $petugas, ?string $tanggal = null): KehadiranSekolah
+    {
         return KehadiranSekolah::updateOrCreate(
-
             [
-
                 'siswa_id' => $siswa->id,
-
-                'tanggal' => today(),
-
+                'tanggal' => $tanggal ?? now('Asia/Jakarta')->toDateString(),
             ],
-
             [
-
                 'status' => 'hadir',
-
                 'sumber' => 'manual',
-
                 'jam_datang' => $jamDatang,
-
                 'petugas_id' => $petugas->id,
-
             ]
         );
     }
 
-    public function markManualTerlambat(
-        Siswa $siswa,
-        string $jamDatang,
-        Pegawai $petugas,
-    ): KehadiranSekolah {
-
+    public function markManualTerlambat(Siswa $siswa, string $jamDatang, Pegawai $petugas, ?string $tanggal = null): KehadiranSekolah
+    {
         return KehadiranSekolah::updateOrCreate(
-
             [
-
                 'siswa_id' => $siswa->id,
-
-                'tanggal' => today(),
-
+                'tanggal' => $tanggal ?? now('Asia/Jakarta')->toDateString(),
             ],
-
             [
-
                 'status' => 'terlambat',
-
                 'sumber' => 'manual',
-
                 'jam_datang' => $jamDatang,
-
                 'petugas_id' => $petugas->id,
-
             ]
         );
     }
 
-    public function markSakit(
-        Siswa $siswa,
-        ?string $keterangan,
-        Pegawai $petugas,
-    ): KehadiranSekolah {
-
+    public function markSakit(Siswa $siswa, ?string $keterangan, Pegawai $petugas, ?string $tanggal = null): KehadiranSekolah
+    {
         return KehadiranSekolah::updateOrCreate(
-
             [
-
                 'siswa_id' => $siswa->id,
-
-                'tanggal' => today(),
-
+                'tanggal' => $tanggal ?? now('Asia/Jakarta')->toDateString(),
             ],
-
             [
-
                 'status' => 'sakit',
-
                 'sumber' => 'manual',
-
                 'keterangan' => $keterangan,
-
                 'petugas_id' => $petugas->id,
-
             ]
         );
     }
 
-    public function markIzin(
-        Siswa $siswa,
-        ?string $keterangan,
-        Pegawai $petugas,
-    ): KehadiranSekolah {
-
+    public function markIzin(Siswa $siswa, ?string $keterangan, Pegawai $petugas, ?string $tanggal = null): KehadiranSekolah
+    {
         return KehadiranSekolah::updateOrCreate(
-
             [
-
                 'siswa_id' => $siswa->id,
-
-                'tanggal' => today(),
-
+                'tanggal' => $tanggal ?? now('Asia/Jakarta')->toDateString(),
             ],
-
             [
-
                 'status' => 'izin',
-
                 'sumber' => 'manual',
-
                 'keterangan' => $keterangan,
-
                 'petugas_id' => $petugas->id,
-
             ]
         );
     }
 
-    public function markAlfa(
-        Siswa $siswa,
-        ?string $keterangan,
-        Pegawai $petugas,
-    ): KehadiranSekolah {
-
+    public function markAlfa(Siswa $siswa, ?string $keterangan, Pegawai $petugas, ?string $tanggal = null): KehadiranSekolah
+    {
         return KehadiranSekolah::updateOrCreate(
-
             [
-
                 'siswa_id' => $siswa->id,
-
-                'tanggal' => today(),
-
+                'tanggal' => $tanggal ?? now('Asia/Jakarta')->toDateString(),
             ],
-
             [
-
                 'status' => 'alfa',
-
                 'sumber' => 'manual',
-
                 'keterangan' => $keterangan,
-
                 'petugas_id' => $petugas->id,
-
             ]
         );
     }
@@ -264,82 +175,35 @@ class KehadiranSekolahService
 
     public function hadir(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->where('status', 'hadir');
+        return $this->today()->where('status', 'hadir');
     }
-
     public function terlambat(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->where('status', 'terlambat');
+        return $this->today()->where('status', 'terlambat');
     }
-
     public function sakit(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->where('status', 'sakit');
+        return $this->today()->where('status', 'sakit');
     }
-
     public function izin(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->where('status', 'izin');
+        return $this->today()->where('status', 'izin');
     }
-
     public function alfa(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->where('status', 'alfa');
+        return $this->today()->where('status', 'alfa');
     }
-
     public function sudahHadir(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->whereIn('status', [
-
-                'hadir',
-
-                'terlambat',
-
-            ]);
+        return $this->today()->where('status', ['hadir', 'terlambat']);
     }
-
     public function belumPulang(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->whereNotNull('jam_datang')
-
-            ->whereNull('jam_pulang');
+        return $this->today()->whereNotNull('jam_datang')->whereNull('jam_pulang');
     }
-
     public function sudahPulang(): Builder
     {
-        return $this
-
-            ->today()
-
-            ->whereNotNull('jam_pulang');
+        return $this->today()->whereNotNull('jam_pulang');
     }
 
     /*
@@ -350,84 +214,38 @@ class KehadiranSekolahService
 
     public function jumlahHadir(): int
     {
-        return $this
-
-            ->hadir()
-
-            ->count();
+        return $this->hadir()->count();
     }
-
     public function jumlahTerlambat(): int
     {
-        return $this
-
-            ->terlambat()
-
-            ->count();
+        return $this->terlambat()->count();
     }
-
     public function jumlahSakit(): int
     {
-        return $this
-
-            ->sakit()
-
-            ->count();
+        return $this->sakit()->count();
     }
-
     public function jumlahIzin(): int
     {
-        return $this
-
-            ->izin()
-
-            ->count();
+        return $this->izin()->count();
     }
-
     public function jumlahAlfa(): int
     {
-        return $this
-
-            ->alfa()
-
-            ->count();
+        return $this->alfa()->count();
     }
-
     public function jumlahSudahHadir(): int
     {
-        return $this
-
-            ->sudahHadir()
-
-            ->count();
+        return $this->sudahHadir()->count();
     }
-
-    public function jumlahBelumRfid(
-        ?int $kelasId = null,
-    ): int {
-
-        return $this
-
-            ->belumRfid($kelasId)
-
-            ->count();
+    public function jumlahBelumRfid(?int $kelasId = null): int
+    {
+        return $this->belumRfid($kelasId)->count();
     }
-
     public function jumlahBelumPulang(): int
     {
-        return $this
-
-            ->belumPulang()
-
-            ->count();
+        return $this->belumPulang()->count();
     }
-
     public function jumlahSudahPulang(): int
     {
-        return $this
-
-            ->sudahPulang()
-
-            ->count();
+        return $this->sudahPulang()->count();
     }
 }

@@ -41,17 +41,12 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
         $this->record = null;
 
         $this->form->fill([
-
-            'tanggal' => now()->toDateString(),
-
+            // PERBAIKAN 1: Mengunci nilai default tanggal ke Asia/Jakarta (WIB)
+            'tanggal' => now('Asia/Jakarta')->toDateString(),
             'kelas_id' => null,
-
             'mapel' => null,
-
             'jam_ke' => null,
-
             'isi_tugas' => null,
-
         ]);
     }
 
@@ -72,17 +67,11 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
         $this->record = TugasGuruIzin::findOrFail($id);
 
         $this->form->fill([
-
             'tanggal' => $this->record->tanggal->toDateString(),
-
             'kelas_id' => $this->record->kelas_id,
-
             'mapel' => $this->record->mapel,
-
             'jam_ke' => $this->record->jam_ke,
-
             'isi_tugas' => $this->record->isi_tugas,
-
         ]);
 
         $this->dispatch(
@@ -94,9 +83,7 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
     public function form(Schema $schema): Schema
     {
         return $schema
-
             ->components([
-
                 DatePicker::make('tanggal')
                     ->label('Tanggal')
                     ->required(),
@@ -104,15 +91,13 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
                 Select::make('kelas_id')
                     ->label('Kelas')
                     ->options(
-
+                        // PERBAIKAN: Menampilkan SEMUA kelas secara aman, lalu membuang nama yang kembar lewat PHP ->unique()
                         Kelas::query()
-
                             ->orderBy('tingkat')
-
                             ->orderBy('nama_kelas')
-
+                            ->get()
+                            ->unique('nama_kelas') // Menghilangkan duplikasi jika ada nama kelas sama dari tahun lalu
                             ->pluck('nama_kelas', 'id')
-
                     )
                     ->searchable()
                     ->required(),
@@ -124,7 +109,6 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
                 Select::make('jam_ke')
                     ->label('Jam Ke')
                     ->options([
-
                         '1' => '1',
                         '2' => '2',
                         '3' => '3',
@@ -134,12 +118,16 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
                         '7' => '7',
                         '8' => '8',
                         '9' => '9',
-
+                        // Opsi gabungan bawaan awal
                         '1-2' => '1 - 2',
                         '3-4' => '3 - 4',
                         '5-6' => '5 - 6',
                         '7-8' => '7 - 8',
-
+                        // PERBAIKAN 3: Menambahkan opsi jam pelajaran silang
+                        '2-3' => '2 - 3',
+                        '4-5' => '4 - 5',
+                        '6-7' => '6 - 7',
+                        '8-9' => '8 - 9',
                     ])
                     ->required(),
 
@@ -147,71 +135,40 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
                     ->label('Isi Tugas')
                     ->rows(8)
                     ->required(),
-
             ])
-
             ->statePath('data');
     }
 
     public function submit(): void
     {
         $data = $this->form->getState();
-
         $isEdit = $this->record !== null;
 
         DB::transaction(function () use ($data) {
-
             if ($this->record) {
-
                 $this->record->update([
-
                     'kelas_id' => $data['kelas_id'],
-
                     'tanggal' => $data['tanggal'],
-
                     'mapel' => $data['mapel'],
-
                     'jam_ke' => $data['jam_ke'],
-
                     'isi_tugas' => $data['isi_tugas'],
-
                 ]);
             } else {
-
                 TugasGuruIzin::create([
-
                     'pegawai_id' => Auth::user()->pegawai->id,
-
                     'kelas_id' => $data['kelas_id'],
-
                     'tanggal' => $data['tanggal'],
-
                     'mapel' => $data['mapel'],
-
                     'jam_ke' => $data['jam_ke'],
-
                     'isi_tugas' => $data['isi_tugas'],
-
                     'status' => 'baru',
-
                 ]);
             }
         });
 
         Notification::make()
-
-            ->title(
-
-                $isEdit
-
-                    ? 'Pengajuan berhasil diperbarui.'
-
-                    : 'Pengajuan berhasil dikirim.'
-
-            )
-
+            ->title($isEdit ? 'Pengajuan berhasil diperbarui.' : 'Pengajuan berhasil dikirim.')
             ->success()
-
             ->send();
 
         $this->dispatch(
@@ -221,15 +178,11 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
 
         $this->resetForm();
 
-        $this->dispatch(
-            'refresh-riwayat-guru-berhalangan'
-        );
+        $this->dispatch('refresh-riwayat-guru-berhalangan');
     }
 
     public function render(): View
     {
-        return view(
-            'livewire.guru-berhalangan-form'
-        );
+        return view('livewire.guru-berhalangan-form');
     }
 }

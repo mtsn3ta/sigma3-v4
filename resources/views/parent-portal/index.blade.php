@@ -21,7 +21,7 @@
 
     {{-- Efek Pendaran Futuristik Latar Belakang --}}
     <div
-        class="fixed top-0 left-0 right-0 h-80 bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none z-0">
+        class="fixed top-0 left-0 right-0 h-80 bg-linear-to-b from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none z-0">
     </div>
 
     <div class="max-w-xl mx-auto px-4 pt-6 relative z-10">
@@ -311,7 +311,7 @@
                         {{-- Tombol Submit Besar --}}
                         <div class="pt-2">
                             <button type="submit"
-                                class="w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-extrabold text-lg rounded-xl shadow-md hover:from-indigo-700 hover:to-indigo-800 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                                class="w-full py-4 bg-linear-to-r from-indigo-600 to-indigo-700 text-white font-extrabold text-lg rounded-xl shadow-md hover:from-indigo-700 hover:to-indigo-800 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                     stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round"

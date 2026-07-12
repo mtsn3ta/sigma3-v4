@@ -33,7 +33,8 @@ class VerifikasiKehadiranIbadahForm extends Component implements HasActions, Has
     public function mount(): void
     {
         $this->form->fill([
-            'tanggal' => today()->toDateString(),
+            // PERBAIKAN: Mengunci waktu inisialisasi awal form ke Asia/Jakarta (WIB)
+            'tanggal' => now('Asia/Jakarta')->toDateString(),
             'jenis'   => 'dhuha',
         ]);
     }

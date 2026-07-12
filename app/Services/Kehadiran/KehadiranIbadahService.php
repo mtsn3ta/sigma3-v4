@@ -16,20 +16,19 @@ class KehadiranIbadahService
     ): KehadiranIbadah {
 
         return KehadiranIbadah::updateOrCreate(
-
             [
                 'siswa_id' => $siswa->id,
-                'tanggal'  => $tanggal ?? today()->toDateString(),
+                // PERBAIKAN 1: Fallback tanggal default menggunakan Asia/Jakarta (WIB)
+                'tanggal'  => $tanggal ?? now('Asia/Jakarta')->toDateString(),
                 'jenis'    => $jenis,
             ],
-
             [
                 'status'      => 'hadir',
                 'sumber'      => 'manual',
                 'petugas_id'  => $petugas->id,
-                'waktu_scan'  => now(),
+                // PERBAIKAN 2: Mengunci waktu rekam jam scan ke Asia/Jakarta (WIB)
+                'waktu_scan'  => now('Asia/Jakarta'),
             ]
-
         );
     }
 
@@ -41,20 +40,19 @@ class KehadiranIbadahService
     ): KehadiranIbadah {
 
         return KehadiranIbadah::updateOrCreate(
-
             [
                 'siswa_id' => $siswa->id,
-                'tanggal'  => $tanggal ?? today()->toDateString(),
+                // PERBAIKAN 3: Fallback tanggal default menggunakan Asia/Jakarta (WIB)
+                'tanggal'  => $tanggal ?? now('Asia/Jakarta')->toDateString(),
                 'jenis'    => $jenis,
             ],
-
             [
                 'status'      => 'menstruasi',
                 'sumber'      => 'manual',
                 'petugas_id'  => $petugas->id,
-                'waktu_scan'  => now(),
+                // PERBAIKAN 4: Mengunci waktu rekam jam scan ke Asia/Jakarta (WIB)
+                'waktu_scan'  => now('Asia/Jakarta'),
             ]
-
         );
     }
 
@@ -66,20 +64,19 @@ class KehadiranIbadahService
     ): KehadiranIbadah {
 
         return KehadiranIbadah::updateOrCreate(
-
             [
                 'siswa_id' => $siswa->id,
-                'tanggal'  => $tanggal ?? today()->toDateString(),
+                // PERBAIKAN 5: Fallback tanggal default menggunakan Asia/Jakarta (WIB)
+                'tanggal'  => $tanggal ?? now('Asia/Jakarta')->toDateString(),
                 'jenis'    => $jenis,
             ],
-
             [
                 'status'      => 'tidak_hadir',
                 'sumber'      => 'manual',
                 'petugas_id'  => $petugas->id,
-                'waktu_scan'  => now(),
+                // PERBAIKAN 6: Mengunci waktu rekam jam scan ke Asia/Jakarta (WIB)
+                'waktu_scan'  => now('Asia/Jakarta'),
             ]
-
         );
     }
 
@@ -89,34 +86,27 @@ class KehadiranIbadahService
     ): ?KehadiranIbadah {
 
         return KehadiranIbadah::query()
-
             ->where('siswa_id', $student->id)
-
-            ->whereDate('tanggal', today())
-
+            // PERBAIKAN 7: Pengecekan data harian wajib dikunci ke Asia/Jakarta (WIB)
+            ->whereDate('tanggal', now('Asia/Jakarta')->toDateString())
             ->where('jenis', $jenis)
-
             ->first();
     }
+
     public function markRfidHadir(
         Siswa $student,
         string $jenis,
     ): KehadiranIbadah {
 
         return KehadiranIbadah::create([
-
             'siswa_id' => $student->id,
-
-            'tanggal' => today(),
-
+            // PERBAIKAN 8: Tanggal pencatatan RFID wajib dikunci ke Asia/Jakarta (WIB)
+            'tanggal' => now('Asia/Jakarta')->toDateString(),
             'jenis' => $jenis,
-
             'status' => 'hadir',
-
-            'jam_scan' => now(),
-
+            // PERBAIKAN 9: Jam scan RFID wajib dikunci ke Asia/Jakarta (WIB)
+            'jam_scan' => now('Asia/Jakarta'),
             'metode' => 'rfid',
-
         ]);
     }
 }

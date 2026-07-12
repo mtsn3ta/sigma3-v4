@@ -19,12 +19,12 @@ class IzinKeluarForm
             ->components([
 
                 Section::make('Data Izin Keluar')
-
                     ->schema([
 
                         DatePicker::make('tanggal')
                             ->label('Tanggal')
-                            ->default(today())
+                            // PERBAIKAN 1: Mengunci tanggal default hari ini ke WIB (Tanggal 13)
+                            ->default(now('Asia/Jakarta')->toDateString())
                             ->required(),
 
                         Select::make('kelas_id')
@@ -52,7 +52,8 @@ class IzinKeluarForm
                         TextInput::make('jam_keluar')
                             ->label('Jam Keluar')
                             ->type('time')
-                            ->default(now()->format('H:i'))
+                            // PERBAIKAN 2: Mengunci jam awal otomatis ke waktu WIB saat ini (01:23)
+                            ->default(now('Asia/Jakarta')->format('H:i'))
                             ->required(),
 
                         TextInput::make('tujuan')
@@ -60,19 +61,12 @@ class IzinKeluarForm
                             ->required()
                             ->maxLength(150)
                             ->datalist([
-
                                 'Dispensasi',
-
                                 'Puskesmas',
-
                                 'Rumah Sakit',
-
                                 'Apotek',
-
                                 'Rumah',
-
                                 'Lainnya',
-
                             ]),
 
                         Textarea::make('keperluan')
@@ -82,7 +76,6 @@ class IzinKeluarForm
                             ->columnSpanFull(),
 
                     ])
-
                     ->columnSpanFull(),
 
             ]);

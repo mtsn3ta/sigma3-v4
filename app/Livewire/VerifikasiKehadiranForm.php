@@ -43,8 +43,12 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
 
     public function mount(): void
     {
+        // PERBAIKAN PASTI: Memastikan form pertama kali dibuka langsung mengunci tanggal 13 (WIB)
         $this->form->fill([
-            'tanggal' => today()->toDateString(),
+            'tanggal' => now('Asia/Jakarta')->toDateString(),
+            'kelas_id' => null,
+            'siswa_id' => null,
+            'status' => null,
         ]);
     }
 
@@ -64,8 +68,9 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
                             ->schema([
 
                                 DatePicker::make('tanggal')
+                                    // PERBAIKAN: Mengunci tanggal default hari ini ke zona waktu Asia/Jakarta (WIB)
+                                    ->default(now('Asia/Jakarta')->toDateString())
                                     ->required(),
-
                                 Select::make('kelas_id')
                                     ->label('Kelas')
                                     ->options(KelasHelper::options())
@@ -172,77 +177,52 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
         )->firstOrFail();
 
         switch ($data['status']) {
-
             case 'hadir':
-
                 $service->markManualHadir(
-
                     siswa: $siswa,
-
                     jamDatang: $data['jam_datang'],
-
                     petugas: $petugas,
-
+                    tanggal: $data['tanggal'] // <--- Tambahkan ini
                 );
-
                 break;
 
             case 'terlambat':
-
                 $service->markManualTerlambat(
-
                     siswa: $siswa,
-
                     jamDatang: $data['jam_datang'],
-
                     petugas: $petugas,
-
+                    tanggal: $data['tanggal'] // <--- Tambahkan ini
                 );
-
                 break;
 
             case 'izin':
-
                 $service->markIzin(
-
                     siswa: $siswa,
-
                     keterangan: $data['keterangan'],
-
                     petugas: $petugas,
-
+                    tanggal: $data['tanggal'] // <--- Tambahkan ini
                 );
-
                 break;
 
             case 'sakit':
-
                 $service->markSakit(
-
                     siswa: $siswa,
-
                     keterangan: $data['keterangan'],
-
                     petugas: $petugas,
-
+                    tanggal: $data['tanggal'] // <--- Tambahkan ini
                 );
-
                 break;
 
             case 'alfa':
-
                 $service->markAlfa(
-
                     siswa: $siswa,
-
                     keterangan: $data['keterangan'],
-
                     petugas: $petugas,
-
+                    tanggal: $data['tanggal'] // <--- Tambahkan ini
                 );
-
                 break;
         }
+
 
         Notification::make()
             ->success()
@@ -269,7 +249,6 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
         $request = ParentLeaveRequest::with('siswa')->findOrFail($id);
 
         if ($request->status !== 'pending') {
-
             Notification::make()
                 ->warning()
                 ->title('Pengajuan sudah diproses')
@@ -285,50 +264,35 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
         )->firstOrFail();
 
         if ($request->jenis === 'izin') {
-
             $service->markIzin(
-
                 siswa: $request->siswa,
-
                 keterangan: $request->keterangan,
-
                 petugas: $petugas,
-
             );
         } else {
-
             $service->markSakit(
-
                 siswa: $request->siswa,
-
                 keterangan: $request->keterangan,
-
                 petugas: $petugas,
-
             );
         }
 
         $request->update([
-
             'status' => 'approved',
-
             'verified_by' => $petugas->id,
-
-            'verified_at' => now(),
-
+            // PERBAIKAN 1: Kunci zona waktu persetujuan ke Asia/Jakarta (WIB)
+            'verified_at' => now('Asia/Jakarta'),
         ]);
 
         Notification::make()
-
             ->success()
-
             ->title('Berhasil')
-
             ->body('Pengajuan berhasil disetujui.')
-
             ->send();
+
         $this->dispatch('$refresh');
     }
+
     public function reject(): void
     {
         $request = ParentLeaveRequest::findOrFail(
@@ -343,31 +307,21 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
         )->firstOrFail();
 
         $request->update([
-
             'status' => 'rejected',
-
             'verified_by' => $petugas->id,
-
-            'verified_at' => now(),
-
+            // PERBAIKAN 2: Kunci zona waktu penolakan ke Asia/Jakarta (WIB)
+            'verified_at' => now('Asia/Jakarta'),
             'verification_note' => $this->verificationNote,
-
         ]);
 
         Notification::make()
-
             ->danger()
-
             ->title('Pengajuan ditolak')
-
             ->send();
 
         $this->showRejectModal = false;
-
         $this->rejectId = null;
-
         $this->verificationNote = '';
-
         $this->dispatch('$refresh');
     }
     public function preview(int $id): void
