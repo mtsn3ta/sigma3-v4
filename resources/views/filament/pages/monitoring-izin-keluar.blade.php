@@ -49,7 +49,8 @@
         @forelse($data->groupBy(fn($item) => $item->tanggal->format('Y-m-d')) as $tanggal => $rows)
             <x-filament::section>
                 <h3 style="font-size: 1.1rem; font-weight: 700; color: #111827; margin-bottom: 1rem;">
-                    {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d F Y') }}
+                    {{-- PERBAIKAN 1: Paksa format bahasa teks hari dan bulan ke Bahasa Indonesia murni --}}
+                    {{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('l, d F Y') }}
                 </h3>
 
                 <div style="overflow-x: auto; border-radius: 0.75rem; border: 1px solid #e5e7eb; background: #fff;">
@@ -70,7 +71,10 @@
                             @foreach ($rows as $row)
                                 <tr style="border-bottom: 1px solid #f3f4f6;">
                                     <td style="padding: 0.75rem; text-align: center;">{{ $loop->iteration }}</td>
-                                    <td style="padding: 0.75rem;">{{ $row->siswa?->nama_kelas_aktif ?? '-' }}</td>
+                                    <td style="padding: 0.75rem;">
+                                        {{-- PERBAIKAN 2: Gunakan jalur objek kelasSiswa database murni agar nama kelas siswa baru Kelas 7 tampil utuh --}}
+                                        {{ $row->siswa?->kelasSiswa?->first()?->kelas?->nama_kelas ?? '-' }}
+                                    </td>
                                     <td style="padding: 0.75rem; font-weight: 500;">{{ $row->siswa?->nama }}</td>
                                     <td style="padding: 0.75rem; text-align: center;">
                                         {{ $row->jam_keluar_formatted ?? '-' }}</td>

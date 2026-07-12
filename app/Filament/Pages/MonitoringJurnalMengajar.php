@@ -34,46 +34,35 @@ class MonitoringJurnalMengajar extends Page
     protected function getHeaderActions(): array
     {
         return [
-
             Action::make('exportPdf')
-
                 ->label('Export PDF')
-
                 ->icon('heroicon-o-document-arrow-down')
-
                 ->color('danger')
-
                 ->form([
-
                     DatePicker::make('tanggal_mulai')
                         ->label('Tanggal Mulai')
-                        ->default(now())
+                        // PERBAIKAN 1: Kunci tanggal awal ekspor ke Asia/Jakarta (WIB)
+                        ->default(now('Asia/Jakarta')->toDateString())
                         ->required(),
 
                     DatePicker::make('tanggal_selesai')
                         ->label('Tanggal Selesai')
-                        ->default(now())
+                        // PERBAIKAN 2: Kunci tanggal akhir ekspor ke Asia/Jakarta (WIB)
+                        ->default(now('Asia/Jakarta')->toDateString())
                         ->required(),
 
                     Select::make('kelas')
                         ->label('Kelas')
                         ->options(KelasHelper::options())
                         ->required(),
-
                 ])
-
                 ->action(function (array $data) {
-
                     $url = route(
                         'print.monitoring-jurnal',
                         [
-
                             'tanggal_mulai' => $data['tanggal_mulai'],
-
                             'tanggal_selesai' => $data['tanggal_selesai'],
-
                             'kelas' => $data['kelas'],
-
                         ]
                     );
 
@@ -82,7 +71,6 @@ class MonitoringJurnalMengajar extends Page
                         navigate: false
                     );
                 }),
-
         ];
     }
 
@@ -102,9 +90,10 @@ class MonitoringJurnalMengajar extends Page
 
     public function mount(): void
     {
-        $this->tanggalMulai = now()->toDateString();
+        // PERBAIKAN 3: Kunci tanggal awal muat halaman monitoring ke Asia/Jakarta (WIB) agar langsung memuat data hari ini
+        $this->tanggalMulai = now('Asia/Jakarta')->toDateString();
 
-        $this->tanggalSelesai = now()->toDateString();
+        $this->tanggalSelesai = now('Asia/Jakarta')->toDateString();
     }
 
     public static function canAccess(): bool
@@ -183,11 +172,12 @@ class MonitoringJurnalMengajar extends Page
 
         $tanggal = Carbon::parse(
             $this->tanggalMulai
-        );
+        )->locale('id'); // <--- PAKSA BAHASA INDONESIA DI SINI
 
         $tanggalSelesai = Carbon::parse(
             $this->tanggalSelesai
-        );
+        )->locale('id'); // <--- PAKSA BAHASA INDONESIA DI SINI
+
 
         while ($tanggal->lte($tanggalSelesai)) {
 

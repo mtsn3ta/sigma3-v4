@@ -105,9 +105,11 @@
 
             Dicetak<br>
 
-            {{ now()->format('d-m-Y H:i') }}
+            {{-- PERBAIKAN: Mengunci jam cetak struk thermal ke Asia/Jakarta (WIB) --}}
+            {{ now('Asia/Jakarta')->format('d-m-Y H:i') }} WIB
 
         </div>
     @endif
+
 
 @endsection

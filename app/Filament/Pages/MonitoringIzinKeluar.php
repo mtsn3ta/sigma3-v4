@@ -43,9 +43,10 @@ class MonitoringIzinKeluar extends Page
 
     public function mount(): void
     {
-        $this->tanggalMulai = now()->toDateString();
+        // PERBAIKAN: Mengunci tanggal default awal halaman monitoring ke Asia/Jakarta (WIB)
+        $this->tanggalMulai = now('Asia/Jakarta')->toDateString();
 
-        $this->tanggalSelesai = now()->toDateString();
+        $this->tanggalSelesai = now('Asia/Jakarta')->toDateString();
 
         $this->data = collect();
     }
@@ -61,46 +62,35 @@ class MonitoringIzinKeluar extends Page
     protected function getHeaderActions(): array
     {
         return [
-
             Action::make('exportPdf')
-
                 ->label('Export PDF')
-
                 ->icon('heroicon-o-document-arrow-down')
-
                 ->color('danger')
-
                 ->form([
-
                     DatePicker::make('tanggal_mulai')
                         ->label('Tanggal Mulai')
-                        ->default(now())
+                        // PERBAIKAN 1: Mengunci tanggal default ekspor hari ini ke Asia/Jakarta (WIB)
+                        ->default(now('Asia/Jakarta')->toDateString())
                         ->required(),
 
                     DatePicker::make('tanggal_selesai')
                         ->label('Tanggal Selesai')
-                        ->default(now())
+                        // PERBAIKAN 2: Mengunci tanggal default ekspor hari ini ke Asia/Jakarta (WIB)
+                        ->default(now('Asia/Jakarta')->toDateString())
                         ->required(),
-
                 ])
-
                 ->action(function (array $data) {
-
                     $this->redirect(
                         route(
                             'print.monitoring-izin-keluar',
                             [
-
                                 'tanggal_mulai' => $data['tanggal_mulai'],
-
                                 'tanggal_selesai' => $data['tanggal_selesai'],
-
                             ]
                         ),
                         navigate: false
                     );
                 }),
-
         ];
     }
 
@@ -110,51 +100,38 @@ class MonitoringIzinKeluar extends Page
             ! $this->tanggalMulai ||
             ! $this->tanggalSelesai
         ) {
-
             $this->data = collect();
-
             $this->total = 0;
-
             $this->totalBelumKembali = 0;
-
             $this->totalSudahKembali = 0;
-
             return;
         }
 
         $this->data = IzinKeluar::query()
-
+            // PERBAIKAN 3: Mengubah eager load ke kelasSiswa agar nama kelas siswa baru Kelas 7 tetap terbaca utuh
             ->with([
-                'siswa.kelasAktif.kelas',
+                'siswa.kelasSiswa.kelas',
                 'pegawai',
             ])
-
             ->whereBetween(
                 'tanggal',
                 [
-                    Carbon::parse($this->tanggalMulai),
-                    Carbon::parse($this->tanggalSelesai),
+                    // PERBAIKAN 4: Pastikan parse tanggal terkunci di timezone Asia/Jakarta
+                    Carbon::parse($this->tanggalMulai, 'Asia/Jakarta')->startOfDay(),
+                    Carbon::parse($this->tanggalSelesai, 'Asia/Jakarta')->endOfDay(),
                 ]
             )
-
             ->orderBy('tanggal')
-
             ->orderBy('jam_keluar')
-
             ->get();
 
         $this->total = $this->data->count();
-
         $this->totalBelumKembali = $this->data
-
             ->whereNull('jam_kembali')
-
             ->count();
 
         $this->totalSudahKembali = $this->data
-
             ->whereNotNull('jam_kembali')
-
             ->count();
     }
 }

@@ -54,13 +54,14 @@
                         Monitoring</span>
                     <strong style="font-size: 1.125rem; color: #111827;">
                         @if ($tanggalMulai && $tanggalSelesai)
-                            {{ \Carbon\Carbon::parse($tanggalMulai)->translatedFormat('d M Y') }}
+                            {{ \Carbon\Carbon::parse($tanggalMulai)->locale('id')->translatedFormat('d M Y') }}
                             <span style="color: #9ca3af; font-weight: 400; margin: 0 0.5rem;">s/d</span>
-                            {{ \Carbon\Carbon::parse($tanggalSelesai)->translatedFormat('d M Y') }}
+                            {{ \Carbon\Carbon::parse($tanggalSelesai)->locale('id')->translatedFormat('d M Y') }}
                         @else
                             -
                         @endif
                     </strong>
+
                 </div>
 
                 <div style="flex: 1; min-width: 250px;">
@@ -81,8 +82,10 @@
                     style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem;">
 
                     <h3 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">
-                        {{ $hari['tanggal']->translatedFormat('l, d F Y') }}
+                        {{-- PERBAIKAN: Paksa objek Carbon tanggal harian menggunakan lokalisasi Bahasa Indonesia --}}
+                        {{ $hari['tanggal']->locale('id')->translatedFormat('l, d F Y') }}
                     </h3>
+
 
                     <div style="display: flex; gap: 0.75rem; font-size: 0.75rem; font-weight: 600;">
                         <div

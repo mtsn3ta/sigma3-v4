@@ -53,9 +53,10 @@
                         style="font-size: 0.85rem; color: #6b7280; font-weight: 500; display: block; margin-bottom: 0.25rem;">Periode</span>
                     <div style="font-weight: 600; color: #111827;">
                         @if ($tanggalMulai && $tanggalSelesai)
-                            {{ \Carbon\Carbon::parse($tanggalMulai)->translatedFormat('d F Y') }}
+                            {{-- PERBAIKAN 1: Paksa nama bulan periode ekspor menggunakan Bahasa Indonesia --}}
+                            {{ \Carbon\Carbon::parse($tanggalMulai)->locale('id')->translatedFormat('d F Y') }}
                             <span style="color: #9ca3af; font-weight: 400; margin: 0 0.5rem;">s/d</span>
-                            {{ \Carbon\Carbon::parse($tanggalSelesai)->translatedFormat('d F Y') }}
+                            {{ \Carbon\Carbon::parse($tanggalSelesai)->locale('id')->translatedFormat('d F Y') }}
                         @else
                             <span style="color: #9ca3af; font-style: italic;">Belum memilih periode</span>
                         @endif
@@ -110,7 +111,9 @@
                             <tr style="border-bottom: 1px solid #f3f4f6;">
                                 <td style="padding: 0.75rem; text-align: center;">{{ $loop->iteration }}</td>
                                 <td style="padding: 0.75rem; white-space: nowrap;">
-                                    {{ $row->tanggal->translatedFormat('d M Y') }}</td>
+                                    {{-- PERBAIKAN 2: Paksa baris tanggal kejadian di dalam tabel menggunakan Bahasa Indonesia --}}
+                                    {{ $row->tanggal->locale('id')->translatedFormat('d M Y') }}
+                                </td>
                                 <td style="padding: 0.75rem;">{{ $row->siswa?->nama ?? '-' }}</td>
                                 <td style="padding: 0.75rem;">{{ $row->permasalahan }}</td>
                                 <td style="padding: 0.75rem; text-align: center;">

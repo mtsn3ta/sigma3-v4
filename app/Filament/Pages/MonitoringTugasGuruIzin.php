@@ -15,17 +15,13 @@ use Filament\Forms\Components\DatePicker;
 
 class MonitoringTugasGuruIzin extends Page
 {
-    protected string $view =
-    'filament.pages.monitoring-tugas-guru-izin';
+    protected string $view = 'filament.pages.monitoring-tugas-guru-izin';
 
-    protected static string|BackedEnum|null $navigationIcon =
-    Heroicon::OutlinedClipboardDocumentList;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $navigationLabel =
-    'Monitoring Tugas Guru Izin';
+    protected static ?string $navigationLabel = 'Monitoring Tugas Guru Izin';
 
-    protected static string|\UnitEnum|null $navigationGroup =
-    'Monitoring';
+    protected static string|\UnitEnum|null $navigationGroup = 'Monitoring';
 
     protected static ?int $navigationSort = 4;
 
@@ -43,9 +39,10 @@ class MonitoringTugasGuruIzin extends Page
 
     public function mount(): void
     {
-        $this->tanggalMulai = now()->toDateString();
+        // PERBAIKAN 1: Kunci tanggal awal muat halaman monitoring ke Asia/Jakarta (WIB) agar akurat tanggal hari ini
+        $this->tanggalMulai = now('Asia/Jakarta')->toDateString();
 
-        $this->tanggalSelesai = now()->toDateString();
+        $this->tanggalSelesai = now('Asia/Jakarta')->toDateString();
 
         $this->data = collect();
     }
@@ -55,47 +52,35 @@ class MonitoringTugasGuruIzin extends Page
         /** @var User|null $user */
         $user = Auth::user();
 
-        return $user?->can(
-            'tugas_izin.view'
-        ) ?? false;
+        return $user?->can('tugas_izin.view') ?? false;
     }
 
     protected function getHeaderActions(): array
     {
         return [
-
             Action::make('exportPdf')
-
                 ->label('Export PDF')
-
                 ->icon('heroicon-o-document-arrow-down')
-
                 ->color('danger')
-
                 ->form([
-
                     DatePicker::make('tanggal_mulai')
                         ->label('Tanggal Mulai')
-                        ->default(now())
+                        // PERBAIKAN 2: Kunci default tanggal awal ekspor PDF ke Asia/Jakarta (WIB)
+                        ->default(now('Asia/Jakarta')->toDateString())
                         ->required(),
 
                     DatePicker::make('tanggal_selesai')
                         ->label('Tanggal Selesai')
-                        ->default(now())
+                        // PERBAIKAN 3: Kunci default tanggal akhir ekspor PDF ke Asia/Jakarta (WIB)
+                        ->default(now('Asia/Jakarta')->toDateString())
                         ->required(),
-
                 ])
-
                 ->action(function (array $data) {
-
                     $url = route(
                         'print.monitoring-tugas-guru-izin',
                         [
-
                             'tanggal_mulai' => $data['tanggal_mulai'],
-
                             'tanggal_selesai' => $data['tanggal_selesai'],
-
                         ]
                     );
 
@@ -104,7 +89,6 @@ class MonitoringTugasGuruIzin extends Page
                         navigate: false
                     );
                 }),
-
         ];
     }
 
@@ -114,71 +98,38 @@ class MonitoringTugasGuruIzin extends Page
             ! $this->tanggalMulai ||
             ! $this->tanggalSelesai
         ) {
-
             $this->data = collect();
-
             $this->totalBaru = 0;
-
             $this->totalDisampaikan = 0;
-
             $this->totalSelesai = 0;
-
             return;
         }
 
         $this->data = TugasGuruIzin::query()
-
             ->with([
                 'guru',
                 'petugas',
                 'kelas',
             ])
-
             ->whereBetween(
                 'tanggal',
                 [
-                    Carbon::parse($this->tanggalMulai),
-                    Carbon::parse($this->tanggalSelesai),
+                    // PERBAIKAN 4: Pastikan range pencarian aman dengan start/end of day berbasis timezone Asia/Jakarta
+                    Carbon::parse($this->tanggalMulai, 'Asia/Jakarta')->startOfDay(),
+                    Carbon::parse($this->tanggalSelesai, 'Asia/Jakarta')->endOfDay(),
                 ]
             )
-
             ->orderBy('tanggal')
-
             ->orderBy('kelas_id')
-
             ->orderBy('jam_ke')
-
             ->get();
 
-        $collection = $this->data
+        $collection = $this->data->flatten();
 
-            ->flatten();
+        $this->totalBaru = $collection->where('status', 'baru')->count();
 
-        $this->totalBaru = $collection
+        $this->totalDisampaikan = $collection->where('status', 'disampaikan')->count();
 
-            ->where(
-                'status',
-                'baru'
-            )
-
-            ->count();
-
-        $this->totalDisampaikan = $collection
-
-            ->where(
-                'status',
-                'disampaikan'
-            )
-
-            ->count();
-
-        $this->totalSelesai = $collection
-
-            ->where(
-                'status',
-                'selesai'
-            )
-
-            ->count();
+        $this->totalSelesai = $collection->where('status', 'selesai')->count();
     }
 }

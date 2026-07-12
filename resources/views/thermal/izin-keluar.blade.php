@@ -36,7 +36,8 @@
             <td class="label">Kelas</td>
             <td class="separator">:</td>
             <td class="value">
-                {{ $izinKeluar->siswa->nama_kelas_aktif }}
+                {{-- PERBAIKAN 1: Menggunakan jalur relasi objek database murni agar nama kelas (misal: IX-A) tidak kosong --}}
+                {{ $izinKeluar->siswa->kelasAktif?->kelas?->nama_kelas ?? '-' }}
             </td>
         </tr>
 
@@ -110,14 +111,13 @@
 
     </div>
 
-    @if ($izinKeluar->waktu_cetak)
-        <div class="footer">
+    {{-- PERBAIKAN 2: Mengunci pencetakan waktu rill kertas keluar ke Asia/Jakarta (WIB) agar jamnya akurat --}}
+    <div class="footer">
 
-            Dicetak<br>
+        Dicetak<br>
 
-            {{ $izinKeluar->waktu_cetak->format('d-m-Y H:i') }}
+        {{ now('Asia/Jakarta')->format('d-m-Y H:i') }} WIB
 
-        </div>
-    @endif
+    </div>
 
 @endsection

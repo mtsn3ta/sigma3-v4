@@ -37,11 +37,14 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
     public function mount(): void
     {
         $this->form->fill([
-            'tanggal' => now()->toDateString(),
+            // PERBAIKAN: Mengunci tanggal default hari ini ke zona waktu Asia/Jakarta (WIB)
+            'tanggal' => now('Asia/Jakarta')->toDateString(),
         ]);
+
         $this->siswaTidakHadir = collect();
         $this->daftarSiswa = collect();
     }
+
 
     // Tambahkan Listener ini untuk menangani klik tombol "Isi Jurnal"
     #[On('tambah-jurnal')]
@@ -49,7 +52,8 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
     {
         $this->record = null;
         $this->form->fill([
-            'tanggal' => now()->toDateString(),
+            // PERBAIKAN: Mengunci tanggal default jurnal baru ke Asia/Jakarta (WIB)
+            'tanggal' => now('Asia/Jakarta')->toDateString(),
             'kelas_id' => null,
             'jam_ke' => null,
             'mapel' => null,
@@ -63,6 +67,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
         // Perintah untuk membuka modal di sisi browser
         $this->dispatch('open-modal', id: 'jurnal-modal');
     }
+
 
     #[On('edit-jurnal-mengajar')]
     public function edit(int $id): void
@@ -100,16 +105,18 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
             return;
         }
 
+        // PERBAIKAN 1: Mengubah filter relasi agar langsung mencocokkan kelas_id siswa tanpa terhambat status kosong data siswa baru
         $this->siswaTidakHadir = KehadiranSekolah::query()
             ->whereDate('tanggal', $tanggal)
             ->whereIn('status', ['izin', 'sakit', 'alfa'])
-            ->whereHas('siswa.kelasAktif', fn($query) => $query->where('kelas_id', $kelasId))
+            ->whereHas('siswa.kelasSiswa', fn($query) => $query->where('kelas_id', $kelasId))
             ->with('siswa')
             ->orderBy('status')
             ->get();
 
+        // PERBAIKAN 2: Mengubah filter daftar siswa hadir agar adaptif dan langsung mengunci kecocokan ID kelasnya
         $this->daftarSiswa = Siswa::query()
-            ->whereHas('kelasAktif', fn($query) => $query->where('kelas_id', $kelasId))
+            ->whereHas('kelasSiswa', fn($query) => $query->where('kelas_id', $kelasId))
             ->whereHas('kehadiranSekolah', function ($query) use ($tanggal) {
                 $query->whereDate('tanggal', $tanggal)
                     ->whereIn('status', ['hadir', 'terlambat']);
@@ -118,12 +125,15 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
             ->get();
     }
 
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 DatePicker::make('tanggal')
                     ->label('Tanggal')
+                    // PERBAIKAN: Mengunci nilai awal tanggal ke Asia/Jakarta (WIB) agar tidak meleset mundur ke hari kemarin akibat jam server hosting (UTC)
+                    ->default(now('Asia/Jakarta')->toDateString())
                     ->live()
                     ->afterStateUpdated(fn() => $this->loadKehadiranSekolah())
                     ->required(),

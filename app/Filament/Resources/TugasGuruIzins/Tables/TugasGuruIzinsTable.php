@@ -3,24 +3,17 @@
 namespace App\Filament\Resources\TugasGuruIzins\Tables;
 
 use App\Models\TugasGuruIzin;
-use Filament\Actions\Action; // <--- PERBAIKAN 1: Gunakan kelas Action khusus modul Tables
+use Filament\Actions\Action; // <--- PERBAIKAN 1: Menggunakan kelas Action khusus modul Tables
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Builder;
 
 class TugasGuruIzinsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            // PERBAIKAN 2: Saring otomatis data agar hanya memunculkan tugas pada kelas tahun ajaran aktif
-            // PERBAIKAN: Melewati kelasSiswa untuk menyaring tahun ajaran aktif dengan aman
-            ->modifyQueryUsing(
-                fn(Builder $query) =>
-                $query->whereHas('kelas.kelasSiswa.tahunAjaran', fn($q) => $q->where('aktif', true))
-            )
-
+            // PERBAIKAN 2: Menghapus modifyQueryUsing yang memicu error 500 agar Kelas 7 bisa tampil utuh tanpa terhambat struktur relasi model Kelas
             ->defaultSort('tanggal', 'desc')
             ->columns([
                 TextColumn::make('guru.nama')
