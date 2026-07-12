@@ -28,10 +28,26 @@ export default function Monitoring() {
     } = usePage().props;
 
     /*
-|--------------------------------------------------------------------------
-| React State
-|--------------------------------------------------------------------------
-*/
+    |--------------------------------------------------------------------------
+    | Helper Zona Waktu Jakarta (Format YYYY-MM-DD)
+    |--------------------------------------------------------------------------
+    */
+    const getJakartaDateString = () => {
+        const options = {
+            timeZone: "Asia/Jakarta",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        };
+        const formatter = new Intl.DateTimeFormat("en-CA", options); // 'en-CA' otomatis menghasilkan format YYYY-MM-DD
+        return formatter.format(new Date());
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | React State
+    |--------------------------------------------------------------------------
+    */
 
     const [attendance, setAttendance] = useState(initialAttendance);
 
@@ -42,7 +58,11 @@ export default function Monitoring() {
     const [filters, setFilters] = useState({
         search: initialFilters.search ?? "",
         kelas: initialFilters.kelas ?? "",
-        tanggal: initialFilters.tanggal ?? "",
+        // PERBAIKAN: Jika initialFilters.tanggal bernilai kosong atau meleset, paksa gunakan tanggal hari ini berbasis WIB (Tanggal 13)
+        tanggal:
+            initialFilters.tanggal && initialFilters.tanggal !== ""
+                ? initialFilters.tanggal
+                : getJakartaDateString(),
     });
 
     /*

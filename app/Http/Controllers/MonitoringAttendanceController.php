@@ -14,9 +14,9 @@ class MonitoringAttendanceController extends Controller
         Request $request,
         MonitoringAttendanceService $service,
     ) {
-        $tanggal = Carbon::parse(
-            $request->tanggal ?? today()
-        );
+        // PERBAIKAN: Jika parameter tanggal kosong, gunakan tanggal hari ini berbasis Asia/Jakarta (WIB) agar melompat ke tanggal 13
+        $tanggalStr = $request->tanggal ?? now('Asia/Jakarta')->toDateString();
+        $tanggal = Carbon::parse($tanggalStr);
 
         return Inertia::render('Monitoring', [
 
@@ -38,8 +38,9 @@ class MonitoringAttendanceController extends Controller
                 'search' => $request->search,
             ],
 
+            // Saringan optimasi: Membatasi agar hanya memunculkan kelas yang terikat pada tahun ajaran aktif saat ini
             'classes' => Kelas::query()
-                ->select('id', 'nama_kelas')
+                ->whereHas('kelasSiswa.tahunAjaran', fn($q) => $q->where('aktif', true))
                 ->orderBy('nama_kelas')
                 ->pluck('nama_kelas', 'id'),
 

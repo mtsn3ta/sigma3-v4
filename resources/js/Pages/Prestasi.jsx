@@ -604,19 +604,18 @@ export default function Prestasi() {
                             exit={{ opacity: 0, y: 16, scale: 0.97 }}
                             transition={{ duration: 0.25, ease: "easeOut" }}
                             onClick={(e) => e.stopPropagation()}
-                            className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-3xl border border-white/60 bg-white shadow-2xl"
+                            // PERBAIKAN 1: Menambahkan 'flex flex-col' agar kontainer induk bisa membagi tinggi header dan konten secara dinamis
+                            className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/60 bg-white shadow-2xl"
                         >
                             <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-emerald-400 via-teal-400 to-cyan-400" />
 
-                            {/* Header */}
-
-                            <div className="flex items-center justify-between border-b border-slate-100 px-8 py-6">
+                            {/* Header (Tetap Diam di Atas) */}
+                            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-8 py-6">
                                 <div>
                                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500">
                                         Detail Prestasi
                                     </p>
-
-                                    <h2 className="mt-2 text-3xl font-black text-slate-900">
+                                    <h2 className="mt-2 text-2xl font-black text-slate-900 lg:text-3xl">
                                         {selectedAchievement.title}
                                     </h2>
                                 </div>
@@ -629,103 +628,101 @@ export default function Prestasi() {
                                 </button>
                             </div>
 
-                            <div className="grid gap-8 overflow-y-auto p-8 lg:grid-cols-2">
-                                {/* Foto */}
+                            {/* Bagian Konten (Diberi Batas Scroll yang Fleksibel) */}
+                            {/* PERBAIKAN 2: Menggunakan 'overflow-y-auto' di sini dikombinasikan dengan flex-1 agar area grid konten bisa digulir ke bawah tanpa terpotong */}
+                            <div className="flex-1 overflow-y-auto p-8">
+                                <div className="grid gap-8 lg:grid-cols-2">
+                                    {/* Foto */}
+                                    <div>
+                                        {selectedAchievement.photo ? (
+                                            <img
+                                                src={selectedAchievement.photo}
+                                                alt={selectedAchievement.title}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className="aspect-4/3 w-full rounded-2xl object-cover shadow-lg"
+                                            />
+                                        ) : (
+                                            <div className="flex aspect-4/3 items-center justify-center rounded-2xl bg-linear-to-br from-emerald-50 to-cyan-50 text-8xl">
+                                                🏆
+                                            </div>
+                                        )}
+                                    </div>
 
-                                <div>
-                                    {selectedAchievement.photo ? (
-                                        <img
-                                            src={selectedAchievement.photo}
-                                            alt={selectedAchievement.title}
-                                            loading="lazy"
-                                            decoding="async"
-                                            className="aspect-4/3 w-full rounded-2xl object-cover shadow-lg"
-                                        />
-                                    ) : (
-                                        <div className="flex aspect-4/3 items-center justify-center rounded-2xl bg-linear-to-br from-emerald-50 to-cyan-50 text-8xl">
-                                            🏆
+                                    {/* Informasi */}
+                                    <div className="space-y-6">
+                                        <div>
+                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                                                Nama Lomba
+                                            </p>
+                                            <p className="mt-1 text-lg font-bold text-slate-900">
+                                                {
+                                                    selectedAchievement.competition
+                                                }
+                                            </p>
                                         </div>
-                                    )}
-                                </div>
 
-                                {/* Informasi */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <GlassCard className="border border-emerald-100 bg-emerald-50/50 p-4">
+                                                <p className="text-xs uppercase tracking-widest text-slate-400">
+                                                    Tingkat
+                                                </p>
+                                                <p className="mt-1 font-bold text-emerald-600">
+                                                    {selectedAchievement.level}
+                                                </p>
+                                            </GlassCard>
 
-                                <div className="space-y-6">
-                                    <div>
-                                        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                            Nama Lomba
-                                        </p>
-
-                                        <p className="mt-1 text-lg font-bold text-slate-900">
-                                            {selectedAchievement.competition}
-                                        </p>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <GlassCard className="border border-emerald-100 bg-emerald-50/50 p-4">
-                                            <p className="text-xs uppercase tracking-widest text-slate-400">
-                                                Tingkat
-                                            </p>
-
-                                            <p className="mt-1 font-bold text-emerald-600">
-                                                {selectedAchievement.level}
-                                            </p>
-                                        </GlassCard>
-
-                                        <GlassCard className="border border-slate-100 bg-slate-50/60 p-4">
-                                            <p className="text-xs uppercase tracking-widest text-slate-400">
-                                                Tanggal
-                                            </p>
-
-                                            <p className="mt-1 font-bold text-slate-900">
-                                                {selectedAchievement.date}
-                                            </p>
-                                        </GlassCard>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                            Ekstrakurikuler
-                                        </p>
-
-                                        <div className="mt-2 inline-flex rounded-full bg-linear-to-r from-emerald-50 to-cyan-50 px-4 py-2 text-sm font-bold text-emerald-600">
-                                            {selectedAchievement.extracurricular ??
-                                                "Sekolah"}
+                                            <GlassCard className="border border-slate-100 bg-slate-50/60 p-4">
+                                                <p className="text-xs uppercase tracking-widest text-slate-400">
+                                                    Tanggal
+                                                </p>
+                                                <p className="mt-1 font-bold text-slate-900">
+                                                    {selectedAchievement.date}
+                                                </p>
+                                            </GlassCard>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                            Peserta
-                                        </p>
-
-                                        <div className="mt-3 flex flex-wrap gap-2">
-                                            {selectedAchievement.participants.map(
-                                                (student) => (
-                                                    <span
-                                                        key={student.id}
-                                                        className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
-                                                    >
-                                                        {student.nama}
-                                                    </span>
-                                                ),
-                                            )}
+                                        <div>
+                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                                                Ekstrakurikuler
+                                            </p>
+                                            <div className="mt-2 inline-flex rounded-full bg-linear-to-r from-emerald-50 to-cyan-50 px-4 py-2 text-sm font-bold text-emerald-600">
+                                                {selectedAchievement.extracurricular ??
+                                                    "Sekolah"}
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                            Keterangan
-                                        </p>
+                                        <div>
+                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                                                Peserta
+                                            </p>
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                {selectedAchievement.participants.map(
+                                                    (student) => (
+                                                        <span
+                                                            key={student.id}
+                                                            className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                                        >
+                                                            {student.nama}
+                                                        </span>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </div>
 
-                                        <div
-                                            className="prose prose-slate mt-2 max-w-none"
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    selectedAchievement.description ||
-                                                    "<p>Tidak ada keterangan.</p>",
-                                            }}
-                                        />
+                                        <div>
+                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                                                Keterangan
+                                            </p>
+                                            <div
+                                                className="prose prose-slate mt-2 max-w-none"
+                                                dangerouslySetInnerHTML={{
+                                                    __html:
+                                                        selectedAchievement.description ||
+                                                        "<p>Tidak ada keterangan.</p>",
+                                                }}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

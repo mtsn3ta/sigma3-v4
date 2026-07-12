@@ -793,16 +793,22 @@ export default function Landing() {
                         <div className="flex flex-col sm:flex-row justify-center gap-4">
                             <Button
                                 href="https://ppdb.mtsn3tulungagung.sch.id"
+                                external
                                 variant="primary"
                                 className="px-8 py-4 text-lg bg-emerald-600 hover:bg-emerald-700 border-none"
                             >
                                 Daftar PPDB Sekarang
                             </Button>
 
+                            {/* PERBAIKAN: Menggunakan rute WhatsApp Official Matsanega CS AI dengan properti external */}
                             <Button
-                                href="/kontak"
+                                href="https://wa.me/62881081297786?text=Assalamualaikum%20Warahmatullahi%20Wabarakatuh"
+                                external
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 variant="glass"
                                 className="px-8 py-4 text-lg border-emerald-200 text-slate-700 hover:bg-white/50"
+                                title="SIGMA-3 CS AI"
                             >
                                 Hubungi Kami
                             </Button>

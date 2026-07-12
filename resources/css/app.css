@@ -15,7 +15,10 @@
     position: fixed;
     right: 20px;
     bottom: 20px;
-    z-index: 9999;
+
+    /* PERBAIKAN UTAMA: Diturunkan dari 9999 agar berada di bawah lapisan menu sidebar Filament */
+    z-index: 10;
+
     text-decoration: none;
     display: flex;
     flex-direction: column;
@@ -104,7 +107,15 @@
 }
 
 @media(max-width: 768px) {
-    .sigma-ai-float { right: 14px; bottom: 14px; left: 14px; align-items: stretch; }
+    .sigma-ai-float {
+        right: 14px;
+        bottom: 14px;
+        left: 14px;
+        align-items: stretch;
+
+        /* TAMBAHAN MOBILE: Diperendah ke angka 5 saat resolusi HP agar tertutup penuh oleh overlay menu mobile Filament */
+        z-index: 5;
+    }
     .sigma-ai-box { max-width: none; width: 100%; padding: 14px; }
     .sigma-ai-title { font-size: 14px; }
     .sigma-ai-desc { font-size: 11px; }
