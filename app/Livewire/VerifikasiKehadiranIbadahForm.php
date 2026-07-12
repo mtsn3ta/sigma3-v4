@@ -67,31 +67,26 @@ class VerifikasiKehadiranIbadahForm extends Component implements HasActions, Has
 
                                 Select::make('kelas_id')
                                     ->label('Kelas')
-                                    ->options(
-                                        KelasHelper::options()
-                                    )
+                                    ->options(KelasHelper::options())
                                     ->live()
                                     ->searchable()
+                                    ->preload()
+                                    ->afterStateUpdated(fn(callable $set) => $set('siswa_id', null))
                                     ->required(),
 
                                 Select::make('siswa_id')
                                     ->label('Siswa')
                                     ->options(
                                         fn(callable $get) =>
-
                                         SiswaHelper::belumVerifikasiIbadahOptions(
-
                                             kelasId: $get('kelas_id'),
-
                                             tanggal: $get('tanggal'),
-
                                             jenis: $get('jenis'),
-
                                         )
-
                                     )
                                     ->searchable()
                                     ->live()
+                                    ->preload()
                                     ->required(),
 
                                 Radio::make('status')

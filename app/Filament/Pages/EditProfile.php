@@ -7,7 +7,12 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +31,8 @@ class EditProfile extends Page implements HasSchemas
 
     public ?Pegawai $pegawai = null;
 
+    public ?array $biodataData = [];
+
     public ?array $passwordData = [];
 
     public ?string $signatureBase64 = null;
@@ -37,7 +44,100 @@ class EditProfile extends Page implements HasSchemas
             Auth::id(),
         )->firstOrFail();
 
+        $this->biodataForm->fill([
+            'nama' => $this->pegawai->nama,
+            'no_hp' => $this->pegawai->no_hp,
+            'jenis_kelamin' => $this->pegawai->jenis_kelamin,
+            'tempat_lahir' => $this->pegawai->tempat_lahir,
+            'tanggal_lahir' => $this->pegawai->tanggal_lahir?->toDateString(),
+            'alamat' => $this->pegawai->alamat,
+            'foto' => $this->pegawai->foto,
+        ]);
+
         $this->passwordForm->fill();
+    }
+
+    public function biodataForm(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+
+                Section::make('Biodata Pegawai')
+                    ->description('Perbarui informasi diri Anda di sini.')
+                    ->schema([
+
+                        FileUpload::make('foto')
+                            ->label('Foto Profil')
+                            ->image()
+                            ->avatar()
+                            ->disk('public')
+                            ->directory('pegawai')
+                            ->visibility('public'),
+
+                        Grid::make(2)
+                            ->schema([
+
+                                TextInput::make('nama')
+                                    ->label('Nama Lengkap')
+                                    ->required(),
+
+                                TextInput::make('no_hp')
+                                    ->label('No. HP')
+                                    ->tel(),
+
+                                Select::make('jenis_kelamin')
+                                    ->label('Jenis Kelamin')
+                                    ->options([
+                                        'L' => 'Laki-laki',
+                                        'P' => 'Perempuan',
+                                    ])
+                                    ->required(),
+
+                                TextInput::make('tempat_lahir')
+                                    ->label('Tempat Lahir'),
+
+                                DatePicker::make('tanggal_lahir')
+                                    ->label('Tanggal Lahir'),
+
+                            ]),
+
+                        Textarea::make('alamat')
+                            ->label('Alamat')
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                    ]),
+
+            ])
+            ->statePath('biodataData');
+    }
+
+    public function saveBiodata(): void
+    {
+        $data = $this->biodataForm->getState();
+
+        // Hapus foto lama kalau ada foto baru yang diupload dan berbeda dari yang lama
+        if (
+            $this->pegawai->foto &&
+            $data['foto'] !== $this->pegawai->foto
+        ) {
+            Storage::disk('public')->delete($this->pegawai->foto);
+        }
+
+        $this->pegawai->update([
+            'nama' => $data['nama'],
+            'no_hp' => $data['no_hp'],
+            'jenis_kelamin' => $data['jenis_kelamin'],
+            'tempat_lahir' => $data['tempat_lahir'],
+            'tanggal_lahir' => $data['tanggal_lahir'],
+            'alamat' => $data['alamat'],
+            'foto' => $data['foto'],
+        ]);
+
+        Notification::make()
+            ->success()
+            ->title('Biodata berhasil diperbarui')
+            ->send();
     }
 
     public function passwordForm(Schema $schema): Schema

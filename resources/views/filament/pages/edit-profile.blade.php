@@ -2,6 +2,30 @@
 
     <div style="display:flex;flex-direction:column;gap:1.5rem;max-width:42rem;">
 
+        {{-- ===== BIODATA PEGAWAI ===== --}}
+        <div
+            style="background:#fff;border:1px solid #e2e8f0;border-radius:1.25rem;padding:1.75rem;box-shadow:0 1px 3px rgba(0,0,0,.05);">
+
+            <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1.25rem;">
+                <span style="font-size:1.4rem;">👤</span>
+                <h2 style="margin:0;font-size:1.15rem;font-weight:700;color:#0f172a;">Biodata Diri</h2>
+            </div>
+
+            <form wire:submit="saveBiodata">
+
+                {{ $this->biodataForm }}
+
+                <div style="margin-top:1.5rem;">
+                    <button type="submit"
+                        style="width:100%;padding:.9rem 1.5rem;background:#2563eb;color:#fff;border:none;border-radius:.85rem;font-weight:700;font-size:1rem;cursor:pointer;box-shadow:0 4px 10px rgba(37,99,235,.25);">
+                        💾 Simpan Biodata
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
         {{-- ===== GANTI PASSWORD ===== --}}
         <div
             style="background:#fff;border:1px solid #e2e8f0;border-radius:1.25rem;padding:1.75rem;box-shadow:0 1px 3px rgba(0,0,0,.05);">

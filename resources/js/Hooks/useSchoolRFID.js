@@ -9,6 +9,7 @@ import {
 const ENDPOINT = "/api/rfid/sekolah";
 
 const RESET_DELAY = 800;
+const DEBOUNCE_DELAY = 150; // jeda tunggu sebelum eksekusi scan
 
 export default function useSchoolRFID({
 
@@ -25,6 +26,7 @@ export default function useSchoolRFID({
 }) {
 
     const loadingRef = useRef(false);
+    const debounceRef = useRef(null);
 
     const reset = useCallback(() => {
 
@@ -52,13 +54,7 @@ export default function useSchoolRFID({
 
     ]);
 
-    const scan = useCallback(async () => {
-
-        if (!uid?.trim()) {
-
-            return;
-
-        }
+    const executeScan = useCallback(async (uidValue) => {
 
         if (loadingRef.current) {
 
@@ -76,7 +72,7 @@ export default function useSchoolRFID({
 
                 {
 
-                    uid: uid.trim(),
+                    uid: uidValue.trim(),
 
                 }
 
@@ -162,13 +158,39 @@ export default function useSchoolRFID({
 
     }, [
 
-        uid,
-
         reset,
 
         setLastScans,
 
         setScanResult,
+
+    ]);
+
+    const scan = useCallback(() => {
+
+        if (!uid?.trim()) {
+
+            return;
+
+        }
+
+        // Batalkan timer sebelumnya kalau masih ada karakter baru masuk
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
+
+        const currentUid = uid;
+
+        // Tunggu sampai tidak ada perubahan uid selama DEBOUNCE_DELAY ms
+        debounceRef.current = setTimeout(() => {
+            executeScan(currentUid);
+        }, DEBOUNCE_DELAY);
+
+    }, [
+
+        uid,
+
+        executeScan,
 
     ]);
 

@@ -71,6 +71,8 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
                                     ->options(KelasHelper::options())
                                     ->live()
                                     ->searchable()
+                                    ->preload()
+                                    ->afterStateUpdated(fn(callable $set) => $set('siswa_id', null))
                                     ->required(),
 
                                 Select::make('siswa_id')
@@ -80,6 +82,7 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
                                     ))
                                     ->live()
                                     ->searchable()
+                                    ->preload()
                                     ->required(),
 
                                 Radio::make('status')

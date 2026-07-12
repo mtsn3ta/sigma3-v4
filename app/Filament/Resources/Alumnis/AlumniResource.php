@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Alumnis;
 use App\Filament\Resources\Alumnis\Pages\ListAlumnis;
 use App\Filament\Resources\Alumnis\Tables\AlumnisTable;
 use App\Models\Siswa;
+use App\Support\ActiveRole;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
@@ -25,6 +26,29 @@ class AlumniResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
 
     protected static ?int $navigationSort = 15;
+
+    protected static array $hiddenForRoles = [
+        'guru',
+        'pembina',
+        'pelatih',
+        'piket',
+    ];
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        foreach (static::$hiddenForRoles as $role) {
+            if (ActiveRole::is($role)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::shouldRegisterNavigation();
+    }
 
     public static function table(Table $table): Table
     {

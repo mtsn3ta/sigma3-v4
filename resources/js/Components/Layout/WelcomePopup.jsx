@@ -50,8 +50,9 @@ export default function WelcomePopup() {
                     exit={{ opacity: 0 }}
                     transition={motionTheme.fast}
                     className="
-                        fixed inset-0 z-100 flex items-center justify-center
-                        bg-slate-900/40 backdrop-blur-md p-4 sm:p-6
+                        fixed inset-0 z-100 flex items-start sm:items-center justify-center
+                        overflow-y-auto overscroll-contain
+                        bg-slate-900/40 backdrop-blur-md p-4 sm:p-6 py-8 sm:py-6
                     "
                 >
                     <motion.div
@@ -71,11 +72,11 @@ export default function WelcomePopup() {
                             scale: 0.96,
                         }}
                         transition={motionTheme.normal}
-                        className="w-full max-w-5xl"
+                        className="w-full max-w-5xl my-auto"
                     >
                         <GlassCard
                             padding={false}
-                            className="relative overflow-hidden group"
+                            className="relative overflow-hidden group max-h-[85vh] sm:max-h-[90vh] flex flex-col"
                         >
                             {/* ==========================
                                 EFEK GLOW LATAR BELAKANG
@@ -83,7 +84,7 @@ export default function WelcomePopup() {
                             <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-emerald-500/20 blur-[100px] pointer-events-none" />
                             <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-sky-500/10 blur-[100px] pointer-events-none" />
 
-                            {/* Tombol Close Frosted Glass */}
+                            {/* Tombol Close Frosted Glass - sticky supaya selalu terlihat & bisa diklik */}
                             <button
                                 type="button"
                                 onClick={closePopup}
@@ -93,13 +94,13 @@ export default function WelcomePopup() {
                                     radius.full,
                                     shadow.low,
                                     css.transition,
-                                    "absolute right-4 top-4 sm:right-6 sm:top-6 z-30 flex h-10 w-10 items-center justify-center text-sm font-bold text-slate-700 hover:scale-105 active:scale-95",
+                                    "sticky float-right top-4 right-4 sm:top-6 sm:right-6 z-30 flex h-10 w-10 items-center justify-center text-sm font-bold text-slate-700 hover:scale-105 active:scale-95 mr-4 mt-4 sm:mr-6 sm:mt-6",
                                 )}
                             >
                                 ✕
                             </button>
 
-                            <div className="flex flex-col lg:flex-row relative z-10">
+                            <div className="flex flex-col lg:flex-row relative z-10 overflow-y-auto">
                                 {/* ==========================
     LEFT SECTION (UPDATED)
 ========================== */}
@@ -133,7 +134,7 @@ export default function WelcomePopup() {
                                                 src={settings.principal_photo}
                                                 alt={settings.principal}
                                                 className="
-                    relative z-10 max-h-105 w-auto object-contain object-bottom
+                    relative z-10 max-h-64 lg:max-h-105 w-auto object-contain object-bottom
                     drop-shadow-[0_20px_30px_rgba(0,0,0,0.2)]
                     pointer-events-none select-none
                 "

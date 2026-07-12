@@ -29,11 +29,12 @@ class CreateSesiKegiatan extends CreateRecord
                     'siswa_id' => $item->siswa_id,
                 ],
                 [
-                    'status' => 'alpa',
+                    'status' => 'tidak_hadir',   // ← diganti dari 'alpa'
                     'sumber' => 'manual',
                 ]
             );
         }
+
         ActivityLogService::log(
             'Create Sesi',
             $this->record->ekstrakurikuler->nama

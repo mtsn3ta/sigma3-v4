@@ -52,10 +52,18 @@ class SesiKegiatansTable
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn($state) => match ($state) {
+                        'draft' => 'gray',
                         'aktif' => 'primary',
                         'selesai' => 'success',
                         'batal' => 'danger',
                         default => 'gray',
+                    })
+                    ->formatStateUsing(fn($state) => match ($state) {
+                        'draft' => 'Draft',
+                        'aktif' => 'Aktif',
+                        'selesai' => 'Selesai',
+                        'batal' => 'Dibatalkan',
+                        default => $state,
                     }),
 
                 TextColumn::make('created_at')
@@ -90,7 +98,8 @@ class SesiKegiatansTable
                     ->visible(fn($record) => $record->status === 'selesai')
                     ->url(fn($record) => '#'),
 
-                EditAction::make(),
+                EditAction::make()
+                    ->label(fn($record) => $record->status === 'draft' ? 'Lengkapi' : 'Edit'),
 
                 DeleteAction::make()
 

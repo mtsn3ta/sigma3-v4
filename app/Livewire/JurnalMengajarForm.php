@@ -166,6 +166,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                             ->label('Siswa')
                             ->options(fn() => $this->daftarSiswa->pluck('nama', 'id')->toArray())
                             ->searchable()
+                            ->preload()          // ← tambahkan ini
                             ->required(),
                         Select::make('status')
                             ->label('Status')

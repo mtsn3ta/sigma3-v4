@@ -96,17 +96,13 @@ class GaleriForm
             || $user->hasRole('waka_kesiswaan')
             || $user->hasRole('kepala_madrasah')
         ) {
-
             return Ekstrakurikuler::query()
-
                 ->orderBy('nama')
-
                 ->pluck('nama', 'id')
                 ->toArray();
         }
 
         return Ekstrakurikuler::query()
-
             ->whereIn(
                 'id',
                 $user->pegawai
@@ -115,11 +111,11 @@ class GaleriForm
                     ->pluck('ekstrakurikuler_id')
                     : []
             )
-
             ->orderBy('nama')
-
-            ->pluck('nama', 'id');
+            ->pluck('nama', 'id')
+            ->toArray(); // <--- Menambahkan ->toArray() di sini untuk memperbaiki error
     }
+
     private static function getDefaultEkskul(): ?int
     {
         /** @var User|null $user */

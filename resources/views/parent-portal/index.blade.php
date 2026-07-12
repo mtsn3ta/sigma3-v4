@@ -37,8 +37,26 @@
 
             <div class="flex items-center gap-4">
                 <div class="relative">
-                    <img src="{{ $student->foto ? asset('storage/' . $student->foto) : asset('images/default-user.png') }}"
-                        class="w-20 h-24 rounded-2xl object-cover border-2 border-indigo-500/20 shadow-sm">
+                    @if ($this->siswa->foto)
+                        <img src="{{ asset('storage/' . $this->siswa->foto) }}" alt="{{ $this->siswa->nama }}"
+                            style="
+                                height: 140px; width: 140px; border-radius: 50%; object-fit: cover;
+                                border: 4px solid #f8fafc;
+                                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                            ">
+                    @else
+                        <div
+                            style="
+                                height: 140px; width: 140px; border-radius: 50%;
+                                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+                                display: flex; align-items: center; justify-content: center;
+                                font-size: 3.5rem; font-weight: 700; color: #94a3b8;
+                                border: 4px solid #ffffff;
+                                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                            ">
+                            {{ strtoupper(substr($this->siswa->nama, 0, 1)) }}
+                        </div>
+                    @endif
                     <span
                         class="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></span>
                 </div>
@@ -351,7 +369,8 @@
                                 class="mt-3 pt-3 border-t border-slate-200/60 text-sm text-slate-600 font-medium space-y-1">
                                 <div><span class="text-slate-400">Oleh:</span> <strong
                                         class="text-slate-700 font-semibold">{{ $item->nama_pengirim }}
-                                        ({{ ucfirst($item->hubungan) }})</strong></div>
+                                        ({{ ucfirst($item->hubungan) }})
+                                    </strong></div>
                                 <div
                                     class="bg-white p-2.5 rounded-lg border border-slate-100 text-slate-700 mt-1 italic text-xs">
                                     "{{ $item->keterangan }}"

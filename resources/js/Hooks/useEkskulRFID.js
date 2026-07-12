@@ -9,6 +9,7 @@ import {
 const ENDPOINT = "/api/rfid/ekskul";
 
 const RESET_DELAY = 800;
+const DEBOUNCE_DELAY = 150;
 
 export default function useEkskulRFID({
     uid,
@@ -22,6 +23,7 @@ export default function useEkskulRFID({
     uidInputRef,
 }) {
     const loadingRef = useRef(false);
+    const debounceRef = useRef(null);
 
     const reset = useCallback(() => {
         setUid("");
@@ -43,11 +45,7 @@ export default function useEkskulRFID({
         uidInputRef,
     ]);
 
-    const scan = useCallback(async () => {
-        if (!uid?.trim()) {
-            return;
-        }
-
+    const executeScan = useCallback(async (uidValue) => {
         if (loadingRef.current) {
             return;
         }
@@ -58,7 +56,7 @@ export default function useEkskulRFID({
             const { data } = await axios.post(
                 ENDPOINT,
                 {
-                    uid: uid.trim(),
+                    uid: uidValue.trim(),
                 },
             );
 
@@ -127,10 +125,28 @@ export default function useEkskulRFID({
             }, RESET_DELAY);
         }
     }, [
-        uid,
         reset,
         setLastScans,
         setScanResult,
+    ]);
+
+    const scan = useCallback(() => {
+        if (!uid?.trim()) {
+            return;
+        }
+
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
+
+        const currentUid = uid;
+
+        debounceRef.current = setTimeout(() => {
+            executeScan(currentUid);
+        }, DEBOUNCE_DELAY);
+    }, [
+        uid,
+        executeScan,
     ]);
 
     return {

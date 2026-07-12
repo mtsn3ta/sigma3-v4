@@ -62,7 +62,7 @@ class PelatihPrestasiWidget extends BaseWidget
             ])
             ->paginated(false)
             ->striped()
-            ->emptyStateIcon('heroicon-o-medal')
+            ->emptyStateIcon('heroicon-o-trophy') // <--- Mengubah ikon dari 'heroicon-o-medal' menjadi 'heroicon-o-trophy'
             ->emptyStateHeading('Belum Ada Prestasi')
             ->emptyStateDescription('Data prestasi akan muncul saat atlet meraih gelar juara.');
     }

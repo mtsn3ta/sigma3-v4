@@ -9,6 +9,7 @@ import {
 const ENDPOINT = "/api/rfid/ibadah";
 
 const RESET_DELAY = 800;
+const DEBOUNCE_DELAY = 150;
 
 export default function useIbadahRFID({
 
@@ -25,6 +26,7 @@ export default function useIbadahRFID({
 }) {
 
     const loadingRef = useRef(false);
+    const debounceRef = useRef(null);
 
     const reset = useCallback(() => {
 
@@ -52,13 +54,7 @@ export default function useIbadahRFID({
 
     ]);
 
-    const scan = useCallback(async () => {
-
-        if (!uid?.trim()) {
-
-            return;
-
-        }
+    const executeScan = useCallback(async (uidValue) => {
 
         if (loadingRef.current) {
 
@@ -76,7 +72,7 @@ export default function useIbadahRFID({
 
                 {
 
-                    uid: uid.trim(),
+                    uid: uidValue.trim(),
 
                 }
 
@@ -176,13 +172,37 @@ export default function useIbadahRFID({
 
     }, [
 
-        uid,
-
         reset,
 
         setLastScans,
 
         setScanResult,
+
+    ]);
+
+    const scan = useCallback(() => {
+
+        if (!uid?.trim()) {
+
+            return;
+
+        }
+
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
+
+        const currentUid = uid;
+
+        debounceRef.current = setTimeout(() => {
+            executeScan(currentUid);
+        }, DEBOUNCE_DELAY);
+
+    }, [
+
+        uid,
+
+        executeScan,
 
     ]);
 

@@ -33,6 +33,7 @@ class IzinKeluarForm
                             ->searchable()
                             ->preload()
                             ->live()
+                            ->afterStateUpdated(fn(callable $set) => $set('siswa_id', null))
                             ->dehydrated(false)
                             ->required(),
 
