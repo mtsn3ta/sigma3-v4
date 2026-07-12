@@ -16,8 +16,10 @@
     right: 20px;
     bottom: 20px;
 
-    /* PERBAIKAN UTAMA: Diturunkan dari 9999 agar berada di bawah lapisan menu sidebar Filament */
-    z-index: 10;
+    /* Tombol ini hanya dipakai di halaman publik, jadi z-index cukup tinggi
+       agar selalu di atas semua <section> (yang pakai class "relative z-10"
+       di Landing.jsx). Tidak perlu lagi diturunkan untuk kasus Filament. */
+    z-index: 40;
 
     text-decoration: none;
     display: flex;
@@ -112,9 +114,7 @@
         bottom: 14px;
         left: 14px;
         align-items: stretch;
-
-        /* TAMBAHAN MOBILE: Diperendah ke angka 5 saat resolusi HP agar tertutup penuh oleh overlay menu mobile Filament */
-        z-index: 5;
+        /* z-index tetap mengikuti nilai dasar (40) di atas, tidak diturunkan lagi */
     }
     .sigma-ai-box { max-width: none; width: 100%; padding: 14px; }
     .sigma-ai-title { font-size: 14px; }

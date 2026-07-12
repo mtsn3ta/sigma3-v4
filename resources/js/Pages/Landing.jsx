@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { usePage, Link } from "@inertiajs/react";
+import { usePage, Link, Head } from "@inertiajs/react";
 import FrontendLayout from "@/Layouts/FrontendLayout";
 import Container from "@/Components/UI/Container";
 import {
@@ -53,11 +53,14 @@ export default function Landing() {
     const featuredAchievement = latestAchievements[achievementIndex] ?? null;
     return (
         <FrontendLayout>
+            <Head title="SIGMA-3 - MTsN 3 Tulungagung" />
             <section
                 id="hero"
                 className={cn(
                     background.hero,
-                    "relative min-h-[90vh] flex flex-col justify-center pt-32 pb-20", // pt-32 memberi ruang di bawah Navbar fixed
+                    // Mobile: tinggi section mengikuti konten (bukan dipaksa 90vh) + padding lebih ringkas
+                    // Desktop (md+): tetap full-bleed 90vh seperti semula
+                    "relative flex flex-col justify-center pb-16 md:min-h-[90vh] md:pt-32 md:pb-20",
                 )}
             >
                 {/* Background Elements */}
@@ -121,9 +124,9 @@ export default function Landing() {
                             {/* PERUBAHAN: bg-white/60, border-white, dan tambahan shadow halus */}
                             <GlassCard className="p-6 md:p-8 relative border-white bg-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-2xl">
                                 <div className="mb-8 flex items-center justify-between">
-                                    <h3 className="text-xl font-black text-slate-900">
+                                    <h2 className="text-xl font-black text-slate-900">
                                         SIGMA-3 Stats
-                                    </h3>
+                                    </h2>
                                     <Badge variant="danger">Live Update</Badge>
                                 </div>
 
@@ -149,15 +152,17 @@ export default function Landing() {
                                         <motion.div
                                             key={i}
                                             variants={itemVariants}
+                                            className="min-w-0"
                                         >
                                             {/* PERUBAHAN: bg-white/50 dan border putih tipis */}
-                                            <GlassCard className="p-4 bg-white/50 border border-white shadow-sm hover:bg-white/80 transition-colors">
-                                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            {/* min-w-0 + overflow-hidden: cegah value panjang (mis. "2025/2026") meluber keluar card di grid */}
+                                            <GlassCard className="p-4 bg-white/50 border border-white shadow-sm hover:bg-white/80 transition-colors min-w-0 overflow-hidden">
+                                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 leading-snug">
                                                     {stat.label}
                                                 </p>
-                                                <h4 className="text-2xl font-black text-slate-900 mt-1">
+                                                <h3 className="text-base sm:text-lg md:text-2xl font-black text-slate-900 mt-1 leading-tight wrap-break-words">
                                                     {stat.value}
-                                                </h4>
+                                                </h3>
                                             </GlassCard>
                                         </motion.div>
                                     ))}
@@ -256,7 +261,7 @@ export default function Landing() {
                                     {fitur.title}
                                 </h3>
 
-                                <p className="text-sm leading-relaxed text-slate-500">
+                                <p className="text-sm leading-relaxed text-slate-600">
                                     {fitur.desc}
                                 </p>
                             </GlassCard>
@@ -307,7 +312,7 @@ export default function Landing() {
                                         Monitoring RFID
                                     </h3>
 
-                                    <p className="mt-1 text-sm font-medium text-slate-500">
+                                    <p className="mt-1 text-sm font-medium text-slate-600">
                                         {attendanceSummary.today}
                                     </p>
                                 </div>
@@ -315,7 +320,7 @@ export default function Landing() {
                                 {/* Grid Data dirapatkan agar muat */}
                                 <div className="relative z-10 mt-4 grid grid-cols-2 gap-x-8 gap-y-2 flex-1">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-500">
+                                        <span className="text-sm text-slate-600">
                                             🟢 Hadir
                                         </span>
                                         <span className="font-black text-emerald-600">
@@ -323,7 +328,7 @@ export default function Landing() {
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-500">
+                                        <span className="text-sm text-slate-600">
                                             🟡 Terlambat
                                         </span>
                                         <span className="font-black text-amber-500">
@@ -331,7 +336,7 @@ export default function Landing() {
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-500">
+                                        <span className="text-sm text-slate-600">
                                             🔵 Sakit
                                         </span>
                                         <span className="font-black text-sky-600">
@@ -339,7 +344,7 @@ export default function Landing() {
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-500">
+                                        <span className="text-sm text-slate-600">
                                             🟠 Izin
                                         </span>
                                         <span className="font-black text-orange-500">
@@ -347,7 +352,7 @@ export default function Landing() {
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-500">
+                                        <span className="text-sm text-slate-600">
                                             🔴 Alfa
                                         </span>
                                         <span className="font-black text-red-500">
@@ -362,13 +367,13 @@ export default function Landing() {
                                         <div className="text-3xl lg:text-4xl font-black text-emerald-600 leading-none">
                                             {attendanceSummary.persentase}%
                                         </div>
-                                        <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                        <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-600">
                                             Kehadiran Hari Ini
                                         </p>
                                     </div>
 
                                     <div className="flex items-center gap-3">
-                                        <span className="hidden sm:block text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors group-hover:text-emerald-600">
+                                        <span className="hidden sm:block text-xs font-bold uppercase tracking-wider text-slate-600 transition-colors group-hover:text-emerald-600">
                                             Pantau
                                         </span>
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-100 bg-white text-emerald-600 shadow-sm transition-all duration-300 group-hover:translate-x-1 group-hover:border-emerald-500 group-hover:bg-emerald-500 group-hover:text-white">
@@ -438,7 +443,7 @@ export default function Landing() {
                                                             featuredAchievement.level
                                                         }
                                                     </span>
-                                                    <span className="text-[10px] font-medium text-slate-400 shrink-0">
+                                                    <span className="text-[10px] font-medium text-slate-600 shrink-0">
                                                         {
                                                             featuredAchievement.date
                                                         }
@@ -449,7 +454,7 @@ export default function Landing() {
                                                     {featuredAchievement.title}
                                                 </h4>
 
-                                                <p className="mt-1 text-xs font-medium text-slate-500 line-clamp-1">
+                                                <p className="mt-1 text-xs font-medium text-slate-600 line-clamp-1">
                                                     {
                                                         featuredAchievement.competition
                                                     }
@@ -485,7 +490,7 @@ export default function Landing() {
                                         <p className="text-2xl font-black text-slate-900 leading-none">
                                             {statistics.achievements || 0}
                                         </p>
-                                        <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                        <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-600">
                                             Total Prestasi
                                         </p>
                                     </div>
@@ -521,7 +526,7 @@ export default function Landing() {
                                                 {statistics.extracurriculars ||
                                                     0}
                                             </span>
-                                            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Aktif
                                             </span>
                                         </div>
@@ -547,7 +552,7 @@ export default function Landing() {
                                 </div>
 
                                 <div className="relative z-10 mt-4 flex items-center justify-between border-t border-white/60 pt-4">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors group-hover:text-emerald-600">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600 transition-colors group-hover:text-emerald-600">
                                         Lihat Semua
                                     </span>
                                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-emerald-100 text-emerald-600 shadow-sm transition-all group-hover:translate-x-1 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500">
@@ -615,7 +620,7 @@ export default function Landing() {
                                 </div>
 
                                 <div className="relative z-10 mt-4 flex items-center justify-between border-t border-white/60 pt-4">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors group-hover:text-emerald-600">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600 transition-colors group-hover:text-emerald-600">
                                         Buka Galeri
                                     </span>
                                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-emerald-100 text-emerald-600 shadow-sm transition-all group-hover:translate-x-1 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500">
@@ -679,7 +684,7 @@ export default function Landing() {
                             <h3 className="text-xl font-black text-slate-900 mb-3">
                                 Smart School
                             </h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
+                            <p className="text-sm text-slate-600 leading-relaxed">
                                 Sistem RFID realtime, monitoring kehadiran,
                                 serta layanan digital terintegrasi melalui
                                 SIGMA-3.
@@ -694,7 +699,7 @@ export default function Landing() {
                             <h3 className="text-xl font-black text-slate-900 mb-3">
                                 Budaya Berprestasi
                             </h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
+                            <p className="text-sm text-slate-600 leading-relaxed">
                                 Prestasi akademik maupun non akademik terus
                                 berkembang hingga tingkat nasional.
                             </p>
@@ -708,7 +713,7 @@ export default function Landing() {
                             <h3 className="text-xl font-black text-slate-900 mb-3">
                                 Budaya Islami
                             </h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
+                            <p className="text-sm text-slate-600 leading-relaxed">
                                 Monitoring Dhuha, Dzuhur, serta pembinaan
                                 karakter siswa setiap hari.
                             </p>
@@ -722,7 +727,7 @@ export default function Landing() {
                             <h3 className="text-xl font-black text-slate-900 mb-3">
                                 Pengembangan Bakat
                             </h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
+                            <p className="text-sm text-slate-600 leading-relaxed">
                                 Puluhan pilihan ekstrakurikuler untuk
                                 mengembangkan minat dan bakat siswa.
                             </p>
@@ -736,7 +741,7 @@ export default function Landing() {
                             <h3 className="text-xl font-black text-slate-900 mb-3">
                                 Guru Profesional
                             </h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
+                            <p className="text-sm text-slate-600 leading-relaxed">
                                 Didukung tenaga pendidik yang kompeten,
                                 berpengalaman, dan berdedikasi tinggi.
                             </p>
@@ -750,7 +755,7 @@ export default function Landing() {
                             <h3 className="text-xl font-black text-slate-900 mb-3">
                                 Lingkungan Nyaman
                             </h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">
+                            <p className="text-sm text-slate-600 leading-relaxed">
                                 Madrasah hijau, bersih, aman, dan nyaman untuk
                                 mendukung proses belajar.
                             </p>
