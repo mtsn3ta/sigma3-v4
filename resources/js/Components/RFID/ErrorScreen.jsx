@@ -181,32 +181,24 @@ export default function ErrorScreen({
     mode = "school",
     type = "system_error",
     student = null,
+    message = null, // Tambahkan prop ini
 }) {
     const title = (() => {
+        // PRIORITAS: Jika ada pesan dari backend, tampilkan pesan tersebut!
+        if (message) return message;
+
         switch (type) {
             case "unknown_card":
                 return "KARTU TIDAK TERDAFTAR";
 
             case "already_scanned":
-                if (mode === "ibadah") {
-                    return "IBADAH SUDAH TERCATAT";
-                }
-
-                if (mode === "ekskul") {
-                    return "KEHADIRAN SUDAH TERCATAT";
-                }
-
+                if (mode === "ibadah") return "IBADAH SUDAH TERCATAT";
+                if (mode === "ekskul") return "KEHADIRAN SUDAH TERCATAT";
                 return "SUDAH MELAKUKAN SCAN";
 
             case "outside_time":
-                if (mode === "ibadah") {
-                    return "DI LUAR JAM IBADAH";
-                }
-
-                if (mode === "ekskul") {
-                    return "DI LUAR JAM KEGIATAN";
-                }
-
+                if (mode === "ibadah") return "DI LUAR JAM IBADAH";
+                if (mode === "ekskul") return "DI LUAR JAM KEGIATAN";
                 return "DI LUAR JAM ABSENSI";
 
             case "checkin_required":
@@ -217,6 +209,7 @@ export default function ErrorScreen({
 
             case "disabled_today":
                 return "ABSEN SHOLAT DZUHUR TIDAK TERSEDIA HARI JUMAT";
+
             case "not_member":
                 return "BUKAN ANGGOTA EKSTRAKURIKULER";
 
@@ -225,6 +218,7 @@ export default function ErrorScreen({
 
             case "attendance_not_generated":
                 return "DATA KEHADIRAN BELUM DIBUAT";
+
             default:
                 return "TERJADI KESALAHAN SISTEM";
         }

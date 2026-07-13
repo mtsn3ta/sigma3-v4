@@ -151,6 +151,7 @@ export default function School() {
                         mode="school"
                         type={scanResult.error?.type}
                         student={scanResult.student}
+                        message={scanResult.error?.message} // <--- TAMBAHKAN BARIS INI
                     />
                 )}
             </div>

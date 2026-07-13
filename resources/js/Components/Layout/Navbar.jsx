@@ -40,7 +40,7 @@ const SECTIONS = {
 export default function Navbar({ hasUrgentAlert = false }) {
     // Ambil url saat ini dari Inertia untuk membedakan halaman aktif
     const { props, url } = usePage();
-    const settings = props.settings || {};
+    const { settings = {}, auth = {} } = props;
 
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -210,14 +210,14 @@ export default function Navbar({ hasUrgentAlert = false }) {
                         {/* ==========================
                             RIGHT ACTION
                         ========================== */}
-
                         <div className="flex items-center gap-3">
                             <Button
-                                href="/login"
+                                href={auth?.user ? "/admin" : "/login"}
+                                external={true} // <--- TAMBAHKAN INI AGAR TIDAK POPUP
                                 variant="primary"
                                 className="hidden h-10 px-6 md:inline-flex"
                             >
-                                Login
+                                {auth?.user ? "Ke Dashboard" : "Login"}
                             </Button>
 
                             <button
@@ -340,11 +340,12 @@ export default function Navbar({ hasUrgentAlert = false }) {
 
                             <div className="mt-auto pb-4">
                                 <Button
-                                    href="/login"
+                                    href={auth?.user ? "/admin" : "/login"}
+                                    external={true} // <--- TAMBAHKAN INI JUGA
                                     variant="primary"
                                     className="w-full py-4 text-lg"
                                 >
-                                    Masuk ke Dashboard
+                                    {auth?.user ? "Ke Dashboard" : "Login"}
                                 </Button>
                             </div>
                         </motion.aside>

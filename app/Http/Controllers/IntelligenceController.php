@@ -163,65 +163,50 @@ class IntelligenceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Absensi Sekolah & Ibadah
+        | Absensi Sekolah & Ibadah (PERBAIKAN: Mendukung Jam Datang & Pulang)
         |--------------------------------------------------------------------------
         */
 
-        $kehadiranSekolah = KehadiranSekolah::where(
-            'siswa_id',
-            $idSiswa,
-        )
-            ->whereDate(
-                'tanggal',
-                $hariIni,
-            )
-            ->get()
-            ->map(function ($item) {
+        $kehadiranSekolahRaw = KehadiranSekolah::where('siswa_id', $idSiswa)
+            ->whereDate('tanggal', $hariIni)
+            ->get();
 
-                return [
+        $kehadiranSekolah = collect();
 
-                    'jenis' => 'Kehadiran Sekolah',
+        foreach ($kehadiranSekolahRaw as $item) {
+            // 1. Baris untuk Absen Datang
+            $kehadiranSekolah->push([
+                'jenis' => 'Hadir Datang',
+                'status' => $item->status_label,
+                'jam' => $item->jam_datang ? substr($item->jam_datang, 0, 5) : '-',
+            ]);
 
+            // 2. Baris untuk Absen Pulang (Hanya muncul jika jam_pulang sudah terisi / tidak null)
+            if ($item->jam_pulang) {
+                $kehadiranSekolah->push([
+                    'jenis' => 'Hadir Pulang',
                     'status' => $item->status_label,
+                    'jam' => substr($item->jam_pulang, 0, 5),
+                ]);
+            }
+        }
 
-                    'jam' => $item->jam_datang
-                        ? substr(
-                            $item->jam_datang,
-                            0,
-                            5,
-                        )
-                        : '-',
-
-                ];
-            });
-
-        $kehadiranIbadah = KehadiranIbadah::where(
-            'siswa_id',
-            $idSiswa,
-        )
-            ->whereDate(
-                'tanggal',
-                $hariIni,
-            )
+        $kehadiranIbadah = KehadiranIbadah::where('siswa_id', $idSiswa)
+            ->whereDate('tanggal', $hariIni)
             ->get()
             ->map(function ($item) {
-
                 return [
-
+                    // Menghasilkan nama dinamis seperti "Shalat Dzuhur" atau "Shalat Dhuha"
                     'jenis' => 'Shalat ' . $item->jenis_label,
-
                     'status' => $item->status_label,
-
+                    // Pastikan format jam ibadah aman baik bertipe string maupun objek Carbon
                     'jam' => $item->waktu_scan
-                        ? $item->waktu_scan->format('H:i')
+                        ? (is_string($item->waktu_scan) ? substr($item->waktu_scan, 0, 5) : $item->waktu_scan->format('H:i'))
                         : '-',
-
                 ];
             });
 
-        $absensi = $kehadiranSekolah->concat(
-            $kehadiranIbadah
-        );
+        $absensi = $kehadiranSekolah->concat($kehadiranIbadah);
 
         /*
         |--------------------------------------------------------------------------
