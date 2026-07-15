@@ -84,4 +84,9 @@ class Pegawai extends Model
             'verified_by'
         );
     }
+    public function ploting()
+    {
+        // Menggunakan hasMany agar bisa menampilkan semua mapel yang diajar
+        return $this->hasMany(PlotingGuru::class, 'pegawai_id');
+    }
 }

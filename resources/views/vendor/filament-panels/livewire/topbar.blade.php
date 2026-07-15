@@ -10,7 +10,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 50 !important;
+            z-index: 40 !important;
             pointer-events: none;
             /* Penting: Agar area kosong di luar topbar tidak menghalangi klik ke halaman utama */
         }

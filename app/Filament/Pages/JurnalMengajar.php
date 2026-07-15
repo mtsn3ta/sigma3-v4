@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Filament\Actions\Action; // Tambahkan ini
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -31,17 +30,5 @@ class JurnalMengajar extends Page
         $user = Auth::user();
 
         return $user?->hasRole('guru') ?? false;
-    }
-
-    // Tambahkan method ini untuk membuat tombol "Isi Jurnal" di kanan atas halaman
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('isiJurnal')
-                ->label('Isi Jurnal')
-                ->icon('heroicon-m-plus')
-                ->color('primary')
-                ->action(fn() => $this->dispatch('tambah-jurnal')),
-        ];
     }
 }
