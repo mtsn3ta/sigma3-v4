@@ -16,8 +16,10 @@
             <h2 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0;">Matriks Jadwal</h2>
 
             <div style="display: flex; gap: 12px;">
-                <x-filament::button color="info" icon="heroicon-o-arrow-down-tray"
-                    wire:click="mountAction('importJadwal')">
+                {{-- Diubah dari wire:click="mountAction('importJadwal')" ke modal manual —
+                     modal Filament Action ke-clip/tidak kelihatan di custom page + HasTable
+                     ini, sama seperti kasus "Isi Jadwal" sebelumnya. --}}
+                <x-filament::button color="info" icon="heroicon-o-arrow-down-tray" wire:click="bukaImportModal">
                     Import CSV
                 </x-filament::button>
                 <x-filament::button color="primary" icon="heroicon-o-cog-6-tooth"
@@ -295,6 +297,67 @@
                         Hapus Jadwal
                     </x-filament::button>
                 @endif
+            </div>
+        </div>
+    </x-filament::modal>
+
+    {{-- Modal Import CSV — modal manual dengan Livewire WithFileUploads,
+         menggantikan Action::make('importJadwal') yang kena bug modal ke-clip. --}}
+    <x-filament::modal id="import-jadwal" width="lg">
+        <x-slot name="heading">Upload File KODE_GURU.csv</x-slot>
+        <x-slot name="description">
+            Pastikan Anda mengunggah file "KODE_GURU.csv" yang berisi kode guru dan mapel (contoh: 34 PP, 17 BA).
+        </x-slot>
+
+        <div style="display: flex; flex-direction: column; gap: 16px; padding: 4px;">
+            <div>
+                <label style="display:block; font-weight:600; color:#374151; margin-bottom:6px; font-size:0.875rem;">
+                    Pilih File CSV <span style="color:#ef4444;">*</span>
+                </label>
+
+                <label for="csv-upload-input"
+                    style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; border:2px dashed #d1d5db; border-radius:10px; padding:28px 16px; cursor:pointer; background-color:#f9fafb; transition: border-color 0.15s, background-color 0.15s;"
+                    onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#eff6ff';"
+                    onmouseout="this.style.borderColor='#d1d5db'; this.style.backgroundColor='#f9fafb';">
+                    <x-filament::icon icon="heroicon-o-arrow-up-tray" style="width:28px; height:28px; color:#9ca3af;" />
+                    <span style="font-size:0.8rem; color:#4b5563; text-align:center;">
+                        @if ($csvFile)
+                            <span style="font-weight:700; color:#166534;">
+                                {{ method_exists($csvFile, 'getClientOriginalName') ? $csvFile->getClientOriginalName() : 'File dipilih' }}
+                            </span>
+                            <br>
+                            <span style="color:#6b7280;">Klik untuk ganti file</span>
+                        @else
+                            <span><span style="color:#2563eb; font-weight:600;">Klik untuk pilih file</span> atau
+                                seret file ke sini</span>
+                            <br>
+                            <span style="color:#9ca3af;">Format .csv</span>
+                        @endif
+                    </span>
+                    <input id="csv-upload-input" type="file" wire:model="csvFile" accept=".csv,text/csv"
+                        style="display:none;">
+                </label>
+
+                <div wire:loading wire:target="csvFile"
+                    style="display:flex; align-items:center; gap:6px; margin-top:8px; font-size:0.75rem; color:#2563eb;">
+                    <x-filament::loading-indicator style="width:14px; height:14px;" />
+                    Mengunggah file...
+                </div>
+
+                @error('csvFile')
+                    <p style="color:#ef4444; font-size:0.75rem; margin-top:6px;">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div style="display:flex; gap:8px;">
+                <x-filament::button color="info" wire:click="importCsv" wire:loading.attr="disabled"
+                    wire:target="importCsv,csvFile">
+                    <span wire:loading.remove wire:target="importCsv">Submit</span>
+                    <span wire:loading wire:target="importCsv">Memproses...</span>
+                </x-filament::button>
+                <x-filament::button color="gray" wire:click="closeImportModal">
+                    Cancel
+                </x-filament::button>
             </div>
         </div>
     </x-filament::modal>

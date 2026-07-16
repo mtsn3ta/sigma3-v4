@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use Filament\Actions\Action;
 
 class GuruJurnalWidget extends BaseWidget
 {
@@ -36,10 +37,19 @@ class GuruJurnalWidget extends BaseWidget
                     ->with('kelas')
                     ->where('pegawai_id', $pegawaiId)
                     ->latest('tanggal')
+                    ->latest('jam_ke')
                     ->limit(8)
             )
+            ->headerActions([
+                // PERBAIKAN: Ubah menjadi tombol Redirect ke halaman Jurnal Mengajar
+                Action::make('tambah_jurnal')
+                    ->label('Kelola Jurnal')
+                    ->icon('heroicon-m-arrow-right-circle')
+                    ->color('primary')
+                    // Arahkan langsung ke Custom Page Jurnal Mengajar
+                    ->url(fn() => \App\Filament\Pages\JurnalMengajar::getUrl()),
+            ])
             ->columns([
-                // 1. Tanggal & Materi (Digabung agar lebih lega)
                 Tables\Columns\TextColumn::make('tanggal')
                     ->label('Jurnal')
                     ->icon('heroicon-m-calendar-days')
@@ -48,7 +58,6 @@ class GuruJurnalWidget extends BaseWidget
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->format('d M Y'))
                     ->searchable(),
 
-                // 2. Kelas & Jam Ke (Digabung dalam format digital)
                 Tables\Columns\TextColumn::make('kelas.nama_kelas')
                     ->label('Kelas/Jam')
                     ->badge()
@@ -56,16 +65,24 @@ class GuruJurnalWidget extends BaseWidget
                     ->icon('heroicon-m-academic-cap')
                     ->description(fn(JurnalMengajar $record): string => "Jam Ke-{$record->jam_ke}"),
 
-                // 3. Mata Pelajaran
                 Tables\Columns\TextColumn::make('mapel')
                     ->label('Mata Pelajaran')
                     ->fontFamily(FontFamily::Mono)
                     ->color('primary')
                     ->alignEnd(),
             ])
+            ->actions([
+                // PERBAIKAN: Ubah tombol baris menjadi jalan pintas ke halaman Jurnal juga
+                Action::make('buka_halaman')
+                    ->label('Buka')
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->color('warning')
+                    ->iconButton()
+                    ->tooltip('Buka halaman Jurnal untuk mengedit')
+                    ->url(fn() => \App\Filament\Pages\JurnalMengajar::getUrl()),
+            ])
             ->paginated(false)
             ->striped()
-            // Tampilan saat guru belum mengisi jurnal
             ->emptyStateIcon('heroicon-o-book-open')
             ->emptyStateHeading('Belum Ada Jurnal')
             ->emptyStateDescription('Mulai catat aktivitas mengajar Anda hari ini.');

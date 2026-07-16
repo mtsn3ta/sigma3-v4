@@ -12,6 +12,7 @@ use Filament\Schemas\Components\View as SchemaView;
 use Livewire\Component;
 use App\Support\KelasHelper;
 use App\Support\SiswaHelper;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -47,7 +48,8 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
         $this->form->fill([
             'tanggal' => now('Asia/Jakarta')->toDateString(),
             'kelas_id' => null,
-            'siswa_id' => null,
+            // siswa_id sekarang array karena CheckboxList mendukung multi-pilih.
+            'siswa_id' => [],
             'status' => null,
         ]);
     }
@@ -77,18 +79,27 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
                                     ->live()
                                     ->searchable()
                                     ->preload()
-                                    ->afterStateUpdated(fn(callable $set) => $set('siswa_id', null))
+                                    // Reset ke array kosong, bukan null, karena siswa_id sekarang multi-pilih.
+                                    ->afterStateUpdated(fn(callable $set) => $set('siswa_id', []))
                                     ->required(),
 
-                                Select::make('siswa_id')
+                                // PERBAIKAN UX: diganti dari Select (single, dropdown) menjadi CheckboxList
+                                // (multi-pilih) supaya guru piket bisa centang banyak siswa berstatus sama
+                                // sekaligus (mis. centang semua yang sakit) tanpa submit satu-satu.
+                                CheckboxList::make('siswa_id')
                                     ->label('Siswa')
                                     ->options(fn(callable $get) => SiswaHelper::belumRfidOptions(
                                         $get('kelas_id')
                                     ))
-                                    ->live()
                                     ->searchable()
-                                    ->preload()
-                                    ->required(),
+                                    // Tombol "select all / deselect all" — mempercepat kasus
+                                    // "semua hadir kecuali beberapa" atau sebaliknya.
+                                    ->bulkToggleable()
+                                    ->columns(2)
+                                    ->columnSpanFull()
+                                    ->live()
+                                    ->required()
+                                    ->helperText('Centang siswa yang berstatus sama, lalu simpan. Ulangi untuk status yang berbeda.'),
 
                                 Radio::make('status')
                                     ->label('Status')
@@ -165,9 +176,17 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
     ): void {
         $data = $this->form->getState();
 
-        $siswa = Siswa::findOrFail(
-            $data['siswa_id']
-        );
+        $siswaIds = $data['siswa_id'] ?? [];
+
+        // Guard tambahan di luar validasi form, jaga-jaga state kosong.
+        if (empty($siswaIds)) {
+            Notification::make()
+                ->warning()
+                ->title('Pilih minimal satu siswa')
+                ->send();
+
+            return;
+        }
 
         $user = Auth::user();
 
@@ -176,58 +195,49 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
             $user->id,
         )->firstOrFail();
 
-        switch ($data['status']) {
-            case 'hadir':
-                $service->markManualHadir(
+        // Terapkan status/jam/keterangan yang sama ke setiap siswa yang dicentang.
+        foreach ($siswaIds as $siswaId) {
+            $siswa = Siswa::findOrFail($siswaId);
+
+            match ($data['status']) {
+                'hadir' => $service->markManualHadir(
                     siswa: $siswa,
                     jamDatang: $data['jam_datang'],
                     petugas: $petugas,
-                    tanggal: $data['tanggal'] // <--- Tambahkan ini
-                );
-                break;
-
-            case 'terlambat':
-                $service->markManualTerlambat(
+                    tanggal: $data['tanggal'],
+                ),
+                'terlambat' => $service->markManualTerlambat(
                     siswa: $siswa,
                     jamDatang: $data['jam_datang'],
                     petugas: $petugas,
-                    tanggal: $data['tanggal'] // <--- Tambahkan ini
-                );
-                break;
-
-            case 'izin':
-                $service->markIzin(
+                    tanggal: $data['tanggal'],
+                ),
+                'izin' => $service->markIzin(
                     siswa: $siswa,
                     keterangan: $data['keterangan'],
                     petugas: $petugas,
-                    tanggal: $data['tanggal'] // <--- Tambahkan ini
-                );
-                break;
-
-            case 'sakit':
-                $service->markSakit(
+                    tanggal: $data['tanggal'],
+                ),
+                'sakit' => $service->markSakit(
                     siswa: $siswa,
                     keterangan: $data['keterangan'],
                     petugas: $petugas,
-                    tanggal: $data['tanggal'] // <--- Tambahkan ini
-                );
-                break;
-
-            case 'alfa':
-                $service->markAlfa(
+                    tanggal: $data['tanggal'],
+                ),
+                'alfa' => $service->markAlfa(
                     siswa: $siswa,
                     keterangan: $data['keterangan'],
                     petugas: $petugas,
-                    tanggal: $data['tanggal'] // <--- Tambahkan ini
-                );
-                break;
+                    tanggal: $data['tanggal'],
+                ),
+                default => null,
+            };
         }
-
 
         Notification::make()
             ->success()
             ->title('Berhasil')
-            ->body("Verifikasi kehadiran {$siswa->nama} berhasil disimpan.")
+            ->body(count($siswaIds) . ' siswa berhasil diverifikasi sebagai "' . ucfirst($data['status']) . '".')
             ->send();
 
         $kelas = $data['kelas_id'];
@@ -239,6 +249,8 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
             'tanggal' => $tanggal,
 
             'kelas_id' => $kelas,
+
+            'siswa_id' => [],
 
         ]);
     }

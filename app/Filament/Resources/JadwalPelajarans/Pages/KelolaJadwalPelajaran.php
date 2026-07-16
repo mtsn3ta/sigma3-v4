@@ -20,6 +20,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Validation\Rule;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 class KelolaJadwalPelajaran extends Page implements HasTable
@@ -35,8 +36,21 @@ class KelolaJadwalPelajaran extends Page implements HasTable
     public ?int $tahunAjaranAktif = null;
     public array $jadwalData = [];
 
-    public $csvFile = null;
+    // --- State untuk modal "Import CSV" ---
+    // Sama seperti modal "Isi Jadwal": SENGAJA tidak pakai Filament Action /
+    // mountAction(), karena kena bug yang sama (modal ke-clip, cuma tampak
+    // kalau numpang di dalam modal lain yang sudah terbuka). Solusi: modal
+    // manual + Livewire WithFileUploads untuk upload file-nya.
+    public ?TemporaryUploadedFile $csvFile = null;
 
+    // --- State untuk modal "Isi Jadwal" ---
+    // Sengaja TIDAK pakai Filament Action / mountAction() di sini.
+    // Alasan: bug Filament v4 — modal dari page-level Action pada custom page
+    // yang juga implement HasTable suka ke-clip / tidak terlihat (overflow:clip
+    // pada .fi-layout), baru tampak kalau ada modal lain yang sudah terbuka.
+    // Lihat: https://github.com/filamentphp/filament/issues/19687
+    // Solusinya: modal manual (sama seperti pola "set-kode-guru" yang sudah
+    // terbukti jalan), dikendalikan lewat event open-modal / close-modal.
     public ?string $selectedHari = null;
     public ?string $selectedJam = null;
     public ?int $selectedPlotingGuruId = null;
