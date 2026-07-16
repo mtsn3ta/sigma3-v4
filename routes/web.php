@@ -25,6 +25,8 @@ use App\Http\Controllers\ActiveRoleController;
 use App\Http\Controllers\IntelligenceController;
 use App\Http\Controllers\ParentPortalController;
 use App\Http\Controllers\ParentLeaveRequestController;
+use App\Http\Controllers\Thermal\IzinKeluarBluetoothPrintController;
+use App\Http\Controllers\Thermal\TugasGuruIzinBluetoothPrintController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
@@ -92,20 +94,24 @@ Route::get(
 Route::middleware(['auth'])->group(function () {
 
     Route::get(
-
         '/thermal/izin-keluar/{izinKeluar}',
-
         IzinKeluarPrintController::class
-
     )->name('thermal.izin-keluar');
 
     Route::get(
-
         '/thermal/tugas-guru-izin/{tugasGuruIzin}',
-
         TugasGuruIzinPrintController::class
-
     )->name('thermal.tugas-guru-izin');
+
+    Route::get(
+        '/thermal/izin-keluar/{izinKeluar}/bluetooth',
+        IzinKeluarBluetoothPrintController::class
+    )->name('thermal.izin-keluar.bluetooth');
+
+    Route::get(
+        '/thermal/tugas-guru-izin/{tugasGuruIzin}/bluetooth',
+        TugasGuruIzinBluetoothPrintController::class
+    )->name('thermal.tugas-guru-izin.bluetooth');
 });
 Route::middleware(['auth'])
     ->get(

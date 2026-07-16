@@ -3,7 +3,8 @@
 namespace App\Filament\Resources\TugasGuruIzins\Tables;
 
 use App\Models\TugasGuruIzin;
-use Filament\Actions\Action; // <--- PERBAIKAN 1: Menggunakan kelas Action khusus modul Tables
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,6 @@ class TugasGuruIzinsTable
     public static function configure(Table $table): Table
     {
         return $table
-            // PERBAIKAN 2: Menghapus modifyQueryUsing yang memicu error 500 agar Kelas 7 bisa tampil utuh tanpa terhambat struktur relasi model Kelas
             ->defaultSort('tanggal', 'desc')
             ->columns([
                 TextColumn::make('guru.nama')
@@ -54,15 +54,33 @@ class TugasGuruIzinsTable
                 //
             ])
             ->recordActions([
-                Action::make('print')
+                // PERBAIKAN: "Cetak" sekarang dropdown 2 opsi — Preview (browser,
+                // seperti sebelumnya) dan Bluetooth HP (ESC/POS via RawBT, tanpa
+                // perlu buka webview app pihak ketiga & login ulang).
+                ActionGroup::make([
+                    Action::make('print_preview')
+                        ->label('Preview / Print Browser')
+                        ->icon('heroicon-o-eye')
+                        ->openUrlInNewTab()
+                        ->url(fn(TugasGuruIzin $record) => route(
+                            'thermal.tugas-guru-izin',
+                            $record
+                        )),
+
+                    Action::make('print_bluetooth')
+                        ->label('Cetak Bluetooth (HP)')
+                        ->icon('heroicon-o-printer')
+                        ->color('success')
+                        ->openUrlInNewTab()
+                        ->url(fn(TugasGuruIzin $record) => route(
+                            'thermal.tugas-guru-izin.bluetooth',
+                            $record
+                        )),
+                ])
                     ->label('Cetak')
                     ->icon('heroicon-o-printer')
-                    ->color('primary')
-                    ->openUrlInNewTab()
-                    ->url(fn(TugasGuruIzin $record) => route(
-                        'thermal.tugas-guru-izin',
-                        $record
-                    )),
+                    ->button()
+                    ->color('primary'),
 
                 Action::make('disampaikan')
                     ->label('Sudah Disampaikan')

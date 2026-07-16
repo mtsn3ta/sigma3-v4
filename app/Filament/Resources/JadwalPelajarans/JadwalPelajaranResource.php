@@ -63,7 +63,7 @@ class JadwalPelajaranResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\JadwalPelajaranResource\Pages\KelolaJadwalPelajaran::route('/'),
+            'index' => \App\Filament\Resources\JadwalPelajarans\Pages\KelolaJadwalPelajaran::route('/'),
             'create' => CreateJadwalPelajaran::route('/create'),
             'edit' => EditJadwalPelajaran::route('/{record}/edit'),
         ];

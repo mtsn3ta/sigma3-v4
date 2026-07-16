@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\JadwalPelajaranResource\Pages;
+namespace App\Filament\Resources\JadwalPelajarans\Pages;
 
 use App\Filament\Resources\JadwalPelajarans\JadwalPelajaranResource;
 use App\Models\Kelas;
