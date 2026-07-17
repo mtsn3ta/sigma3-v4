@@ -1,3 +1,0 @@
-<svg x-show="terbuka" style="width: 18px; height: 18px; color: #6b7280;" x-cloak="1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
-</svg><?php /**PATH /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/storage/framework/views/6a8a325b0d70ef4146640725521dee49.blade.php ENDPATH**/ ?>

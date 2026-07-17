@@ -1,3 +1,0 @@
-<svg style="width: 20px; height: 20px; color: #16a34a; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-</svg><?php /**PATH /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/storage/framework/views/b171ba9851f639bc1453e7cac4c92870.blade.php ENDPATH**/ ?>
