@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\ParentLeaveRequest;
+
+class Siswa extends Model
+{
+    use HasFactory;
+
+    protected $table = 'siswa';
+
+    protected $fillable = [
+        'user_id',
+
+        'nisn',
+        'nama',
+
+        'jenis_kelamin',
+
+        'tempat_lahir',
+        'tanggal_lahir',
+
+        'alamat',
+        'no_hp',
+
+        'foto',
+
+        'nama_ayah',
+        'nama_ibu',
+
+        'pekerjaan_ayah',
+        'pekerjaan_ibu',
+
+        'nik_ayah',
+        'nik_ibu',
+
+        'alamat_ortu',
+        'telpon_ortu',
+
+        'nama_wali',
+        'pekerjaan_wali',
+        'alamat_wali',
+        'telpon_wali',
+
+        'anak_ke',
+        'sekolah_asal',
+
+        'rfid_uid',
+
+        'status',
+    ];
+    protected $attributes = [
+        'status' => 'aktif',
+    ];
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function kelasSiswa()
+    {
+        return $this->hasMany(KelasSiswa::class)
+            ->orderBy(
+                TahunAjaran::select('tahun')
+                    ->whereColumn('tahun_ajaran.id', 'kelas_siswa.tahun_ajaran_id')
+            );
+    }
+    public function anggotaEkskul()
+    {
+        return $this->hasMany(AnggotaEkskul::class);
+    }
+    public function kehadiranEkskul()
+    {
+        return $this->hasMany(KehadiranEkskul::class);
+    }
+    public function kelasAktif()
+    {
+        return $this->hasOne(KelasSiswa::class)
+            ->whereHas('tahunAjaran', function ($query) {
+                $query->where('aktif', true);
+            });
+    }
+    public function getNamaKelasAktifAttribute(): ?string
+    {
+        return $this->kelasAktif?->kelas?->nama_kelas;
+    }
+    public function prestasi()
+    {
+        return $this->belongsToMany(
+
+            Prestasi::class,
+
+            'prestasi_siswa'
+
+        )->withTimestamps();
+    }
+    public function konseling()
+    {
+        return $this->hasMany(
+            KonselingSiswa::class
+        );
+    }
+    public function permasalahan()
+    {
+        return $this->hasMany(
+            PermasalahanSiswa::class
+        );
+    }
+    public function izinKeluar()
+    {
+        return $this->hasMany(
+            IzinKeluar::class
+        );
+    }
+    public function kehadiranSekolah()
+    {
+        return $this->hasMany(
+            KehadiranSekolah::class
+        );
+    }
+    public function kehadiranIbadah()
+    {
+        return $this->hasMany(
+            KehadiranIbadah::class
+        );
+    }
+
+    public function scopeAktif(Builder $query): Builder
+    {
+        return $query->where(
+            'status',
+            'aktif',
+        );
+    }
+    public function parentLeaveRequests(): HasMany
+    {
+        return $this->hasMany(
+            ParentLeaveRequest::class
+        );
+    }
+    public function rfidFailedLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RfidFailedLog::class, 'siswa_id');
+    }
+}

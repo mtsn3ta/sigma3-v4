@@ -1,0 +1,111 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* ==========================
+   SIGMA AI FLOAT BUTTON STYLES
+   ========================== */
+.sigma-ai-float {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 9999;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    animation: floatUp 1s ease;
+}
+
+@keyframes floatUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: none; }
+}
+
+.sigma-ai-badge {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+}
+
+.sigma-ai-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    animation: pulseDot 1.2s infinite;
+}
+
+@keyframes pulseDot {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.6); opacity: .5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.sigma-ai-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    padding: 16px 18px;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    transition: 0.3s;
+    max-width: 360px;
+}
+
+.sigma-ai-box:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.18);
+}
+
+.sigma-ai-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #166534, #2563eb);
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.sigma-ai-title { font-size: 15px; font-weight: 900; color: #0f172a; }
+.sigma-ai-desc { font-size: 12px; line-height: 1.5; color: #64748b; margin-top: 4px; }
+.sigma-ai-wa {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #22c55e;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+}
+
+@media(max-width: 768px) {
+    .sigma-ai-float { right: 14px; bottom: 14px; left: 14px; align-items: stretch; }
+    .sigma-ai-box { max-width: none; width: 100%; padding: 14px; }
+    .sigma-ai-title { font-size: 14px; }
+    .sigma-ai-desc { font-size: 11px; }
+}

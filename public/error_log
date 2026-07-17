@@ -1,0 +1,35 @@
+[13-Jul-2026 07:35:30 UTC] PHP Warning:  require(/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/test-sidecar.php on line 3
+[13-Jul-2026 07:35:30 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/test-sidecar.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/test-sidecar.php on line 3
+[13-Jul-2026 07:35:32 UTC] PHP Warning:  require(/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/test-sidecar.php on line 3
+[13-Jul-2026 07:35:32 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/test-sidecar.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/test-sidecar.php on line 3
+[15-Jul-2026 09:51:55 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:04 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:08 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:10 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:10 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:11 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:13 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:15 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[15-Jul-2026 09:52:17 UTC] PHP Fatal error:  Cannot declare class App\Filament\Resources\AgendaMadrasahs\Pages\CreateAgendaMadrasah, because the name is already in use in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Filament/Resources/PlotingGurus/Pages/CreateAgendaMadrasah.php on line 11
+[16-Jul-2026 21:33:53 UTC] PHP Warning:  require(/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php on line 14
+[16-Jul-2026 21:33:53 UTC] PHP Warning:  require(/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php on line 14
+[16-Jul-2026 21:33:53 UTC] PHP Warning:  require(/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php on line 14
+[16-Jul-2026 21:33:53 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/../vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php on line 14
+[16-Jul-2026 21:33:53 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/../vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php on line 14
+[16-Jul-2026 21:33:53 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/../vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/public/index.php on line 14
+[17-Jul-2026 17:52:10 UTC] PHP Fatal error:  Class App\Services\Printer\Sigma3PrintConnector contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Mike42\Escpos\PrintConnectors\PrintConnector::__destruct) in /home/mtsntul1/sigma3.mtsn3tulungagung.sch.id/app/Services/Printer/Sigma3PrintConnector.php on line 7

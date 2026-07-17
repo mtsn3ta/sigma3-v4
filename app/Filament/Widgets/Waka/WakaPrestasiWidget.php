@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Filament\Widgets\Waka;
+
+use App\Models\Prestasi;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+
+class WakaPrestasiWidget extends BaseWidget
+{
+    protected static ?int $sort = 6;
+
+    protected int|string|array $columnSpan = 1;
+
+    public static function canView(): bool
+    {
+        return \App\Support\ActiveRole::is('waka_kesiswaan');
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->heading('Prestasi & Penghargaan Terbaru')
+            ->description('Pemantauan langsung pencapaian ekstrakurikuler dan prestasi siswa madrasah.')
+            ->query(
+                Prestasi::query()
+                    ->with('ekstrakurikuler')
+                    ->latest('tanggal')
+                    ->limit(5)
+            )
+            ->columns([
+                // 1. Nama Lomba & Ekstrakurikuler (Digabung agar lebih lega)
+                Tables\Columns\TextColumn::make('nama_lomba')
+                    ->label('Kompetisi / Lomba')
+                    ->icon('heroicon-m-trophy')
+                    ->iconColor('warning') // Menghasilkan warna Emas/Kuning
+                    ->weight(FontWeight::Bold)
+                    ->description(
+                        fn(Prestasi $record): string => $record->ekstrakurikuler
+                            ? 'Pembinaan: ' . $record->ekstrakurikuler->nama
+                            : 'Kategori: Mandiri / Umum'
+                    )
+                    ->searchable(),
+
+                // 2. Pencapaian / Prestasi
+                Tables\Columns\TextColumn::make('nama_prestasi')
+                    ->label('Pencapaian')
+                    ->badge()
+                    ->color('success')
+                    ->icon('heroicon-m-star'),
+
+                // 3. Tingkat
+                Tables\Columns\TextColumn::make('tingkat')
+                    ->label('Tingkat')
+                    ->badge()
+                    ->color('info')
+                    ->icon('heroicon-m-globe-asia-australia')
+                    ->formatStateUsing(fn(string $state): string => ucfirst($state)),
+
+                // 4. Tanggal (Dipindah ke ujung dengan time-ago)
+                Tables\Columns\TextColumn::make('tanggal')
+                    ->label('Tanggal Diraih')
+                    ->date('d M Y')
+                    ->icon('heroicon-m-calendar-days')
+                    ->description(fn(Prestasi $record): string => \Carbon\Carbon::parse($record->tanggal)->diffForHumans())
+                    ->sortable()
+                    ->alignEnd(),
+            ])
+            ->paginated(false)
+            // Aksen zebra untuk memudahkan membaca baris data
+            ->striped()
+            // Tampilan khusus saat belum ada data prestasi
+            ->emptyStateIcon('heroicon-o-sparkles')
+            ->emptyStateHeading('Belum Ada Prestasi Baru')
+            ->emptyStateDescription('Data penghargaan dan prestasi siswa akan muncul di sini setelah dicatat.');
+    }
+}
