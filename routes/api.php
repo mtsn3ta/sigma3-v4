@@ -9,7 +9,8 @@ use App\Http\Controllers\IntelligenceController;
 use App\Http\Controllers\WhatsAppWebhookController;
 
 // Jalur masuk webhook dari VPS NAT
-Route::post('/whatsapp-webhook', [WhatsAppWebhookController::class, 'handle']);
+Route::post('/whatsapp-webhook', [WhatsAppWebhookController::class, 'handle'])
+    ->middleware('throttle:60,1');
 
 Route::post(
     '/rfid/sekolah',

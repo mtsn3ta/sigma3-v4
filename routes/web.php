@@ -112,6 +112,9 @@ Route::middleware(['auth'])->group(function () {
         '/thermal/tugas-guru-izin/{tugasGuruIzin}/bluetooth',
         TugasGuruIzinBluetoothPrintController::class
     )->name('thermal.tugas-guru-izin.bluetooth');
+    
+    Route::get('/admin/whatsapp/qr', [\App\Http\Controllers\Admin\WhatsAppQrController::class, 'show'])
+        ->name('admin.whatsapp.qr');
 });
 Route::middleware(['auth'])
     ->get(

@@ -10,29 +10,37 @@ class WhatsAppWebhookController extends Controller
 {
     public function handle(Request $request, WhatsAppBotService $bot)
     {
+        $secret = $request->header('X-Webhook-Secret');
+
+        if (! $secret || ! hash_equals((string) config('services.whatsapp.webhook_secret'), $secret)) {
+
+            Log::warning('WA WEBHOOK: percobaan akses ditolak', [
+                'ip' => $request->ip(),
+            ]);
+
+            return response()->json(['status' => 'unauthorized'], 401);
+        }
+
         $event = $request->input('event');
         $data = $request->input('data');
 
         if ($event === 'message' && isset($data['message'])) {
             $msg = $data['message'];
 
-            // Catat log untuk memastikan data dari VPS benar-benar masuk ke hosting
             Log::info('=== WA EVENT MASUK (VIA WEBHOOK) ===', [
-                'from' => $msg['from'],
+                'from' => $msg['from'] ?? null,
                 'body' => $msg['body'] ?? '',
-                'fromMe' => $msg['fromMe']
+                'fromMe' => $msg['fromMe'] ?? false,
             ]);
 
-            // Abaikan jika pesan berasal dari bot itu sendiri atau dari status
-            if ($msg['fromMe'] || $msg['isStatus']) {
+            if (($msg['fromMe'] ?? false) || ($msg['isStatus'] ?? false)) {
                 return response()->json(['status' => 'ignored']);
             }
 
-            $phone = str_replace('@c.us', '', $msg['from']);
+            $phone = str_replace('@c.us', '', $msg['from'] ?? '');
             $text = $msg['body'] ?? '';
 
-            // Jalankan bot otomatis andalanmu
-            if (!empty($text)) {
+            if (! empty($text) && ! empty($phone)) {
                 $bot->handle($phone, $text);
             }
         }

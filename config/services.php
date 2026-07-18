@@ -34,5 +34,14 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'whatsapp' => [
+    'webhook_secret' => env('WHATSAPP_WEB_WEBHOOK_SECRET'),
+    'token' => env('WHATSAPP_WEB_TOKEN'),
+    'host' => env('WHATSAPP_WEB_HOST') . ':' . env('WHATSAPP_WEB_PORT', 80),
+    ],
+    'telegram' => [
+    'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+    'chat_id' => env('TELEGRAM_CHAT_ID'),
+],
 
 ];

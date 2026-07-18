@@ -10,6 +10,7 @@ use App\Models\KehadiranSekolah;
 use App\Models\KehadiranIbadah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class IntelligenceController extends Controller
 {
@@ -488,9 +489,8 @@ class IntelligenceController extends Controller
                 }
             } catch (\Exception $e) {
 
-                // Abaikan jika database e-Rapor
-                // sedang offline
-
+                Log::error('E-RAPOR OFFLINE: Gagal konek database e-rapor - ' . $e->getMessage());
+            
                 $raporTimeline = [];
             }
         }
