@@ -137,7 +137,7 @@ class SettingHelper
         return self::setting()?->kepalaAktif?->nama ?? '-';
     }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Tahun Ajaran
     |--------------------------------------------------------------------------
@@ -145,13 +145,15 @@ class SettingHelper
 
     public static function tahunAjaran(): ?TahunAjaran
     {
-        return self::setting()?->tahunAjaranAktif;
+        return \App\Support\TahunAjaranHelper::aktif();
     }
 
     public static function tahunAjaranLabel(): string
     {
-        return self::setting()?->tahunAjaranAktif?->tahun ?? '-';
+        // Ubah baris ini agar selaras menggunakan fungsi tahunAjaran() di atas
+        return self::tahunAjaran()?->tahun ?? '-';
     }
+
     /*
 |--------------------------------------------------------------------------
 | RFID School

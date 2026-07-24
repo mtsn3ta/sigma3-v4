@@ -86,8 +86,7 @@ class SiswaForm
                                     ->directory('siswa') // 📁 Diubah dari 'siswa/foto' menjadi 'siswa' agar sinkron dengan DB Anda
                                     ->disk('public') // 💾 Pastikan disimpan ke disk public agar bisa diakses browser
                                     ->visibility('public')
-                                    ->maxSize(2048) // Opsional: Membatasi ukuran maksimal file (misal: 2MB)
-                                    ->required(),
+                                    ->maxSize(2048), // Opsional: Membatasi ukuran maksimal file (misal: 2MB)
                             ]),
                     ])
                     ->contained(false)
