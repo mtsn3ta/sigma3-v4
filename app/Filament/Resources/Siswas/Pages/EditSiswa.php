@@ -15,12 +15,17 @@ class EditSiswa extends EditRecord
         $siswa = $this->record;
 
         if ($siswa->user) {
+            
+            // Langsung ambil nilai status dari form. 
+            // Jika tidak ada (null/undefined), gunakan status user yang lama.
+            $statusUser = $data['status'] ?? $siswa->user->status;
+
+            // Lakukan hal yang sama untuk 'nisn'
+            $username = $data['nisn'] ?? $siswa->user->username;
 
             $siswa->user->update([
-                'username' => $data['nisn'],
-                'status' => $data['status'] === 'aktif'
-                    ? 'aktif'
-                    : 'nonaktif',
+                'username' => $username,
+                'status' => $statusUser,
             ]);
         }
 

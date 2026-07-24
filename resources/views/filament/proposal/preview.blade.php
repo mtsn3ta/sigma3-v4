@@ -415,7 +415,6 @@
                 </p>
             </div>
 
-            @if ($record->isPelatihMerangkapPembina())
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr>
                         <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
@@ -423,7 +422,7 @@
 
                                 <div
                                     style="position:relative; z-index:1; min-height:70px; display:flex; align-items:center; justify-content:center;">
-                                    Disusun dan Diperiksa oleh,<br>
+                                    Disusun oleh,<br>
                                     Pelatih / Pembina Ekstrakurikuler
                                 </div>
 
@@ -431,11 +430,11 @@
 
                                 <div style="position:relative; z-index:1;">
                                     <strong style="text-decoration: underline;">
-                                        {{ $record->pelatih()?->pegawai?->nama ?? '........................................' }}
+                                        {{ $record->pembina()?->pegawai?->nama ?? '........................................' }}
                                     </strong>
                                 </div>
 
-                                {!! $signatureImg($pelatihTtd, $pembinaApproved, -4) !!}
+                                {!! $signatureImg($pembinaTtd, $pembinaApproved, 4) !!}
 
                             </div>
                         </td>
@@ -489,102 +488,6 @@
                         </td>
                     </tr>
                 </table>
-
-                {{-- Tanda Tangan: Mode Normal (4 Orang) --}}
-            @else
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr>
-                        <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                            <div style="position:relative; text-align:center; font-size:0.9375rem; line-height:1.5;">
-
-                                <div
-                                    style="position:relative; z-index:1; min-height:70px; display:flex; align-items:center; justify-content:center;">
-                                    Disusun oleh,<br>
-                                    Pelatih
-                                </div>
-
-                                <div style="height:70px;"></div>
-
-                                <div style="position:relative; z-index:1;">
-                                    <strong style="text-decoration: underline;">
-                                        {{ $record->pelatih()?->pegawai?->nama ?? '........................................' }}
-                                    </strong>
-                                </div>
-
-                            </div>
-                        </td>
-                        <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                            <div style="position:relative; text-align:center; font-size:0.9375rem; line-height:1.5;">
-
-                                <div
-                                    style="position:relative; z-index:1; min-height:70px; display:flex; align-items:center; justify-content:center;">
-                                    Diperiksa oleh,<br>
-                                    Pembina Ekstrakurikuler
-                                </div>
-
-                                <div style="height:70px;"></div>
-
-                                <div style="position:relative; z-index:1;">
-                                    <strong style="text-decoration: underline;">
-                                        {{ $record->pembina()?->pegawai?->nama ?? '........................................' }}
-                                    </strong>
-                                </div>
-
-                                {!! $signatureImg($pembinaTtd, $pembinaApproved, 4) !!}
-
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <table style="width: 100%; margin-top: 3rem; border-collapse: collapse;">
-                    <tr>
-                        <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                            <div style="position:relative; text-align:center; font-size:0.9375rem; line-height:1.5;">
-
-                                <div
-                                    style="position:relative; z-index:1; min-height:70px; display:flex; align-items:center; justify-content:center;">
-                                    Disetujui oleh,<br>
-                                    Wakil Kepala Madrasah<br>
-                                    Bidang Kesiswaan
-                                </div>
-
-                                <div style="height:70px;"></div>
-
-                                <div style="position:relative; z-index:1;">
-                                    <strong style="text-decoration: underline;">
-                                        {{ $record->wakaKesiswaan()?->pegawai?->nama ?? '........................................' }}
-                                    </strong>
-                                </div>
-
-                                {!! $signatureImg($wakaTtd, $wakaApproved, -4) !!}
-
-                            </div>
-                        </td>
-                        <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
-                            <div style="position:relative; text-align:center; font-size:0.9375rem; line-height:1.5;">
-
-                                <div
-                                    style="position:relative; z-index:1; min-height:70px; display:flex; align-items:center; justify-content:center;">
-                                    Mengetahui,<br>
-                                    Kepala MTsN 3 Tulungagung
-                                </div>
-
-                                <div style="height:70px;"></div>
-
-                                <div style="position:relative; z-index:1;">
-                                    <strong style="text-decoration: underline;">
-                                        {{ $record->kepalaMadrasah()?->pegawai?->nama ?? '........................................' }}
-                                    </strong>
-                                </div>
-
-                                {!! $signatureImg($kepalaTtd, $kepalaApproved, 3) !!}
-
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            @endif
 
         </div>
 
