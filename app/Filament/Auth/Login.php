@@ -28,7 +28,7 @@ class Login extends BaseLogin
             ->required()
             ->autocomplete('username')
             ->autofocus()
-            ->extraInputAttributes(['class' => 'text-white']);
+            ->extraInputAttributes(['class' => 'text-slate-900']);
     }
 
     protected function getPasswordFormComponent(): Component

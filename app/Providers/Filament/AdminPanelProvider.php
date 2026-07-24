@@ -53,7 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(
                 SettingHelper::schoolFaviconUrl()
             )           // Mengunci ke Light Mode agar tidak merusak tema Glass
-            //->spa()
+            ->spa()
             ->navigationGroups([
                 'Master Data',
                 'Akademik',
