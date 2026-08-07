@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\Auth;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Database\Eloquent\Builder;
 
 class PrestasiForm
 {
@@ -36,7 +37,7 @@ class PrestasiForm
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->afterStateUpdated(fn(Set $set) => $set('siswa_ids', []))
+                            ->afterStateUpdated(fn(Set $set) => $set('siswa', []))
                             ->options(fn() => self::getEkskulOptions())
                             ->default(fn() => self::getDefaultEkskul())
                             ->disabled(fn() => self::shouldDisableEkskul()),
@@ -85,16 +86,32 @@ class PrestasiForm
                     ->columnSpanFull()
                     ->schema([
 
-                        MultiSelect::make('siswa_ids')
+                        Select::make('siswa') // Gunakan nama relasi yang ada di Model
+                            ->multiple()
+                            ->relationship(
+                                name: 'siswa',
+                                titleAttribute: 'nama',
+                                // Pindahkan logika filter ke dalam modifyQueryUsing
+                                modifyQueryUsing: function (Builder $query, Get $get) {
+                                    $ekstrakurikulerId = $get('ekstrakurikuler_id');
+
+                                    if (!$ekstrakurikulerId) {
+                                        return $query;
+                                    }
+
+                                    return $query->whereIn(
+                                        'id',
+                                        AnggotaEkskul::query()
+                                            ->where('ekstrakurikuler_id', $ekstrakurikulerId)
+                                            ->where('status', 'aktif')
+                                            ->select('siswa_id') // Gunakan select agar query database lebih efisien
+                                    );
+                                }
+                            )
                             ->label('Siswa Berprestasi')
                             ->live()
                             ->searchable()
                             ->preload()
-                            ->options(
-                                fn(Get $get) => self::getSiswaOptions(
-                                    $get('ekstrakurikuler_id')
-                                )
-                            )
                             ->required()
                             ->columnSpanFull(),
 
@@ -168,50 +185,5 @@ class PrestasiForm
 
         $ids = $user->pegawai?->pengampus()->pluck('ekstrakurikuler_id') ?? collect();
         return $ids->count() === 1;
-    }
-    private static function getSiswaOptions(?int $ekstrakurikulerId): array
-    {
-        // Jika tidak ada ekstrakurikuler yang dipilih, ambil semua siswa
-        if (!$ekstrakurikulerId) {
-            return Siswa::query()
-                ->orderBy('nama')
-                ->pluck('nama', 'id')
-                ->toArray();
-        }
-
-        // Jika ada ekstrakurikuler, filter hanya siswa yang aktif di ekskul tersebut
-        return Siswa::query()
-
-            ->whereIn(
-
-                'id',
-
-                AnggotaEkskul::query()
-
-                    ->where(
-
-                        'ekstrakurikuler_id',
-
-                        $ekstrakurikulerId
-
-                    )
-
-                    ->where(
-
-                        'status',
-
-                        'aktif'
-
-                    )
-
-                    ->pluck('siswa_id')
-
-            )
-
-            ->orderBy('nama')
-
-            ->pluck('nama', 'id')
-
-            ->toArray();
     }
 }
