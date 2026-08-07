@@ -477,7 +477,7 @@
                             <div
                                 style="position:relative; z-index:1; min-height:70px; display:flex; align-items:center; justify-content:center;">
                                 Disusun oleh,<br>
-                                Pelatih / Pembina Ekstrakurikuler
+                                Pembina Ekstrakurikuler
                             </div>
 
                             <div style="height:70px;"></div>

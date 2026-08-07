@@ -560,14 +560,14 @@
                 MTsN 3 Tulungagung <br> Tahun Pelajaran 2026/2027
             </div>
         </div>
-        @if ($record->isPelatihMerangkapPembina())
+        
             <table class="table-ttd">
 
                 <tr>
 
                     <td width="50%">
-                        Disusun dan Diperiksa oleh,<br>
-                        Pelatih / Pembina Ekstrakurikuler
+                        Disusun oleh,<br>
+                        Pembina Ekstrakurikuler
                     </td>
 
                     <td width="50%">
@@ -580,7 +580,7 @@
 
                 <tr>
 
-                    <td class="ttd-space">{!! $renderTtdPdf($pelatihTtd, $pembinaApproved, -4) !!}</td>
+                    <td class="ttd-space">{!! $renderTtdPdf($pembinaTtd, $pembinaApproved, -4) !!}</td>
 
                     <td class="ttd-space">{!! $renderTtdPdf($wakaTtd, $wakaApproved, 4) !!}</td>
 
@@ -591,7 +591,7 @@
                     <td class="font-bold">
 
                         <u>
-                            {{ $record->pelatih()?->pegawai?->nama ?? '................................' }}
+                            {{ $record->pembina()?->pegawai?->nama ?? '................................' }}
                         </u>
 
                     </td>
@@ -640,45 +640,6 @@
                 </tr>
 
             </table>
-        @else
-            <table class="table-ttd">
-                <tr>
-                    <td width="50%">Disusun oleh,<br>Pelatih</td>
-                    <td width="50%">Diperiksa oleh,<br>Pembina Ekstrakurikuler</td>
-                </tr>
-                <tr>
-                    <td class="ttd-space"></td>
-                    <td class="ttd-space">{!! $renderTtdPdf($pembinaTtd, $pembinaApproved, 4) !!}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">
-                        <u>{{ $record->pelatih()?->pegawai?->nama ?? '................................' }}</u>
-                    </td>
-                    <td class="font-bold">
-                        <u>{{ $record->pembina()?->pegawai?->nama ?? '................................' }}</u>
-                    </td>
-                </tr>
-            </table>
-
-            <table class="table-ttd">
-                <tr>
-                    <td width="50%">Disetujui oleh,<br>Wakil Kepala Madrasah<br>Bidang Kesiswaan</td>
-                    <td width="50%">Mengetahui,<br>Kepala MTsN 3 Tulungagung</td>
-                </tr>
-                <tr>
-                    <td class="ttd-space">{!! $renderTtdPdf($wakaTtd, $wakaApproved, -4) !!}</td>
-                    <td class="ttd-space">{!! $renderTtdPdf($kepalaTtd, $kepalaApproved, 3) !!}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold">
-                        <u>{{ $record->wakaKesiswaan()?->pegawai?->nama ?? '................................' }}</u>
-                    </td>
-                    <td class="font-bold">
-                        <u>{{ $record->kepalaMadrasah()?->pegawai?->nama ?? '................................' }}</u>
-                    </td>
-                </tr>
-            </table>
-        @endif
 
     </div>
 
