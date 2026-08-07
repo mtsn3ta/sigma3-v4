@@ -585,9 +585,8 @@ export default function Prestasi() {
                 )}
             </main>
             {/* =======================================================
-    MODAL DETAIL PRESTASI
+    MODAL DETAIL PRESTASI (POSTER STYLE - SIGMA THEME)
 ======================================================= */}
-
             <AnimatePresence>
                 {selectedAchievement && (
                     <motion.div
@@ -595,133 +594,164 @@ export default function Prestasi() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 p-4 backdrop-blur-md"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 p-2 backdrop-blur-md sm:p-4"
                         onClick={() => setSelectedAchievement(null)}
                     >
                         <motion.div
-                            initial={{ opacity: 0, y: 24, scale: 0.97 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 16, scale: 0.97 }}
-                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{
+                                type: "spring",
+                                damping: 25,
+                                stiffness: 300,
+                            }}
                             onClick={(e) => e.stopPropagation()}
-                            // PERBAIKAN 1: Menambahkan 'flex flex-col' agar kontainer induk bisa membagi tinggi header dan konten secara dinamis
-                            className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/60 bg-white shadow-2xl"
+                            // KONTEMPORER: Menggunakan garis tepi Emerald dan efek cahaya hijau dari brand primary
+                            className="relative flex w-full max-w-3xl flex-col overflow-hidden rounded-3xl border-4 border-emerald-500 bg-slate-900 shadow-[0_0_40px_rgba(5,150,105,0.3)] sm:aspect-4/5"
                         >
-                            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-emerald-400 via-teal-400 to-cyan-400" />
+                            {/* 1. Background Placeholder */}
+                            <div
+                                className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
+                                style={{
+                                    backgroundImage: `url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&q=80')`,
+                                }}
+                            />
+                            {/* Overlay gradasi: Emerald gelap ke Slate */}
+                            <div className="absolute inset-0 bg-linear-to-b from-emerald-950/70 via-slate-900/80 to-slate-950" />
 
-                            {/* Header (Tetap Diam di Atas) */}
-                            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-8 py-6">
-                                <div>
-                                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500">
-                                        Detail Prestasi
-                                    </p>
-                                    <h2 className="mt-2 text-2xl font-black text-slate-900 lg:text-3xl">
-                                        {selectedAchievement.title}
-                                    </h2>
-                                </div>
+                            {/* Tombol Close */}
+                            <button
+                                onClick={() => setSelectedAchievement(null)}
+                                className="absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-slate-800/80 text-white backdrop-blur-md transition-colors hover:bg-emerald-600"
+                            >
+                                ✕
+                            </button>
 
-                                <button
-                                    onClick={() => setSelectedAchievement(null)}
-                                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xl text-slate-500 transition hover:bg-slate-200"
-                                >
-                                    ✕
-                                </button>
-                            </div>
-
-                            {/* Bagian Konten (Diberi Batas Scroll yang Fleksibel) */}
-                            {/* PERBAIKAN 2: Menggunakan 'overflow-y-auto' di sini dikombinasikan dengan flex-1 agar area grid konten bisa digulir ke bawah tanpa terpotong */}
-                            <div className="flex-1 overflow-y-auto p-8">
-                                <div className="grid gap-8 lg:grid-cols-2">
-                                    {/* Foto */}
-                                    <div>
-                                        {selectedAchievement.photo ? (
-                                            <img
-                                                src={selectedAchievement.photo}
-                                                alt={selectedAchievement.title}
-                                                loading="lazy"
-                                                decoding="async"
-                                                className="aspect-4/3 w-full rounded-2xl object-cover shadow-lg"
-                                            />
-                                        ) : (
-                                            <div className="flex aspect-4/3 items-center justify-center rounded-2xl bg-linear-to-br from-emerald-50 to-cyan-50 text-8xl">
-                                                🏆
-                                            </div>
-                                        )}
+                            {/* KONTEN POSTER (Z-Index di atas background) */}
+                            <div className="relative z-10 flex h-full flex-col justify-between overflow-y-auto p-6 sm:overflow-hidden sm:p-8">
+                                {/* BAGIAN ATAS: Judul Selamat & Bangga + Logo */}
+                                <div className="flex w-full items-start justify-between gap-4">
+                                    <div className="flex flex-col items-start">
+                                        {/* Bayangan tulisan diubah menggunakan Accent Color (Sky 500) */}
+                                        <h3 className="text-4xl font-black italic tracking-tighter text-white drop-shadow-[2px_2px_0_#0EA5E9] sm:text-6xl">
+                                            Selamat & <br /> Bangga
+                                        </h3>
+                                        {/* Pita menggunakan warna Emerald */}
+                                        <div className="mt-2 -skew-x-12 border-b-4 border-emerald-400 bg-emerald-900 px-6 py-1 shadow-lg">
+                                            <p className="font-bold uppercase tracking-widest text-emerald-300">
+                                                Atas Prestasi
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    {/* Informasi */}
-                                    <div className="space-y-6">
-                                        <div>
-                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                                Nama Lomba
+                                    {/* LOGO SEKOLAH SIGMA-3 */}
+                                    <div className="hidden items-center gap-3.5 rounded-2xl border border-(--rk-line) bg-(--rk-panel-soft) py-2.5 pl-2.5 pr-5 backdrop-blur-xl sm:flex">
+                                        <div className="relative flex h-[clamp(3rem,7vh,4.25rem)] w-[clamp(3rem,7vh,4.25rem)] items-center justify-center rounded-xl border border-(--rk-line) bg-(--rk-panel)">
+                                            {settings?.logo ? (
+                                                <img
+                                                    src={settings.logo}
+                                                    alt={
+                                                        settings?.school_name ||
+                                                        "Logo Sekolah"
+                                                    }
+                                                    className="h-2/3 w-2/3 object-contain"
+                                                />
+                                            ) : (
+                                                <span className="rk-mono text-lg font-bold text-(--rk-emerald)">
+                                                    S3
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="text-left">
+                                            <div className="rk-mono text-[clamp(1.05rem,2.4vh,1.5rem)] font-bold leading-none tracking-[0.3em] text-(--rk-gold)">
+                                                SIGMA-3
+                                            </div>
+                                            <div className="mt-1.5 text-[clamp(0.62rem,1.4vh,0.85rem)] font-medium uppercase leading-none tracking-[0.28em] text-(--rk-muted)">
+                                                {settings?.school_name ??
+                                                    "Sistem Informasi Global"}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* BAGIAN TENGAH & BAWAH: Layout Grid Dinamis */}
+                                <div className="mt-8 flex h-full flex-col gap-6 sm:mt-0 sm:flex-row sm:items-end sm:justify-between">
+                                    {/* KIRI: Area Foto Siswa & Nama Tag */}
+                                    <div className="flex flex-1 flex-col items-center justify-end sm:items-start">
+                                        {/* Bingkai foto oval atas */}
+                                        <div className="relative z-0 h-64 w-52 shrink-0 overflow-hidden rounded-t-full border-4 border-b-0 border-emerald-500 bg-slate-100 shadow-2xl sm:h-80 sm:w-64">
+                                            {selectedAchievement.photo ? (
+                                                <img
+                                                    src={
+                                                        selectedAchievement.photo
+                                                    }
+                                                    alt="Winner"
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex h-full items-center justify-center bg-linear-to-b from-slate-200 to-slate-400 text-6xl">
+                                                    🏆
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Pita Nama Siswa (Gelap dengan aksen Emerald) */}
+                                        <div className="relative z-10 -mt-6 flex w-full max-w-70 -skew-x-6 flex-col border-2 border-emerald-500 bg-slate-800 p-3 shadow-2xl">
+                                            {selectedAchievement.participants?.map(
+                                                (student) => (
+                                                    <p
+                                                        key={student.id}
+                                                        className="text-center text-lg font-black uppercase leading-tight text-white sm:text-xl"
+                                                    >
+                                                        {student.nama}
+                                                    </p>
+                                                ),
+                                            )}
+                                            {/* Keterangan Tambahan Siswa */}
+                                            <div className="mt-1 bg-emerald-500 py-1 text-center">
+                                                <p className="text-xs font-bold uppercase text-slate-950">
+                                                    Perwakilan Siswa
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* KANAN: Detail Juara (Teks Raksasa) */}
+                                    <div className="flex flex-col items-center pb-4 text-center sm:items-end sm:pb-0 sm:text-right">
+                                        {/* Juara X (Menyesuaikan warna Emerald Gradient ala metalik) */}
+                                        <h2 className="bg-linear-to-b from-emerald-100 via-emerald-500 to-emerald-700 bg-clip-text text-6xl font-black uppercase tracking-tighter text-transparent drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] sm:text-8xl">
+                                            {selectedAchievement.title}
+                                        </h2>
+
+                                        {/* Pita Cabang Lomba (Menggunakan Accent Color Sky 500) */}
+                                        <div className="-mt-2 -skew-x-12 border-y-4 border-sky-300 bg-sky-500 px-8 py-2 shadow-xl sm:mt-0">
+                                            <p className="text-2xl font-black uppercase tracking-wider text-slate-950 sm:text-4xl">
+                                                {selectedAchievement.extracurricular ??
+                                                    "Sekolah"}
                                             </p>
-                                            <p className="mt-1 text-lg font-bold text-slate-900">
+                                        </div>
+
+                                        {/* Detail Nama & Tingkat Lomba (Menggunakan Glass/Background theme) */}
+                                        <div className="mt-4 flex w-full max-w-sm flex-col border border-emerald-500/40 bg-slate-900/80 p-4 shadow-lg backdrop-blur-md sm:max-w-md">
+                                            <p className="text-sm font-bold uppercase text-emerald-400">
+                                                Nomor Lomba / Event
+                                            </p>
+                                            <p className="mt-1 text-xl font-black uppercase text-white sm:text-2xl">
                                                 {
                                                     selectedAchievement.competition
                                                 }
                                             </p>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <GlassCard className="border border-emerald-100 bg-emerald-50/50 p-4">
-                                                <p className="text-xs uppercase tracking-widest text-slate-400">
-                                                    Tingkat
-                                                </p>
-                                                <p className="mt-1 font-bold text-emerald-600">
+                                            <div className="mt-3 flex items-center justify-center gap-2 sm:justify-end">
+                                                <span className="bg-emerald-600 px-3 py-1 text-xs font-bold uppercase text-white">
+                                                    Tingkat{" "}
                                                     {selectedAchievement.level}
-                                                </p>
-                                            </GlassCard>
-
-                                            <GlassCard className="border border-slate-100 bg-slate-50/60 p-4">
-                                                <p className="text-xs uppercase tracking-widest text-slate-400">
-                                                    Tanggal
-                                                </p>
-                                                <p className="mt-1 font-bold text-slate-900">
+                                                </span>
+                                                <span className="border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-bold uppercase text-sky-400">
                                                     {selectedAchievement.date}
-                                                </p>
-                                            </GlassCard>
-                                        </div>
-
-                                        <div>
-                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                                Ekstrakurikuler
-                                            </p>
-                                            <div className="mt-2 inline-flex rounded-full bg-linear-to-r from-emerald-50 to-cyan-50 px-4 py-2 text-sm font-bold text-emerald-600">
-                                                {selectedAchievement.extracurricular ??
-                                                    "Sekolah"}
+                                                </span>
                                             </div>
-                                        </div>
-
-                                        <div>
-                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                                Peserta
-                                            </p>
-                                            <div className="mt-3 flex flex-wrap gap-2">
-                                                {selectedAchievement.participants.map(
-                                                    (student) => (
-                                                        <span
-                                                            key={student.id}
-                                                            className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
-                                                        >
-                                                            {student.nama}
-                                                        </span>
-                                                    ),
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                                Keterangan
-                                            </p>
-                                            <div
-                                                className="prose prose-slate mt-2 max-w-none"
-                                                dangerouslySetInnerHTML={{
-                                                    __html:
-                                                        selectedAchievement.description ||
-                                                        "<p>Tidak ada keterangan.</p>",
-                                                }}
-                                            />
                                         </div>
                                     </div>
                                 </div>
