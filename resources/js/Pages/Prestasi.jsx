@@ -595,200 +595,170 @@ export default function Prestasi() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-2 backdrop-blur-md sm:p-4"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xl"
                         onClick={() => setSelectedAchievement(null)}
                     >
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                            initial={{ opacity: 0, scale: 0.95, y: 15 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 15 }}
                             transition={{
                                 type: "spring",
                                 damping: 25,
                                 stiffness: 300,
                             }}
                             onClick={(e) => e.stopPropagation()}
-                            className="relative flex w-full max-w-lg flex-col overflow-hidden rounded-[28px]"
+                            // Desain kontainer dibuat memanjang (portrait) tanpa banyak border tebal
+                            className="relative flex w-full max-w-[420px] max-h-[90vh] flex-col overflow-hidden rounded-[24px] bg-[#0A1F16] shadow-[0_20px_60px_-15px_rgba(201,162,75,0.15)]"
                             style={{
+                                border: "1px solid rgba(201, 162, 75, 0.2)",
                                 background:
-                                    "linear-gradient(165deg, #155C43 0%, #0B3626 55%, #082A1F 100%)",
-                                border: "1px solid #C9A24B",
-                                boxShadow: "0 30px 60px -20px rgba(0,0,0,0.6)",
+                                    "radial-gradient(120% 100% at 50% 0%, #113826 0%, #06120D 100%)",
                             }}
                         >
-                            {/* font — sebaiknya dipindah ke index.css agar tidak reload tiap buka modal */}
+                            {/* Font Fraunces (Pastikan ini dipindah ke index.css atau _document jika memungkinkan) */}
                             <style>{`
-                                @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-                            `}</style>
+                    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap');
+                `}</style>
 
-                            {/* garis lintasan dekoratif — nuansa track/estafet */}
+                            {/* SVG Dekoratif (Lintasan) - Dibuat sangat halus sebagai watermark di belakang */}
                             <svg
                                 viewBox="0 0 400 400"
-                                className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 opacity-[0.14]"
+                                className="pointer-events-none absolute -right-32 -top-32 z-0 h-[500px] w-[500px] opacity-[0.06]"
                             >
-                                {[60, 100, 140, 180, 220].map((r) => (
+                                {[80, 140, 200, 260, 320].map((r) => (
                                     <circle
                                         key={r}
-                                        cx="400"
-                                        cy="0"
+                                        cx="200"
+                                        cy="200"
                                         r={r}
                                         fill="none"
                                         stroke="#C9A24B"
-                                        strokeWidth="1.5"
+                                        strokeWidth="1"
                                     />
                                 ))}
                             </svg>
 
-                            {/* Tombol Close */}
+                            {/* Tombol Close Elegan */}
                             <button
                                 onClick={() => setSelectedAchievement(null)}
-                                className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full text-sm text-[#F6F1E4] transition-colors hover:bg-white/10"
-                                style={{ background: "rgba(246,241,228,0.12)" }}
+                                className="absolute right-4 top-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-[#C9A24B] backdrop-blur-md transition hover:bg-[#C9A24B] hover:text-black"
                             >
                                 ✕
                             </button>
 
-                            <div className="relative z-10 flex flex-col gap-6 overflow-y-auto p-6 sm:p-8">
-                                {/* BAGIAN ATAS: Judul + Logo */}
-                                <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#C9A24B]">
-                                            Atas Prestasi
-                                        </p>
-                                        <h3
-                                            className="mt-1 text-3xl italic leading-[0.95] text-[#F6F1E4] sm:text-4xl"
-                                            style={{
-                                                fontFamily: "'Fraunces', serif",
-                                                fontWeight: 700,
-                                            }}
-                                        >
-                                            Selamat &amp;
-                                            <br />
-                                            Bangga
-                                        </h3>
-                                        <div className="mt-3 h-px w-16 bg-[#C9A24B]" />
+                            {/* KONTEN UTAMA (Scrollable) */}
+                            <div className="relative z-10 flex flex-col overflow-y-auto custom-scrollbar">
+                                {/* 1. HEADER & LOGO (Tengah, Minimalis) */}
+                                <div className="flex flex-col items-center pt-8 pb-4 text-center">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#1A4D38] to-[#0A1F16] border border-[#C9A24B]/30 shadow-lg">
+                                        {settings?.logo ? (
+                                            <img
+                                                src={settings.logo}
+                                                alt="Logo"
+                                                className="h-3/4 w-3/4 object-contain"
+                                            />
+                                        ) : (
+                                            <span className="text-sm font-bold text-[#C9A24B]">
+                                                S3
+                                            </span>
+                                        )}
                                     </div>
+                                    <p className="mt-4 text-[10px] font-medium uppercase tracking-[0.3em] text-[#C9A24B]/80">
+                                        Penghargaan Prestasi
+                                    </p>
+                                    <h3
+                                        className="mt-1 px-6 text-3xl italic leading-tight text-[#F6F1E4] sm:text-4xl"
+                                        style={{
+                                            fontFamily: "'Fraunces', serif",
+                                            fontWeight: 400,
+                                        }}
+                                    >
+                                        Selamat &amp; Bangga
+                                    </h3>
+                                </div>
 
-                                    {/* LOGO SEKOLAH + LOGO APLIKASI */}
-                                    <div className="hidden shrink-0 items-center gap-3 rounded-2xl border border-[#C9A24B] bg-black/20 px-4 py-2.5 sm:flex">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#C9A24B] bg-[#082A1F]">
-                                                {settings?.logo ? (
-                                                    <img
-                                                        src={settings.logo}
-                                                        alt={
-                                                            settings?.school_name ||
-                                                            "Logo Sekolah"
-                                                        }
-                                                        className="h-2/3 w-2/3 object-contain"
-                                                    />
-                                                ) : (
-                                                    <span className="text-[10px] font-bold text-[#C9A24B]">
-                                                        S3
-                                                    </span>
-                                                )}
+                                {/* 2. HERO IMAGE (Foto proporsional dengan sentuhan gradasi transisi) */}
+                                <div className="relative mx-6 mt-2 overflow-hidden rounded-2xl border border-[#C9A24B]/20 bg-[#06120D] shadow-inner">
+                                    <div className="aspect-[4/3] w-full">
+                                        {selectedAchievement.photo ? (
+                                            <img
+                                                src={selectedAchievement.photo}
+                                                alt="Perwakilan siswa"
+                                                className="h-full w-full object-cover opacity-90 transition-opacity hover:opacity-100"
+                                            />
+                                        ) : (
+                                            <div className="flex h-full items-center justify-center text-6xl opacity-50">
+                                                🏅
                                             </div>
-
-                                            {settings?.logo_resmi && (
-                                                <>
-                                                    <div className="h-6 w-px bg-[#C9A24B]/40" />
-                                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#C9A24B] bg-[#082A1F]">
-                                                        <img
-                                                            src={
-                                                                settings.logo_resmi
-                                                            }
-                                                            alt="Logo Aplikasi"
-                                                            className="h-2/3 w-2/3 object-contain"
-                                                        />
-                                                    </div>
-                                                </>
-                                            )}
-                                        </div>
-
-                                        <div>
-                                            <div className="text-sm font-bold leading-none tracking-[0.25em] text-[#C9A24B]">
-                                                SIGMA-3
-                                            </div>
-                                            <div className="mt-1 text-[10px] uppercase leading-none tracking-[0.2em] text-[#F6F1E4]/60">
-                                                {settings?.school_name ??
-                                                    "Sistem Informasi Global"}
-                                            </div>
-                                        </div>
+                                        )}
+                                    </div>
+                                    {/* Aksen pita kecil di atas foto */}
+                                    <div className="absolute right-0 top-0 rounded-bl-xl bg-[#C9A24B] px-3 py-1">
+                                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#06120D]">
+                                            {selectedAchievement.extracurricular ??
+                                                "Sekolah"}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* JUDUL PRESTASI */}
-                                <div>
+                                {/* 3. DETAIL PRESTASI (Editorial Style - Garis Tipis, Tanpa Background Kotak) */}
+                                <div className="flex flex-col px-8 pb-10 pt-6 text-center">
                                     <h2
-                                        className="text-4xl italic leading-[0.92] sm:text-5xl"
+                                        className="text-2xl leading-snug sm:text-3xl"
                                         style={{
                                             fontFamily: "'Fraunces', serif",
                                             fontWeight: 700,
                                             background:
-                                                "linear-gradient(180deg, #EBD48A, #C9A24B 60%, #8A6A28)",
+                                                "linear-gradient(180deg, #F6F1E4, #C9A24B 80%)",
                                             WebkitBackgroundClip: "text",
                                             WebkitTextFillColor: "transparent",
                                         }}
                                     >
                                         {selectedAchievement.title}
                                     </h2>
-                                    <span className="mt-3 inline-block rounded-full bg-[#C9A24B] px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#0B3626]">
-                                        {selectedAchievement.extracurricular ??
-                                            "Sekolah"}
-                                    </span>
-                                </div>
 
-                                {/* FOTO SISWA */}
-                                <div className="flex items-end gap-5">
-                                    <div className="relative h-40 w-32 shrink-0 overflow-hidden rounded-t-full border border-b-0 border-[#C9A24B] bg-[#F6F1E4] sm:h-48 sm:w-40">
-                                        {selectedAchievement.photo ? (
-                                            <img
-                                                src={selectedAchievement.photo}
-                                                alt="Perwakilan siswa"
-                                                className="h-full w-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="flex h-full items-center justify-center bg-linear-to-b from-[#F6F1E4] to-[#D8CFB6] text-5xl">
-                                                🏅
-                                            </div>
-                                        )}
+                                    {/* Pemisah Tipis */}
+                                    <div className="mx-auto my-5 flex w-full max-w-[200px] items-center justify-center gap-3 opacity-60">
+                                        <div className="h-px w-full bg-gradient-to-r from-transparent to-[#C9A24B]" />
+                                        <div className="h-1.5 w-1.5 rotate-45 border border-[#C9A24B]" />
+                                        <div className="h-px w-full bg-gradient-to-l from-transparent to-[#C9A24B]" />
                                     </div>
-                                </div>
 
-                                {/* NAMA SISWA */}
-                                <div className="rounded-xl bg-[#F6F1E4] px-4 py-3">
-                                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7C3B2C]">
-                                        Perwakilan Siswa
-                                    </p>
-                                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                                        {selectedAchievement.participants?.map(
-                                            (student) => (
-                                                <p
-                                                    key={student.id}
-                                                    className="text-sm font-semibold text-[#12241C]"
-                                                >
-                                                    {student.nama}
-                                                </p>
-                                            ),
-                                        )}
+                                    {/* Nama Siswa */}
+                                    <div className="mb-4">
+                                        <p className="mb-1.5 text-[9px] font-medium uppercase tracking-[0.2em] text-[#C9A24B]/70">
+                                            Diberikan Kepada
+                                        </p>
+                                        <div className="flex flex-col gap-1">
+                                            {selectedAchievement.participants?.map(
+                                                (student) => (
+                                                    <p
+                                                        key={student.id}
+                                                        className="text-lg font-semibold text-[#F6F1E4] tracking-wide"
+                                                    >
+                                                        {student.nama}
+                                                    </p>
+                                                ),
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* DETAIL EVENT */}
-                                <div className="rounded-xl border border-[#C9A24B]/35 bg-black/20 p-4">
-                                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#C9A24B]">
-                                        Nomor Lomba / Event
-                                    </p>
-                                    <p className="mt-1.5 text-base font-semibold leading-snug text-[#F6F1E4]">
-                                        {selectedAchievement.competition}
-                                    </p>
-                                    <div className="mt-3 flex items-center gap-2">
-                                        <span className="rounded-full bg-[#C9A24B] px-3 py-1 text-[11px] font-semibold uppercase text-[#0B3626]">
-                                            Tingkat {selectedAchievement.level}
-                                        </span>
-                                        <span className="rounded-full border border-[#F6F1E4]/35 px-3 py-1 text-[11px] font-semibold uppercase text-[#F6F1E4]">
-                                            {selectedAchievement.date}
-                                        </span>
+                                    {/* Detail Event */}
+                                    <div className="mt-2 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-[#C9A24B]/15 bg-[#113826]/30 p-3">
+                                        <p className="text-[11px] font-medium uppercase tracking-widest text-[#C9A24B]">
+                                            {selectedAchievement.competition}
+                                        </p>
+                                        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-[#F6F1E4]/70">
+                                            <span>
+                                                Tingkat{" "}
+                                                {selectedAchievement.level}
+                                            </span>
+                                            <span className="h-2 w-px bg-[#C9A24B]/50" />
+                                            <span>
+                                                {selectedAchievement.date}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
