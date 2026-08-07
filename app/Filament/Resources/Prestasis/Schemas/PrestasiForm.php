@@ -98,11 +98,11 @@ class PrestasiForm
                                     }
 
                                     return $query->whereIn(
-                                        'id',
+                                        'siswa.id', // <--- UBAH BAGIAN INI (tambahkan siswa.)
                                         AnggotaEkskul::query()
                                             ->where('ekstrakurikuler_id', $ekstrakurikulerId)
                                             ->where('status', 'aktif')
-                                            ->select('siswa_id') // Gunakan select agar query database lebih efisien
+                                            ->select('siswa_id')
                                     );
                                 }
                             )
