@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use App\Models\IzinKeluar;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 class IzinKeluarsTable
@@ -181,16 +182,21 @@ class IzinKeluarsTable
 
             ->toolbarActions([
                 BulkActionGroup::make([
+
+                    // Tombol Hapus Massal
+                    DeleteBulkAction::make(),
+
+                    // Tombol Cetak Massal
                     BulkAction::make('cetak_kolektif')
                         ->label('Cetak Dispensasi Massal')
                         ->icon('heroicon-o-printer')
                         ->color('primary')
-                        // HAPUS \Illuminate\Database\Eloquent\ nya, cukup Collection
                         ->action(function (Collection $records) {
                             $ids = $records->pluck('id')->join(',');
                             return redirect()->route('thermal.izin-keluar.kolektif', ['ids' => $ids]);
                         })
                         ->deselectRecordsAfterCompletion(),
+
                 ]),
             ]);
     }
