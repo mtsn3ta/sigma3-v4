@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 class IzinKeluarForm
@@ -21,11 +22,18 @@ class IzinKeluarForm
                 Section::make('Data Izin Keluar')
                     ->schema([
 
-                        DatePicker::make('tanggal')
-                            ->label('Tanggal')
-                            // PERBAIKAN 1: Mengunci tanggal default hari ini ke WIB (Tanggal 13)
-                            ->default(now('Asia/Jakarta')->toDateString())
-                            ->required(),
+                        Grid::make(2)->schema([
+                            DatePicker::make('tanggal')
+                                ->label('Tanggal (Mulai)')
+                                ->default(now('Asia/Jakarta')->toDateString())
+                                ->required(),
+
+                            DatePicker::make('tanggal_selesai')
+                                ->label('Sampai Tanggal (Opsional)')
+                                ->placeholder('Pilih jika lebih dari 1 hari')
+                                ->minDate(fn(callable $get) => $get('tanggal')) // Tdk boleh sblm tgl mulai
+                                ->nullable(),
+                        ]),
 
                         Select::make('kelas_id')
                             ->label('Kelas')
@@ -38,13 +46,16 @@ class IzinKeluarForm
                             ->required(),
 
                         Select::make('siswa_id')
-                            ->label('Siswa')
+                            ->label('Siswa (Bisa pilih lebih dari satu untuk Dispensasi)')
                             ->live()
                             ->options(
                                 fn($get) => SiswaHelper::byKelas(
                                     $get('kelas_id')
                                 )
                             )
+                            // PERBAIKAN: Mode multiple hanya aktif di halaman Create (Tambah),
+                            // Di halaman Edit kembali jadi single agar tidak error.
+                            ->multiple(fn(string $context): bool => $context === 'create')
                             ->searchable()
                             ->preload()
                             ->required(),

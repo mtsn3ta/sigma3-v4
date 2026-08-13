@@ -12,35 +12,24 @@ class IzinKeluar extends Model
     protected $table = 'izin_keluar';
 
     protected $fillable = [
-
         'siswa_id',
-
         'pegawai_id',
-
         'tanggal',
-
+        'tanggal_selesai', // <--- TAMBAHAN BARU
         'jam_keluar',
-
         'jam_kembali',
-
         'waktu_cetak',
-
         'tujuan',
-
         'keperluan',
-
         'status_proses',
-
     ];
 
     protected function casts(): array
     {
         return [
-
             'tanggal' => 'date',
-
+            'tanggal_selesai' => 'date', // <--- TAMBAHAN BARU
             'waktu_cetak' => 'datetime',
-
         ];
     }
     public function getJamKeluarFormattedAttribute(): ?string
