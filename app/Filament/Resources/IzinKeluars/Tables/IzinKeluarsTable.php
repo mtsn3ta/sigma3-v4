@@ -179,23 +179,19 @@ class IzinKeluarsTable
 
             ])
 
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
-                    // Aksi Cetak Kolektif
                     BulkAction::make('cetak_kolektif')
                         ->label('Cetak Dispensasi Massal')
                         ->icon('heroicon-o-printer')
                         ->color('primary')
-                        ->openUrlInNewTab()
-                        // Mengirimkan array ID siswa yang diceklis via URL
-                        ->url(fn(Collection $records) => route(
-                            'thermal.izin-keluar.kolektif',
-                            ['ids' => $records->pluck('id')->join(',')]
-                        ))
+                        // HAPUS \Illuminate\Database\Eloquent\ nya, cukup Collection
+                        ->action(function (Collection $records) {
+                            $ids = $records->pluck('id')->join(',');
+                            return redirect()->route('thermal.izin-keluar.kolektif', ['ids' => $ids]);
+                        })
                         ->deselectRecordsAfterCompletion(),
                 ]),
-            ])
-
-            ->toolbarActions([]);
+            ]);
     }
 }
