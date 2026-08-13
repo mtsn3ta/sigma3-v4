@@ -50,9 +50,13 @@
         <h3 style="font-size: 1.25rem; font-weight: 700; margin: 0.75rem 0 0 0; color: #111827;">
             {{ strtoupper($record->ekstrakurikuler->nama) }}
         </h3>
+
+        {{-- PERBAIKAN: Tambahkan (int) di bawah ini --}}
         <p style="font-size: 1rem; font-weight: 500; margin: 0.25rem 0 0 0; color: #374151;">
-            Bulan {{ \Carbon\Carbon::create()->month($record->bulan)->translatedFormat('F') }} {{ $record->tahun }}
+            Bulan {{ \Carbon\Carbon::create()->month((int) $record->bulan)->translatedFormat('F') }}
+            {{ $record->tahun }}
         </p>
+
         <p style="font-size: 0.9375rem; margin: 0.75rem 0 0 0; color: #4b5563;">
             MTsN 3 Tulungagung <br>
             Tahun Pelajaran 2026/2027
