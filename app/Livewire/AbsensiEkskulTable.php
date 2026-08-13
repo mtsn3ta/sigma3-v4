@@ -38,22 +38,13 @@ class AbsensiEkskulTable extends Component implements HasActions, HasSchemas
     protected function loadAnggota(): void
     {
         $anggota = AnggotaEkskul::query()
-
-            ->where(
-                'ekstrakurikuler_id',
-                $this->sesi->ekstrakurikuler_id
-            )
-
-            ->where(
-                'status',
-                'aktif'
-            )
-
+            ->where('ekstrakurikuler_id', $this->sesi->ekstrakurikuler_id)
+            ->where('status', 'aktif')
+            // TAMBAHKAN BARIS INI: Filter berdasarkan Tahun Ajaran Aktif
+            ->where('tahun_ajaran_id', \App\Support\TahunAjaranHelper::aktifId())
             ->with('siswa')
-
             ->orderBy('tanggal_daftar')
             ->orderBy('id')
-
             ->get();
 
         $kehadiran = KehadiranEkskul::query()

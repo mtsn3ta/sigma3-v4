@@ -1,9 +1,12 @@
 @php
-
     use App\Support\LaporanBulananHelper;
 
     $statistik = LaporanBulananHelper::statistik($record);
 
+    // LOGIKA TAHUN PELAJARAN DINAMIS BERDASARKAN BULAN LAPORAN
+    $bln = (int) $record->bulan;
+    $thn = (int) $record->tahun;
+    $tapelLaporan = $bln >= 7 ? $thn . '/' . ($thn + 1) : $thn - 1 . '/' . $thn;
 @endphp
 <x-filament-panels::page>
 
@@ -60,14 +63,9 @@
 
                 </div>
 
-                <div style="
-        font-size:18px;
-        margin-top:5px;
-    ">
-
-                    Tahun Pelajaran
-                    {{ \App\Support\SettingHelper::tahunAjaranLabel() }}
-
+                <div style="font-size:18px; margin-top:5px;">
+                    {{-- UBAH PEMANGGILAN TAHUN PELAJARAN MENJADI VARIABEL BARU --}}
+                    Tahun Pelajaran {{ $tapelLaporan }}
                 </div>
 
             </div>
