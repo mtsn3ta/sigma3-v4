@@ -8,6 +8,9 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Models\IzinKeluar;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
 
 class IzinKeluarsTable
 {
@@ -28,8 +31,19 @@ class IzinKeluarsTable
                     ->badge(),
 
                 TextColumn::make('tanggal')
-                    ->label('Tanggal')
-                    ->date('d M Y')
+                    ->label('Waktu Izin')
+                    // Format menggunakan closure agar bisa mengecek tanggal_selesai
+                    ->formatStateUsing(function (IzinKeluar $record) {
+                        $mulai = $record->tanggal->translatedFormat('d M Y');
+
+                        // Jika ada tanggal_selesai dan tanggalnya berbeda dengan tanggal mulai
+                        if ($record->tanggal_selesai && !$record->tanggal->isSameDay($record->tanggal_selesai)) {
+                            $selesai = $record->tanggal_selesai->translatedFormat('d M Y');
+                            return "{$mulai} s.d. {$selesai}";
+                        }
+
+                        return $mulai;
+                    })
                     ->sortable(),
 
                 TextColumn::make('jam_keluar_formatted')
@@ -110,14 +124,14 @@ class IzinKeluarsTable
                     ->modalDescription(function (IzinKeluar $record): string {
 
                         return <<<TEXT
-Nama      : {$record->siswa->nama}
+                        Nama      : {$record->siswa->nama}
 
-Kelas     : {$record->siswa->nama_kelas_aktif}
+                        Kelas     : {$record->siswa->nama_kelas_aktif}
 
-Jam Keluar: {$record->jam_keluar_formatted}
+                        Jam Keluar: {$record->jam_keluar_formatted}
 
-Tekan "Konfirmasi" jika siswa telah kembali ke madrasah.
-TEXT;
+                        Tekan "Konfirmasi" jika siswa telah kembali ke madrasah.
+                        TEXT;
                     })
                     ->modalSubmitActionLabel('Konfirmasi')
                     ->action(function (IzinKeluar $record) {
@@ -138,14 +152,14 @@ TEXT;
                     ->modalDescription(function (IzinKeluar $record): string {
 
                         return <<<TEXT
-Nama      : {$record->siswa->nama}
+                        Nama      : {$record->siswa->nama}
 
-Kelas     : {$record->siswa->nama_kelas_aktif}
+                        Kelas     : {$record->siswa->nama_kelas_aktif}
 
-Jam Keluar: {$record->jam_keluar_formatted}
+                        Jam Keluar: {$record->jam_keluar_formatted}
 
-Gunakan opsi ini apabila siswa tidak kembali ke madrasah pada hari yang sama.
-TEXT;
+                        Gunakan opsi ini apabila siswa tidak kembali ke madrasah pada hari yang sama.
+                        TEXT;
                     })
                     ->modalSubmitActionLabel('Konfirmasi')
                     ->action(function (IzinKeluar $record) {
@@ -163,6 +177,23 @@ TEXT;
                             && blank($record->waktu_cetak)
                     ),
 
+            ])
+
+            ->bulkActions([
+                BulkActionGroup::make([
+                    // Aksi Cetak Kolektif
+                    BulkAction::make('cetak_kolektif')
+                        ->label('Cetak Dispensasi Massal')
+                        ->icon('heroicon-o-printer')
+                        ->color('primary')
+                        ->openUrlInNewTab()
+                        // Mengirimkan array ID siswa yang diceklis via URL
+                        ->url(fn(Collection $records) => route(
+                            'thermal.izin-keluar.kolektif',
+                            ['ids' => $records->pluck('id')->join(',')]
+                        ))
+                        ->deselectRecordsAfterCompletion(),
+                ]),
             ])
 
             ->toolbarActions([]);

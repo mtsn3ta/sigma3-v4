@@ -27,6 +27,7 @@ use App\Http\Controllers\ParentPortalController;
 use App\Http\Controllers\ParentLeaveRequestController;
 use App\Http\Controllers\Thermal\IzinKeluarBluetoothPrintController;
 use App\Http\Controllers\Thermal\TugasGuruIzinBluetoothPrintController;
+use App\Http\Controllers\Thermal\IzinKeluarKolektifPrintController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
@@ -99,6 +100,11 @@ Route::middleware(['auth'])->group(function () {
     )->name('thermal.izin-keluar');
 
     Route::get(
+        '/thermal/izin-keluar-kolektif',
+        IzinKeluarKolektifPrintController::class
+    )->name('thermal.izin-keluar.kolektif');
+
+    Route::get(
         '/thermal/tugas-guru-izin/{tugasGuruIzin}',
         TugasGuruIzinPrintController::class
     )->name('thermal.tugas-guru-izin');
@@ -112,7 +118,7 @@ Route::middleware(['auth'])->group(function () {
         '/thermal/tugas-guru-izin/{tugasGuruIzin}/bluetooth',
         TugasGuruIzinBluetoothPrintController::class
     )->name('thermal.tugas-guru-izin.bluetooth');
-    
+
     Route::get('/admin/whatsapp/qr', [\App\Http\Controllers\Admin\WhatsAppQrController::class, 'show'])
         ->name('admin.whatsapp.qr');
 });
@@ -153,15 +159,15 @@ Route::get('/privacy-policy', function () {
     <div style='font-family: sans-serif; max-width: 800px; margin: 40px auto; line-height: 1.6; color: #333;'>
         <h1 style='color: #2E7D32;'>Privacy Policy for Sigma3 Print</h1>
         <p><strong>Effective Date:</strong> " . date('Y-m-d') . "</p>
-        
+
         <p>The <strong>Sigma3 Print</strong> application is developed internally for MTsN 3 Tulungagung. This application is designed solely as a utility tool to bridge our internal web information system (SIGMA-3) with a local thermal Bluetooth printer.</p>
-        
+
         <h2 style='color: #2E7D32;'>Data Collection and Usage</h2>
         <p>This application <strong>does not</strong> collect, store, share, transmit, or monetize any personal user data, analytics, or location information to any external servers.</p>
-        
+
         <h2 style='color: #2E7D32;'>Permissions Requested</h2>
         <p>The app only requires standard Bluetooth permissions (such as BLUETOOTH and BLUETOOTH_CONNECT) strictly for the local operational purpose of finding and communicating with a paired thermal printer to print receipts.</p>
-        
+
         <h2 style='color: #2E7D32;'>Contact Us</h2>
         <p>If you have any questions or concerns regarding this Privacy Policy, please contact the IT Administrator of MTsN 3 Tulungagung.</p>
     </div>
