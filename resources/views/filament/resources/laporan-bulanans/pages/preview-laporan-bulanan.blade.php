@@ -90,23 +90,19 @@
 
                 <div
                     style="
-                    font-size:22px;
-                    margin-top:12px;
-                    font-weight:bold;
-                    text-transform:uppercase;
-                ">
+    font-size:22px;
+    margin-top:12px;
+    font-weight:bold;
+    text-transform:uppercase;
+">
                     <h2 class="text-xl">
-
                         {{ $record->ekstrakurikuler->nama }}
-
                     </h2>
 
                     <p>
-
-                        {{ \Carbon\Carbon::create()->month($record->bulan)->translatedFormat('F') }}
-
+                        {{-- TAMBAHKAN (int) SEBELUM $record->bulan --}}
+                        {{ \Carbon\Carbon::create()->month((int) $record->bulan)->translatedFormat('F') }}
                         {{ $record->tahun }}
-
                     </p>
                 </div>
 

@@ -609,7 +609,7 @@ export default function Prestasi() {
                             }}
                             onClick={(e) => e.stopPropagation()}
                             // Desain kontainer dibuat memanjang (portrait) tanpa banyak border tebal
-                            className="relative flex w-full max-w-[420px] max-h-[90vh] flex-col overflow-hidden rounded-[24px] bg-[#0A1F16] shadow-[0_20px_60px_-15px_rgba(201,162,75,0.15)]"
+                            className="relative flex w-full max-w-105 max-h-[90vh] flex-col overflow-hidden rounded-3xl bg-[#0A1F16] shadow-[0_20px_60px_-15px_rgba(201,162,75,0.15)]"
                             style={{
                                 border: "1px solid rgba(201, 162, 75, 0.2)",
                                 background:
@@ -624,7 +624,7 @@ export default function Prestasi() {
                             {/* SVG Dekoratif (Lintasan) - Dibuat sangat halus sebagai watermark di belakang */}
                             <svg
                                 viewBox="0 0 400 400"
-                                className="pointer-events-none absolute -right-32 -top-32 z-0 h-[500px] w-[500px] opacity-[0.06]"
+                                className="pointer-events-none absolute -right-32 -top-32 z-0 h-125 w-125 opacity-[0.06]"
                             >
                                 {[80, 140, 200, 260, 320].map((r) => (
                                     <circle
@@ -651,7 +651,7 @@ export default function Prestasi() {
                             <div className="relative z-10 flex flex-col overflow-y-auto custom-scrollbar">
                                 {/* 1. HEADER & LOGO (Tengah, Minimalis) */}
                                 <div className="flex flex-col items-center pt-8 pb-4 text-center">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#1A4D38] to-[#0A1F16] border border-[#C9A24B]/30 shadow-lg">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-[#1A4D38] to-[#0A1F16] border border-[#C9A24B]/30 shadow-lg">
                                         {settings?.logo ? (
                                             <img
                                                 src={settings.logo}
@@ -680,7 +680,7 @@ export default function Prestasi() {
 
                                 {/* 2. HERO IMAGE (Foto proporsional dengan sentuhan gradasi transisi) */}
                                 <div className="relative mx-6 mt-2 overflow-hidden rounded-2xl border border-[#C9A24B]/20 bg-[#06120D] shadow-inner">
-                                    <div className="aspect-[4/3] w-full">
+                                    <div className="aspect-4/3 w-full">
                                         {selectedAchievement.photo ? (
                                             <img
                                                 src={selectedAchievement.photo}
@@ -719,10 +719,10 @@ export default function Prestasi() {
                                     </h2>
 
                                     {/* Pemisah Tipis */}
-                                    <div className="mx-auto my-5 flex w-full max-w-[200px] items-center justify-center gap-3 opacity-60">
-                                        <div className="h-px w-full bg-gradient-to-r from-transparent to-[#C9A24B]" />
+                                    <div className="mx-auto my-5 flex w-full max-w-50 items-center justify-center gap-3 opacity-60">
+                                        <div className="h-px w-full bg-linear-to-r from-transparent to-[#C9A24B]" />
                                         <div className="h-1.5 w-1.5 rotate-45 border border-[#C9A24B]" />
-                                        <div className="h-px w-full bg-gradient-to-l from-transparent to-[#C9A24B]" />
+                                        <div className="h-px w-full bg-linear-to-l from-transparent to-[#C9A24B]" />
                                     </div>
 
                                     {/* Nama Siswa */}
