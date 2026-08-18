@@ -28,9 +28,11 @@ use App\Http\Controllers\ParentLeaveRequestController;
 use App\Http\Controllers\Thermal\IzinKeluarBluetoothPrintController;
 use App\Http\Controllers\Thermal\TugasGuruIzinBluetoothPrintController;
 use App\Http\Controllers\Thermal\IzinKeluarKolektifPrintController;
+use App\Http\Controllers\VerifikasiController;
 
 Route::get('/', LandingController::class)
     ->name('landing');
+Route::get('/verifikasi/pejabat', [VerifikasiController::class, 'pejabat'])->name('verifikasi.pejabat');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
