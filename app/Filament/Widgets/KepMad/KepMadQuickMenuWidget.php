@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets\KepMad;
 
+use App\Filament\Pages\MonitoringUploadGuru;
 use App\Filament\Resources\LaporanBulanans\LaporanBulananResource;
 use App\Filament\Resources\LaporanKegiatans\LaporanKegiatanResource;
 use App\Filament\Resources\Prestasis\PrestasiResource;
@@ -32,6 +33,7 @@ class KepMadQuickMenuWidget extends Widget
             'headerIcon' => 'heroicon-o-shield-check',
             'theme' => 'emerald',
             'items' => [
+                ['label' => 'Monitoring Upload Guru', 'icon' => 'heroicon-o-cloud-arrow-up', 'url' => MonitoringUploadGuru::getUrl()],
                 ['label' => 'Approval Proposal', 'icon' => 'heroicon-o-document-check', 'url' => ProposalKegiatanResource::getUrl()],
                 ['label' => 'Approval Laporan', 'icon' => 'heroicon-o-clipboard-document-check', 'url' => LaporanKegiatanResource::getUrl()],
                 ['label' => 'Laporan Bulanan', 'icon' => 'heroicon-o-calendar-days', 'url' => LaporanBulananResource::getUrl()],

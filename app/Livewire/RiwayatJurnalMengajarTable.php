@@ -3,8 +3,11 @@
 namespace App\Livewire;
 
 use App\Models\JurnalMengajar;
+use App\Models\Kelas;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
@@ -101,6 +104,14 @@ class RiwayatJurnalMengajarTable extends Component implements HasActions, HasSch
                     ->icon(fn($state) => $state == 0 ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle')
                     ->alignCenter(),
 
+                // === Preview dokumentasi KBM (foto/video) ===
+                Tables\Columns\ImageColumn::make('dokumentasi_foto')
+                    ->label('Dokumentasi')
+                    ->disk('public')
+                    ->square()
+                    ->size(44)
+                    ->toggleable(),
+
             ])
 
             ->filters([
@@ -156,6 +167,18 @@ class RiwayatJurnalMengajarTable extends Component implements HasActions, HasSch
 
             ->actions([
 
+                Action::make('dokumentasi')
+                    ->label('Dokumentasi')
+                    ->icon('heroicon-o-camera')
+                    ->color('info')
+                    ->button()
+                    ->tooltip('Lihat foto/video kegiatan KBM')
+                    ->visible(fn(JurnalMengajar $record) => $record->dokumentasi_foto || $record->dokumentasi_video)
+                    ->modalHeading(fn(JurnalMengajar $record) => 'Dokumentasi KBM — ' . $record->kelas?->nama_kelas)
+                    ->modalContent(fn(JurnalMengajar $record) => view('filament.modals.jurnal-dokumentasi', ['record' => $record]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup'),
+
                 Action::make('edit')
                     ->label('Edit')
                     ->icon('heroicon-o-pencil-square')
@@ -190,6 +213,39 @@ class RiwayatJurnalMengajarTable extends Component implements HasActions, HasSch
                     ->icon('heroicon-o-plus-circle')
                     ->color('primary')
                     ->action(fn() => $this->dispatch('tambah-jurnal')),
+
+                Action::make('exportPdf')
+                    ->label('Export PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('danger')
+                    ->modalHeading('Export Jurnal Mengajar (PDF)')
+                    ->modalDescription('Pilih periode (dan kelas bila perlu), lalu file PDF akan diunduh.')
+                    ->modalSubmitActionLabel('Unduh PDF')
+                    ->form([
+                        DatePicker::make('tanggal_mulai')
+                            ->label('Tanggal Mulai')
+                            ->native(false)
+                            ->default(now('Asia/Jakarta')->startOfMonth()->toDateString())
+                            ->required(),
+                        DatePicker::make('tanggal_selesai')
+                            ->label('Tanggal Selesai')
+                            ->native(false)
+                            ->default(now('Asia/Jakarta')->toDateString())
+                            ->required(),
+                        Select::make('kelas_id')
+                            ->label('Kelas (opsional)')
+                            ->placeholder('Semua kelas')
+                            ->native(false)
+                            ->searchable()
+                            ->options(Kelas::query()->orderBy('nama_kelas')->pluck('nama_kelas', 'id')),
+                    ])
+                    ->action(function (array $data) {
+                        $this->redirect(route('print.jurnal-guru', [
+                            'tanggal_mulai'   => $data['tanggal_mulai'],
+                            'tanggal_selesai' => $data['tanggal_selesai'],
+                            'kelas_id'        => $data['kelas_id'] ?: null,
+                        ]));
+                    }),
             ])
 
             // === Empty state yang mengarahkan aksi, bukan cuma teks kosong ===

@@ -122,6 +122,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\KepMad\KepMadInformasiWidget::class,
                 \App\Filament\Widgets\KepMad\KepMadQuickMenuWidget::class,
                 \App\Filament\Widgets\KepMad\KepMadTugasGuruWidget::class,
+                \App\Filament\Widgets\KepMad\KepMadUploadStatsWidget::class,
                 // Waka Kesiswaan
                 \App\Filament\Widgets\Waka\WakaStatsWidget::class,
                 \App\Filament\Widgets\Waka\WakaApprovalWidget::class,
@@ -138,6 +139,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\Guru\GuruStatsWidget::class,
                 \App\Filament\Widgets\Guru\GuruJurnalWidget::class,
                 \App\Filament\Widgets\Guru\GuruTugasIzinWidget::class,
+                \App\Filament\Widgets\Guru\GuruUmpanBalikWidget::class,
                 // Guru Piket
                 \App\Filament\Widgets\Piket\PiketStatsWidget::class,
                 \App\Filament\Widgets\Piket\PiketKehadiranWidget::class,

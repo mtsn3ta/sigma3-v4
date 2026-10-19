@@ -89,4 +89,24 @@ class Pegawai extends Model
         // Menggunakan hasMany agar bisa menampilkan semua mapel yang diajar
         return $this->hasMany(PlotingGuru::class, 'pegawai_id');
     }
+
+    public function perangkatPembelajaran(): HasMany
+    {
+        return $this->hasMany(PerangkatPembelajaran::class, 'pegawai_id');
+    }
+
+    public function daftarNilai(): HasMany
+    {
+        return $this->hasMany(DaftarNilai::class, 'pegawai_id');
+    }
+
+    public function jurnalMengajar(): HasMany
+    {
+        return $this->hasMany(JurnalMengajar::class, 'pegawai_id');
+    }
+
+    public function umpanBalikGuru(): HasMany
+    {
+        return $this->hasMany(UmpanBalikGuru::class, 'pegawai_id');
+    }
 }

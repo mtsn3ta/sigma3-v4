@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class JurnalMengajar extends Model
 {
@@ -28,6 +29,10 @@ class JurnalMengajar extends Model
         'materi',
 
         'catatan',
+
+        'dokumentasi_foto',
+
+        'dokumentasi_video',
 
     ];
 
@@ -62,6 +67,14 @@ class JurnalMengajar extends Model
         return $this->hasMany(
             KehadiranPembelajaran::class
         );
+    }
+
+    /**
+     * Catatan / umpan balik dari Kepala Madrasah atas jurnal ini.
+     */
+    public function umpanBalik(): MorphMany
+    {
+        return $this->morphMany(UmpanBalikGuru::class, 'referensi');
     }
 
     /*

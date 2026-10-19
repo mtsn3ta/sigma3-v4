@@ -13,6 +13,7 @@ use App\Http\Controllers\PrintMonitoringTugasGuruIzinController;
 use App\Http\Controllers\PrintMonitoringIzinKeluarController;
 use App\Http\Controllers\PrintMonitoringPermasalahanController;
 use App\Http\Controllers\PrintMonitoringEkstrakurikulerController;
+use App\Http\Controllers\PrintJurnalGuruController;
 use App\Http\Controllers\Frontend\LandingController;
 use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\EkstrakurikulerController;
@@ -156,6 +157,12 @@ Route::get(
     '/print/monitoring-ekstrakurikuler',
     PrintMonitoringEkstrakurikulerController::class
 )->name('print.monitoring-ekstrakurikuler');
+Route::middleware(['auth'])
+    ->get(
+        '/print/jurnal-guru',
+        PrintJurnalGuruController::class
+    )
+    ->name('print.jurnal-guru');
 Route::get('/privacy-policy', function () {
     return "
     <div style='font-family: sans-serif; max-width: 800px; margin: 40px auto; line-height: 1.6; color: #333;'>

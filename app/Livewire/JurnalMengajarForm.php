@@ -10,6 +10,7 @@ use App\Models\JadwalPelajaran;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -92,6 +93,8 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
             'mapel' => $this->record->mapel,
             'materi' => $this->record->materi,
             'catatan' => $this->record->catatan,
+            'dokumentasi_foto' => $this->record->dokumentasi_foto,
+            'dokumentasi_video' => $this->record->dokumentasi_video,
             'kehadiran_pembelajaran' => $this->record->kehadiranPembelajaran->map(fn($item) => [
                 'siswa_id' => $item->siswa_id,
                 'status' => $item->status,
@@ -561,6 +564,25 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                             ->extraInputAttributes(['style' => 'font-size: 1.1rem; padding: 0.85rem 1rem;']),
                     ])
                     ->visible(fn() => !$this->isLocked),
+
+                Section::make('Dokumentasi KBM (Foto / Video)')
+                    ->icon('heroicon-o-camera')
+                    ->collapsible()
+                    ->schema([
+                        FileUpload::make('dokumentasi_foto')
+                            ->label('Foto Kegiatan KBM')
+                            ->image()
+                            ->disk('public')
+                            ->directory('jurnal/foto')
+                            ->maxSize(5120),
+                        FileUpload::make('dokumentasi_video')
+                            ->label('Video Kegiatan KBM (Opsional)')
+                            ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-m4v'])
+                            ->disk('public')
+                            ->directory('jurnal/video')
+                            ->maxSize(20480),
+                    ])
+                    ->visible(fn() => !$this->isLocked),
             ])
             ->statePath('data');
     }
@@ -584,6 +606,8 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                     'mapel' => $data['mapel'],
                     'materi' => $data['materi'],
                     'catatan' => $data['catatan'],
+                    'dokumentasi_foto' => $data['dokumentasi_foto'] ?? null,
+                    'dokumentasi_video' => $data['dokumentasi_video'] ?? null,
                 ]);
                 $jurnal = $this->record;
             } else {
@@ -595,6 +619,8 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                     'mapel' => $data['mapel'],
                     'materi' => $data['materi'],
                     'catatan' => $data['catatan'],
+                    'dokumentasi_foto' => $data['dokumentasi_foto'] ?? null,
+                    'dokumentasi_video' => $data['dokumentasi_video'] ?? null,
                 ]);
             }
 
