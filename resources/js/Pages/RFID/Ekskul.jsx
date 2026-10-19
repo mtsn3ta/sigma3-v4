@@ -1,26 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 
 import RFIDLayout from "@/Layouts/RFIDLayout";
-
 import UIDInput from "@/Components/RFID/UIDInput";
 import NFCButton from "@/Components/RFID/NFCButton";
-
 import IdleScreen from "@/Components/RFID/IdleScreen";
 import SuccessScreen from "@/Components/RFID/SuccessScreen";
 import ErrorScreen from "@/Components/RFID/ErrorScreen";
 import useEkskulRFID from "@/Hooks/useEkskulRFID";
 import LastScanList from "@/Components/RFID/LastScanList";
-
 import { RFID_SCREEN } from "@/Lib/rfid";
 
 export default function Ekskul() {
     const uidInputRef = useRef(null);
+
     /*
     |--------------------------------------------------------------------------
     | Screen State
     |--------------------------------------------------------------------------
     */
-
     const [scanResult, setScanResult] = useState({
         screen: RFID_SCREEN.IDLE,
         student: null,
@@ -32,7 +29,6 @@ export default function Ekskul() {
     | RFID UID
     |--------------------------------------------------------------------------
     */
-
     const [uid, setUid] = useState("");
 
     /*
@@ -40,48 +36,33 @@ export default function Ekskul() {
     | Last Scan
     |--------------------------------------------------------------------------
     */
-
     const [lastScans, setLastScans] = useState([]);
 
     /*
-|--------------------------------------------------------------------------
-| Hook
-|--------------------------------------------------------------------------
-*/
-    const { scan } = useEkskulRFID({
-        uid,
-
-        setUid,
-
-        setScanResult,
-
-        setLastScans,
-
-        uidInputRef,
-    });
-
-    /*
     |--------------------------------------------------------------------------
-    | Clock
+    | Hook
     |--------------------------------------------------------------------------
     */
-
-    const [time, setTime] = useState("");
-
-    const [date, setDate] = useState("");
+    const { scan } = useEkskulRFID({
+        uid,
+        setUid,
+        setScanResult,
+        setLastScans,
+        uidInputRef,
+    });
 
     /*
     |--------------------------------------------------------------------------
     | Live Clock
     |--------------------------------------------------------------------------
     */
+    const [time, setTime] = useState("");
+    const [date, setDate] = useState("");
 
     useEffect(() => {
         const updateClock = () => {
             const now = new Date();
-
             setTime(now.toLocaleTimeString("id-ID"));
-
             setDate(
                 now.toLocaleDateString("id-ID", {
                     weekday: "long",
@@ -91,11 +72,8 @@ export default function Ekskul() {
                 }),
             );
         };
-
         updateClock();
-
         const timer = setInterval(updateClock, 1000);
-
         return () => clearInterval(timer);
     }, []);
 
@@ -104,7 +82,6 @@ export default function Ekskul() {
     | Auto Focus RFID Reader
     |--------------------------------------------------------------------------
     */
-
     useEffect(() => {
         if (scanResult.screen === RFID_SCREEN.IDLE) {
             uidInputRef.current?.focus();
@@ -116,21 +93,16 @@ export default function Ekskul() {
     | RFID Workflow
     |--------------------------------------------------------------------------
     */
-
     useEffect(() => {
-        if (!uid.trim()) {
-            return;
-        }
-
+        if (!uid.trim()) return;
         scan();
     }, [uid, scan]);
 
-    // resources/js/Pages/RFID/School.jsx — hanya bagian return yang berubah
     return (
         <RFIDLayout
             title="Absensi Ekstrakurikuler"
             subtitle="Scan Kehadiran Peserta"
-            sidebar={<LastScanList items={lastScans} />}
+            sidebar={<LastScanList items={lastScans} mode="ekskul" />}
         >
             <div className="mx-auto mb-[clamp(0.4rem,1vh,0.85rem)] flex w-full max-w-md shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
                 <UIDInput ref={uidInputRef} value={uid} onChange={setUid} />

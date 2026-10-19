@@ -1,17 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
 import RFIDLayout from "@/Layouts/RFIDLayout";
-
 import UIDInput from "@/Components/RFID/UIDInput";
 import NFCButton from "@/Components/RFID/NFCButton";
-
 import IdleScreen from "@/Components/RFID/IdleScreen";
 import SuccessScreen from "@/Components/RFID/SuccessScreen";
 import ErrorScreen from "@/Components/RFID/ErrorScreen";
 import LastScanList from "@/Components/RFID/LastScanList";
-
 import useIbadahRFID from "@/Hooks/useIbadahRFID";
-
 import { RFID_SCREEN } from "@/Lib/rfid";
 
 export default function Ibadah() {
@@ -22,7 +18,6 @@ export default function Ibadah() {
     | Screen State
     |--------------------------------------------------------------------------
     */
-
     const [scanResult, setScanResult] = useState({
         screen: RFID_SCREEN.IDLE,
         student: null,
@@ -34,7 +29,6 @@ export default function Ibadah() {
     | RFID UID
     |--------------------------------------------------------------------------
     */
-
     const [uid, setUid] = useState("");
 
     /*
@@ -42,7 +36,6 @@ export default function Ibadah() {
     | Last Scan
     |--------------------------------------------------------------------------
     */
-
     const [lastScans, setLastScans] = useState([]);
 
     /*
@@ -50,41 +43,26 @@ export default function Ibadah() {
     | Hook
     |--------------------------------------------------------------------------
     */
-
     const { scan } = useIbadahRFID({
         uid,
-
         setUid,
-
         setScanResult,
-
         setLastScans,
-
         uidInputRef,
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Clock
-    |--------------------------------------------------------------------------
-    */
-
-    const [time, setTime] = useState("");
-
-    const [date, setDate] = useState("");
 
     /*
     |--------------------------------------------------------------------------
     | Live Clock
     |--------------------------------------------------------------------------
     */
+    const [time, setTime] = useState("");
+    const [date, setDate] = useState("");
 
     useEffect(() => {
         const updateClock = () => {
             const now = new Date();
-
             setTime(now.toLocaleTimeString("id-ID"));
-
             setDate(
                 now.toLocaleDateString("id-ID", {
                     weekday: "long",
@@ -94,11 +72,8 @@ export default function Ibadah() {
                 }),
             );
         };
-
         updateClock();
-
         const timer = setInterval(updateClock, 1000);
-
         return () => clearInterval(timer);
     }, []);
 
@@ -107,7 +82,6 @@ export default function Ibadah() {
     | Auto Focus RFID Reader
     |--------------------------------------------------------------------------
     */
-
     useEffect(() => {
         if (scanResult.screen === RFID_SCREEN.IDLE) {
             uidInputRef.current?.focus();
@@ -119,12 +93,8 @@ export default function Ibadah() {
     | RFID Workflow
     |--------------------------------------------------------------------------
     */
-
     useEffect(() => {
-        if (!uid.trim()) {
-            return;
-        }
-
+        if (!uid.trim()) return;
         scan();
     }, [uid, scan]);
 
@@ -132,11 +102,10 @@ export default function Ibadah() {
         <RFIDLayout
             title="Absensi Ibadah"
             subtitle="Scan Sholat Dhuha & Dzuhur"
-            sidebar={<LastScanList items={lastScans} />}
+            sidebar={<LastScanList items={lastScans} mode="ibadah" />}
         >
             <div className="mx-auto mb-[clamp(0.4rem,1vh,0.85rem)] flex w-full max-w-md shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
                 <UIDInput ref={uidInputRef} value={uid} onChange={setUid} />
-
                 <NFCButton onScan={setUid} />
             </div>
 

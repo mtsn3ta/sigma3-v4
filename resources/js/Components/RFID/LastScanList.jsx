@@ -1,14 +1,33 @@
 // resources/js/Components/RFID/LastScanList.jsx
 import { AnimatePresence, motion } from "motion/react";
+import { LogIn, LogOut, Moon, Star } from "lucide-react";
 
 import Avatar from "@/Components/UI/Avatar";
 
-export default function LastScanList({ items = [], maxItems = 6 }) {
-    const visible = items.slice(0, maxItems);
-    const ghostCount = Math.max(maxItems - visible.length, 0);
+/*
+ * Resolves a human-readable label + lucide icon for each scan action/mode combo.
+ */
+function getScanMeta(action, mode) {
+    if (mode === "ibadah") {
+        if (action === "dhuha") return { label: "Dhuha",  Icon: Moon,  color: "var(--rk-gold)"    };
+        if (action === "dzuhur") return { label: "Dzuhur", Icon: Moon,  color: "var(--rk-gold)"    };
+        return { label: "Ibadah", Icon: Moon, color: "var(--rk-gold)" };
+    }
+    if (mode === "ekskul") {
+        return { label: "Ekskul", Icon: Star, color: "var(--rk-amber)" };
+    }
+    // school (default)
+    if (action === "checkout") return { label: "Pulang", Icon: LogOut, color: "var(--rk-sky)"    };
+    return                            { label: "Datang", Icon: LogIn,  color: "var(--rk-emerald)" };
+}
+
+export default function LastScanList({ items = [], maxItems = 6, mode = "school" }) {
+    const visible     = items.slice(0, maxItems);
+    const ghostCount  = Math.max(maxItems - visible.length, 0);
 
     return (
         <div className="flex h-full min-h-0 flex-col">
+            {/* ── Header ── */}
             <div className="mb-[clamp(0.6rem,1.5vh,1.1rem)] flex shrink-0 items-center justify-between">
                 <h3 className="text-[clamp(0.6rem,1.3vh,0.8rem)] font-semibold uppercase tracking-[0.35em] text-(--rk-muted)">
                     Scan Terakhir
@@ -19,13 +38,11 @@ export default function LastScanList({ items = [], maxItems = 6 }) {
                 </span>
             </div>
 
+            {/* ── List ── */}
             <div className="grid min-h-0 flex-1 auto-rows-fr gap-[clamp(0.4rem,1.1vh,0.85rem)] overflow-hidden">
                 <AnimatePresence initial={false}>
                     {visible.map((student, index) => {
-                        const isCheckout = student.action === "checkout";
-                        const accent = isCheckout
-                            ? "var(--rk-sky)"
-                            : "var(--rk-emerald)";
+                        const { label, Icon, color } = getScanMeta(student.action, mode);
 
                         return (
                             <motion.div
@@ -51,20 +68,17 @@ export default function LastScanList({ items = [], maxItems = 6 }) {
                                 "
                                 style={
                                     index === 0
-                                        ? {
-                                              boxShadow: `0 0 0 1px ${accent}55, 0 0 20px -6px ${accent}66`,
-                                          }
+                                        ? { boxShadow: `0 0 0 1px ${color}55, 0 0 20px -6px ${color}66` }
                                         : undefined
                                 }
                             >
+                                {/* accent bar */}
                                 <span
                                     className="absolute inset-y-0 left-0 w-1"
-                                    style={{
-                                        background: accent,
-                                        boxShadow: `0 0 10px ${accent}`,
-                                    }}
+                                    style={{ background: color, boxShadow: `0 0 10px ${color}` }}
                                 />
 
+                                {/* avatar */}
                                 <Avatar
                                     name={student.nama}
                                     photo={student.photo}
@@ -78,6 +92,7 @@ export default function LastScanList({ items = [], maxItems = 6 }) {
                                     "
                                 />
 
+                                {/* name + class */}
                                 <div className="min-w-0 flex-1 text-left">
                                     <h4 className="truncate text-[clamp(0.78rem,1.7vh,1.05rem)] font-bold text-(--rk-text)">
                                         {student.nama}
@@ -87,15 +102,14 @@ export default function LastScanList({ items = [], maxItems = 6 }) {
                                     </p>
                                 </div>
 
+                                {/* action + time */}
                                 <div className="shrink-0 text-right">
                                     <div
-                                        className="mb-1 inline-flex rounded-full px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider"
-                                        style={{
-                                            color: accent,
-                                            background: `${accent}1f`,
-                                        }}
+                                        className="mb-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider"
+                                        style={{ color, background: `${color}1f` }}
                                     >
-                                        {isCheckout ? "Pulang" : "Datang"}
+                                        <Icon className="h-2.5 w-2.5" strokeWidth={2.5} />
+                                        {label}
                                     </div>
                                     <div className="rk-mono text-[clamp(0.82rem,1.7vh,1.15rem)] font-semibold text-(--rk-text)">
                                         {student.jam}
@@ -106,6 +120,7 @@ export default function LastScanList({ items = [], maxItems = 6 }) {
                     })}
                 </AnimatePresence>
 
+                {/* Ghost slots */}
                 {Array.from({ length: ghostCount }).map((_, i) => (
                     <div
                         key={`ghost-${i}`}
