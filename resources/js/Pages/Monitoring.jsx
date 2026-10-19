@@ -4,20 +4,31 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 import FrontendLayout from "@/Layouts/FrontendLayout";
-
 import Container from "@/Components/UI/Container";
 import Badge from "@/Components/UI/Badge";
 import GlassCard from "@/Components/UI/GlassCard";
-
 import { cn, background, motion as motionTheme, spacing } from "@/Theme";
+import {
+    CheckCircle2,
+    Clock,
+    XCircle,
+    Radio,
+    Search,
+    Calendar,
+    ChevronDown,
+    RotateCw,
+    Users,
+    Sun,
+    Sunset,
+    LogOut,
+    LogIn,
+    ChevronLeft,
+    ChevronRight,
+    WifiOff,
+} from "lucide-react";
 
 export default function Monitoring() {
     const searchTimeout = useRef(null);
-    /*
-    |--------------------------------------------------------------------------
-    | Initial Data (Inertia)
-    |--------------------------------------------------------------------------
-    */
 
     const {
         attendance: initialAttendance,
@@ -27,11 +38,6 @@ export default function Monitoring() {
         classes = {},
     } = usePage().props;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Helper Zona Waktu Jakarta (Format YYYY-MM-DD)
-    |--------------------------------------------------------------------------
-    */
     const getJakartaDateString = () => {
         const options = {
             timeZone: "Asia/Jakarta",
@@ -39,44 +45,29 @@ export default function Monitoring() {
             month: "2-digit",
             day: "2-digit",
         };
-        const formatter = new Intl.DateTimeFormat("en-CA", options); // 'en-CA' otomatis menghasilkan format YYYY-MM-DD
+        const formatter = new Intl.DateTimeFormat("en-CA", options);
         return formatter.format(new Date());
     };
 
-    /*
-    |--------------------------------------------------------------------------
-    | React State
-    |--------------------------------------------------------------------------
-    */
-
-    const [attendance, setAttendance] = useState(initialAttendance);
-
-    const [statistics, setStatistics] = useState(initialStatistics);
-
+    const [attendance, setAttendance] = useState(initialAttendance || { data: [], links: [] });
+    const [statistics, setStatistics] = useState(initialStatistics || {});
     const [loading, setLoading] = useState(false);
+    const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }));
 
     const [filters, setFilters] = useState({
         search: initialFilters.search ?? "",
         kelas: initialFilters.kelas ?? "",
-        // PERBAIKAN: Jika initialFilters.tanggal bernilai kosong atau meleset, paksa gunakan tanggal hari ini berbasis WIB (Tanggal 13)
         tanggal:
             initialFilters.tanggal && initialFilters.tanggal !== ""
                 ? initialFilters.tanggal
                 : getJakartaDateString(),
     });
 
-    /*
-|--------------------------------------------------------------------------
-| Load Attendance
-|--------------------------------------------------------------------------
-*/
-
     const loadAttendance = async (
         currentFilters = filters,
         page = attendance.current_page ?? 1,
     ) => {
         setLoading(true);
-
         try {
             const { data } = await axios.get("/api/monitoring", {
                 params: {
@@ -86,29 +77,21 @@ export default function Monitoring() {
             });
 
             setAttendance(data.attendance);
-
             setStatistics(data.statistics);
+            setLastUpdated(new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }));
         } catch (error) {
-            console.error(error);
+            console.error("Gagal memuat monitoring:", error);
         } finally {
             setLoading(false);
         }
     };
-
-    /*
-|--------------------------------------------------------------------------
-| Apply Filter
-|--------------------------------------------------------------------------
-*/
 
     const applyFilter = (changes = {}) => {
         const newFilters = {
             ...filters,
             ...changes,
         };
-
         setFilters(newFilters);
-
         loadAttendance(newFilters, 1);
     };
 
@@ -119,112 +102,26 @@ export default function Monitoring() {
 
         return () => clearInterval(interval);
     }, [filters]);
-    /*
-    |--------------------------------------------------------------------------
-    | Components
-    |--------------------------------------------------------------------------
-    */
-
-    const SelectChevron = () => (
-        <svg
-            className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-        >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 9l-7 7-7-7"
-            />
-        </svg>
-    );
 
     return (
         <FrontendLayout>
-            <Head
-                title={`Monitoring Absensi - ${settings?.school_name ?? "SIGMA-3"}`}
-            />
+            <Head title={`Monitoring Absensi - ${settings?.school_name ?? "SIGMA-3"}`} />
 
-            <main className={cn(background.gradient, "relative bg-[#f7faf9]")}>
+            <main className={cn(background.gradient, "relative bg-[#f8faf9] min-h-screen")}>
                 {/* =======================================================
-                    HERO
+                    HERO & STATS SECTION
                 ======================================================= */}
-
                 <section
                     className={cn(
                         background.hero,
                         spacing.pageHeroTop,
-                        spacing.pageHeroBottomMonitoring,
-                        "relative overflow-hidden",
+                        "relative pb-10 overflow-hidden",
                     )}
                 >
-                    {/* Ambient futuristic backdrop */}
+                    {/* Background Ambience */}
                     <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-                        <svg
-                            className="absolute inset-0 h-full w-full opacity-[0.06]"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <defs>
-                                <pattern
-                                    id="grid-monitoring"
-                                    width="42"
-                                    height="42"
-                                    patternUnits="userSpaceOnUse"
-                                >
-                                    <path
-                                        d="M 42 0 L 0 0 0 42"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1"
-                                        className="text-slate-900"
-                                    />
-                                </pattern>
-                            </defs>
-
-                            <rect
-                                width="100%"
-                                height="100%"
-                                fill="url(#grid-monitoring)"
-                            />
-                        </svg>
-
-                        <motion.div
-                            className="absolute -left-32 -top-24 h-104 w-104 rounded-full bg-emerald-300/30 blur-[110px]"
-                            animate={{
-                                x: [0, 40, 0],
-                                y: [0, 30, 0],
-                            }}
-                            transition={{
-                                duration: 14,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                        />
-
-                        <motion.div
-                            className="absolute -right-24 top-10 h-88 w-88 rounded-full bg-cyan-300/25 blur-[100px]"
-                            animate={{
-                                x: [0, -30, 0],
-                                y: [0, 40, 0],
-                            }}
-                            transition={{
-                                duration: 16,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                        />
-
-                        <motion.div
-                            className="absolute bottom-24 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-teal-200/30 blur-[100px]"
-                            animate={{ opacity: [0.4, 0.7, 0.4] }}
-                            transition={{
-                                duration: 8,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                        />
+                        <div className="absolute -left-32 -top-24 h-96 w-96 rounded-full bg-emerald-400/20 blur-[120px]" />
+                        <div className="absolute -right-24 top-10 h-80 w-80 rounded-full bg-cyan-400/15 blur-[100px]" />
                     </div>
 
                     <Container>
@@ -233,149 +130,130 @@ export default function Monitoring() {
                                 initial={{ opacity: 0, y: -8 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={motionTheme.normal}
-                                className="mb-5 inline-flex"
+                                className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-50/90 px-4 py-1.5 text-xs font-semibold text-emerald-800 shadow-xs backdrop-blur-md"
                             >
-                                <Badge
-                                    variant="primary"
-                                    className="gap-2 border border-emerald-200/70 bg-white/60 shadow-[0_0_0_1px_rgba(16,185,129,0.15)] backdrop-blur-md"
-                                >
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                                    </span>
-                                    RFID Live Monitoring
-                                </Badge>
+                                <span className="relative flex h-2 w-2">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                                </span>
+                                <span>RFID Live Scanner Dashboard</span>
+                                <span className="text-emerald-300">•</span>
+                                <span className="text-emerald-700 font-medium flex items-center gap-1">
+                                    <RotateCw className={cn("w-3 h-3", loading && "animate-spin")} />
+                                    <span>Sync: {lastUpdated}</span>
+                                </span>
                             </motion.div>
 
                             <motion.h1
-                                initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: 16 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={motionTheme.normal}
-                                className="text-5xl font-black tracking-tight text-slate-900 md:text-7xl"
+                                className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900"
                             >
                                 Monitoring{" "}
-                                <span className="bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
-                                    Absensi
+                                <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                                    Presensi Siswa
                                 </span>
                             </motion.h1>
 
                             <motion.p
-                                initial={{ opacity: 0, y: 16 }}
+                                initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{
-                                    ...motionTheme.normal,
-                                    delay: 0.1,
-                                }}
-                                className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600"
+                                transition={{ ...motionTheme.normal, delay: 0.1 }}
+                                className="mx-auto mt-4 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600"
                             >
-                                Monitoring kehadiran siswa secara real-time
-                                meliputi kehadiran sekolah, ibadah, serta status
-                                RFID dalam satu dashboard.
+                                Pemantauan kehadiran gerbang RFID, pelaksanaan ibadah Dhuha & Dzuhur,
+                                serta status dispensasi siswa secara realtime.
                             </motion.p>
                         </div>
 
+                        {/* 4 Metric Cards */}
                         <motion.div
-                            initial={{ opacity: 0, y: 24 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ ...motionTheme.normal, delay: 0.2 }}
-                            className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4"
+                            className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4"
                         >
                             {[
                                 {
-                                    label: "Hadir",
+                                    label: "Hadir Lengkap",
                                     value: statistics.hadir ?? 0,
-                                    icon: "🟢",
+                                    icon: CheckCircle2,
+                                    color: "text-emerald-600",
+                                    bg: "bg-emerald-50 border-emerald-100",
                                 },
                                 {
                                     label: "Terlambat",
                                     value: statistics.terlambat ?? 0,
-                                    icon: "🟡",
+                                    icon: Clock,
+                                    color: "text-amber-500",
+                                    bg: "bg-amber-50 border-amber-100",
                                 },
                                 {
-                                    label: "Tidak Hadir",
+                                    label: "Tidak Hadir / Izin",
                                     value: statistics.tidak_hadir ?? 0,
-                                    icon: "🔴",
+                                    icon: XCircle,
+                                    color: "text-rose-600",
+                                    bg: "bg-rose-50 border-rose-100",
                                 },
                                 {
-                                    label: "RFID",
+                                    label: "Scan RFID Hari Ini",
                                     value: statistics.rfid ?? 0,
-                                    icon: "📡",
+                                    icon: Radio,
+                                    color: "text-sky-600",
+                                    bg: "bg-sky-50 border-sky-100",
                                 },
-                            ].map((stat) => (
-                                <GlassCard
-                                    key={stat.label}
-                                    className="group relative overflow-hidden border border-white/70 bg-white/50 p-6 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(16,185,129,0.15)]"
-                                >
-                                    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-emerald-400/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            ].map((stat, idx) => {
+                                const IconComponent = stat.icon;
+                                return (
+                                    <GlassCard
+                                        key={idx}
+                                        className="group relative overflow-hidden border border-white/80 bg-white/70 p-5 sm:p-6 text-center shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-xl rounded-3xl transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)]"
+                                    >
+                                        <div className="flex items-center justify-center mb-3">
+                                            <div className={cn("p-2 rounded-2xl border", stat.bg)}>
+                                                <IconComponent className={cn("w-5 h-5", stat.color)} />
+                                            </div>
+                                        </div>
 
-                                    <div className="mb-1 text-lg opacity-70">
-                                        {stat.icon}
-                                    </div>
+                                        <p className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors">
+                                            {stat.value}
+                                        </p>
 
-                                    <p className="text-3xl font-black tracking-tight text-slate-900">
-                                        {stat.value}
-                                    </p>
-
-                                    <p className="mt-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                                        {stat.label}
-                                    </p>
-                                </GlassCard>
-                            ))}
+                                        <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                            {stat.label}
+                                        </p>
+                                    </GlassCard>
+                                );
+                            })}
                         </motion.div>
                     </Container>
                 </section>
 
                 {/* =======================================================
-    FILTER
-======================================================= */}
-
-                <section
-                    className={cn("relative z-10", spacing.sectionYMonitoring)}
-                >
+                    FILTER BAR
+                ======================================================= */}
+                <section className="relative z-10 py-6">
                     <Container>
-                        <GlassCard className="relative overflow-hidden border border-white/70 bg-white/55 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-xl">
-                            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-emerald-400/50 to-transparent" />
-
-                            <div className="grid items-center gap-3 lg:grid-cols-[1fr_200px_190px]">
-                                {/* Search */}
-
+                        <GlassCard className="border border-white/80 bg-white/75 p-4 sm:p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl rounded-3xl">
+                            <div className="grid items-center gap-3 md:grid-cols-[1fr_220px_200px]">
+                                {/* Search Input */}
                                 <div className="relative">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
-                                        />
-                                    </svg>
-
+                                    <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                     <input
                                         type="text"
                                         value={filters.search}
                                         onChange={(e) => {
                                             const value = e.target.value;
-
                                             setFilters((current) => ({
                                                 ...current,
                                                 search: value,
                                             }));
 
                                             clearTimeout(searchTimeout.current);
-
-                                            searchTimeout.current = setTimeout(
-                                                () => {
-                                                    applyFilter({
-                                                        search: value,
-                                                    });
-                                                },
-                                                300,
-                                            );
+                                            searchTimeout.current = setTimeout(() => {
+                                                applyFilter({ search: value });
+                                            }, 350);
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
@@ -383,64 +261,51 @@ export default function Monitoring() {
                                             }
                                         }}
                                         placeholder="Cari NISN atau nama siswa..."
-                                        className="h-11 w-full rounded-2xl border border-white bg-white/70 pl-12 pr-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                                        className="h-11 w-full rounded-2xl border border-slate-200/80 bg-white/80 pl-11 pr-4 text-sm text-slate-800 shadow-inner outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/15"
                                     />
                                 </div>
 
-                                {/* Kelas */}
-
+                                {/* Kelas Select */}
                                 <div className="relative">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M3 7h18M6 12h12M10 17h4"
-                                        />
-                                    </svg>
-
+                                    <Users className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                     <select
                                         value={filters.kelas}
                                         onChange={(e) =>
-                                            applyFilter({
-                                                kelas: e.target.value,
-                                            })
+                                            applyFilter({ kelas: e.target.value })
                                         }
-                                        className="h-11 w-full appearance-none rounded-2xl border border-white bg-white/70 pl-11 pr-9 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                                        className="h-11 w-full appearance-none rounded-2xl border border-slate-200/80 bg-white/80 pl-11 pr-10 text-sm font-medium text-slate-700 shadow-inner outline-none transition-all duration-200 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/15 cursor-pointer"
                                     >
                                         <option value="">Semua Kelas</option>
-
-                                        {Object.entries(classes).map(
-                                            ([id, nama]) => (
-                                                <option key={id} value={id}>
-                                                    {nama}
-                                                </option>
-                                            ),
-                                        )}
+                                        {Object.entries(classes).map(([id, nama]) => (
+                                            <option key={id} value={id}>
+                                                {nama}
+                                            </option>
+                                        ))}
                                     </select>
-
-                                    <SelectChevron />
+                                    <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                 </div>
 
-                                {/* Tanggal */}
-
-                                <div className="relative">
-                                    <input
-                                        type="date"
-                                        value={filters.tanggal}
-                                        onChange={(e) =>
-                                            applyFilter({
-                                                tanggal: e.target.value,
-                                            })
-                                        }
-                                        className="h-11 w-full rounded-2xl border border-white bg-white/70 px-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
-                                    />
+                                {/* Tanggal Picker + Quick Hari Ini */}
+                                <div className="relative flex items-center gap-2">
+                                    <div className="relative flex-1">
+                                        <Calendar className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <input
+                                            type="date"
+                                            value={filters.tanggal}
+                                            onChange={(e) =>
+                                                applyFilter({ tanggal: e.target.value })
+                                            }
+                                            className="h-11 w-full rounded-2xl border border-slate-200/80 bg-white/80 pl-11 pr-3 text-sm font-medium text-slate-700 shadow-inner outline-none transition-all duration-200 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/15 cursor-pointer"
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => applyFilter({ tanggal: getJakartaDateString() })}
+                                        className="h-11 px-3.5 rounded-2xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200/70 text-xs font-bold text-slate-600 transition-colors whitespace-nowrap cursor-pointer"
+                                        title="Kembali ke Hari Ini"
+                                    >
+                                        Hari Ini
+                                    </button>
                                 </div>
                             </div>
                         </GlassCard>
@@ -448,346 +313,266 @@ export default function Monitoring() {
                 </section>
 
                 {/* =======================================================
-                    TABLE
+                    ATTENDANCE TABLE SECTION
                 ======================================================= */}
-
-                <section className={spacing.sectionBottom}>
+                <section className="pb-20">
                     <Container>
-                        <GlassCard className="overflow-hidden border border-white/70 bg-white/60 backdrop-blur-xl">
+                        <GlassCard className="overflow-hidden border border-white/80 bg-white/75 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl rounded-3xl">
                             {/* =========================
-        Desktop
-    ========================= */}
+                                DESKTOP TABLE
+                            ========================= */}
                             <div className="hidden lg:block overflow-x-auto">
                                 {loading ? (
-                                    <div className="py-16 text-center text-slate-500">
-                                        Memuat data...
+                                    <div className="py-24 text-center">
+                                        <RotateCw className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-3" />
+                                        <p className="text-sm font-bold text-slate-600">
+                                            Memperbarui data kehadiran...
+                                        </p>
                                     </div>
-                                ) : attendance.data.length === 0 ? (
-                                    <div className="py-20 text-center">
-                                        <div className="text-6xl">📡</div>
-
-                                        <h3 className="mt-6 text-2xl font-black text-slate-900">
-                                            Tidak ada data monitoring.
+                                ) : !attendance.data || attendance.data.length === 0 ? (
+                                    <div className="py-24 text-center max-w-sm mx-auto">
+                                        <div className="h-16 w-16 rounded-3xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                                            <WifiOff className="w-8 h-8" />
+                                        </div>
+                                        <h3 className="text-xl font-black text-slate-900">
+                                            Tidak Ada Data Monitoring
                                         </h3>
-
-                                        <p className="mt-3 text-slate-500">
-                                            Belum terdapat data kehadiran untuk
-                                            filter yang dipilih.
+                                        <p className="mt-2 text-xs text-slate-500 leading-relaxed">
+                                            Belum terdapat data kehadiran untuk filter pencarian, kelas, atau tanggal yang dipilih.
                                         </p>
                                     </div>
                                 ) : (
                                     <table className="min-w-full divide-y divide-slate-100">
                                         <thead className="bg-slate-50/80">
-                                            <tr className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                                                <th className="px-6 py-4">
-                                                    NISN
-                                                </th>
-                                                <th className="px-6 py-4">
-                                                    Nama
-                                                </th>
-                                                <th className="px-6 py-4">
-                                                    Datang
-                                                </th>
-                                                <th className="px-6 py-4">
-                                                    Dhuha
-                                                </th>
-                                                <th className="px-6 py-4">
-                                                    Dzuhur
-                                                </th>
-                                                <th className="px-6 py-4">
-                                                    Pulang
-                                                </th>
-                                                <th className="px-6 py-4">
-                                                    Status
-                                                </th>
-                                                <th className="px-6 py-4">
-                                                    RFID
-                                                </th>
+                                            <tr className="text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                                <th className="px-6 py-4">NISN</th>
+                                                <th className="px-6 py-4">Nama Siswa</th>
+                                                <th className="px-4 py-4 text-center">Datang</th>
+                                                <th className="px-4 py-4 text-center">Dhuha</th>
+                                                <th className="px-4 py-4 text-center">Dzuhur</th>
+                                                <th className="px-4 py-4 text-center">Pulang</th>
+                                                <th className="px-6 py-4 text-center">Status</th>
+                                                <th className="px-6 py-4 text-center">RFID</th>
                                             </tr>
                                         </thead>
 
                                         <tbody className="divide-y divide-slate-100 bg-white/40">
-                                            {attendance.data.map(
-                                                (student, idx) => (
-                                                    <motion.tr
-                                                        key={student.id}
-                                                        initial={{
-                                                            opacity: 0,
-                                                            y: 12,
-                                                        }}
-                                                        whileInView={{
-                                                            opacity: 1,
-                                                            y: 0,
-                                                        }}
-                                                        viewport={{
-                                                            once: true,
-                                                        }}
-                                                        transition={{
-                                                            ...motionTheme.normal,
-                                                            delay: Math.min(
-                                                                idx * 0.03,
-                                                                0.3,
-                                                            ),
-                                                        }}
-                                                        className="transition-colors hover:bg-emerald-50/40"
-                                                    >
-                                                        <td className="px-6 py-4 font-mono text-sm text-slate-600">
-                                                            {student.nisn}
-                                                        </td>
+                                            {attendance.data.map((student, idx) => (
+                                                <tr
+                                                    key={student.id}
+                                                    className="transition-colors hover:bg-emerald-50/50"
+                                                >
+                                                    <td className="px-6 py-4 font-mono text-xs font-semibold text-slate-600">
+                                                        {student.nisn}
+                                                    </td>
 
-                                                        <td className="px-6 py-4">
-                                                            <div>
-                                                                <p className="font-bold text-slate-900">
-                                                                    {
-                                                                        student.nama
-                                                                    }
-                                                                </p>
+                                                    <td className="px-6 py-4">
+                                                        <div>
+                                                            <p className="font-bold text-slate-900 text-sm">
+                                                                {student.nama}
+                                                            </p>
+                                                            <p className="text-xs text-slate-500">
+                                                                {student.kelas || "Kelas —"}
+                                                            </p>
+                                                        </div>
+                                                    </td>
 
-                                                                <p className="text-xs text-slate-500">
-                                                                    {
-                                                                        student.kelas
-                                                                    }
-                                                                </p>
-                                                            </div>
-                                                        </td>
+                                                    {/* Jam Datang */}
+                                                    <td className="px-4 py-4 text-center font-mono text-xs font-semibold text-slate-700">
+                                                        {student.jam_datang ? (
+                                                            <span className="inline-flex items-center gap-1 text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                                                                <LogIn className="w-3 h-3 text-emerald-600" />
+                                                                {student.jam_datang}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-slate-300">—</span>
+                                                        )}
+                                                    </td>
 
-                                                        <td className="px-6 py-4">
-                                                            {student.jam_datang ??
-                                                                "-"}
-                                                        </td>
+                                                    {/* Jam Dhuha */}
+                                                    <td className="px-4 py-4 text-center font-mono text-xs font-semibold text-slate-700">
+                                                        {student.jam_dhuha ? (
+                                                            <span className="inline-flex items-center gap-1 text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
+                                                                <Sun className="w-3 h-3 text-teal-600" />
+                                                                {student.jam_dhuha}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-slate-300">—</span>
+                                                        )}
+                                                    </td>
 
-                                                        <td className="px-6 py-4">
-                                                            {student.jam_dhuha ??
-                                                                "-"}
-                                                        </td>
+                                                    {/* Jam Dzuhur */}
+                                                    <td className="px-4 py-4 text-center font-mono text-xs font-semibold text-slate-700">
+                                                        {student.jam_dzuhur ? (
+                                                            <span className="inline-flex items-center gap-1 text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                                                                <Sunset className="w-3 h-3 text-indigo-600" />
+                                                                {student.jam_dzuhur}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-slate-300">—</span>
+                                                        )}
+                                                    </td>
 
-                                                        <td className="px-6 py-4">
-                                                            {student.jam_dzuhur ??
-                                                                "-"}
-                                                        </td>
+                                                    {/* Jam Pulang */}
+                                                    <td className="px-4 py-4 text-center font-mono text-xs font-semibold text-slate-700">
+                                                        {student.jam_pulang ? (
+                                                            <span className="inline-flex items-center gap-1 text-sky-800 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-100">
+                                                                <LogOut className="w-3 h-3 text-sky-600" />
+                                                                {student.jam_pulang}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-slate-300">—</span>
+                                                        )}
+                                                    </td>
 
-                                                        <td className="px-6 py-4">
-                                                            {student.jam_pulang ??
-                                                                "-"}
-                                                        </td>
+                                                    {/* Status Badge */}
+                                                    <td className="px-6 py-4 text-center">
+                                                        <Badge variant={student.status?.color || "neutral"}>
+                                                            {student.status?.label || "Status"}
+                                                        </Badge>
+                                                    </td>
 
-                                                        <td className="px-6 py-4">
-                                                            <Badge
-                                                                variant={
-                                                                    student
-                                                                        .status
-                                                                        .color
-                                                                }
-                                                            >
-                                                                {
-                                                                    student
-                                                                        .status
-                                                                        .icon
-                                                                }{" "}
-                                                                {
-                                                                    student
-                                                                        .status
-                                                                        .label
-                                                                }
-                                                            </Badge>
-                                                        </td>
-
-                                                        <td className="px-6 py-4">
-                                                            <Badge
-                                                                variant={
-                                                                    student.rfid
-                                                                        .code ===
-                                                                    "rfid"
-                                                                        ? "primary"
-                                                                        : "secondary"
-                                                                }
-                                                            >
-                                                                {
-                                                                    student.rfid
-                                                                        .label
-                                                                }
-                                                            </Badge>
-                                                        </td>
-                                                    </motion.tr>
-                                                ),
-                                            )}
+                                                    {/* RFID Source */}
+                                                    <td className="px-6 py-4 text-center">
+                                                        <span
+                                                            className={cn(
+                                                                "inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold rounded-full border",
+                                                                student.rfid?.code === "rfid"
+                                                                    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                                                    : "border-slate-200 bg-slate-50 text-slate-600",
+                                                            )}
+                                                        >
+                                                            <Radio className="w-3 h-3" />
+                                                            {student.rfid?.label || "Manual"}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                 )}
                             </div>
 
                             {/* =========================
-        Mobile
-    ========================= */}
-
+                                MOBILE CARD LIST
+                            ========================= */}
                             <div className="space-y-4 p-4 lg:hidden">
                                 {loading ? (
-                                    <div className="py-16 text-center text-slate-500">
-                                        Memuat data...
-                                    </div>
-                                ) : attendance.data.length === 0 ? (
                                     <div className="py-20 text-center">
-                                        <div className="text-6xl">📡</div>
-
-                                        <h3 className="mt-6 text-xl font-black text-slate-900">
-                                            Tidak ada data monitoring.
+                                        <RotateCw className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-2" />
+                                        <p className="text-xs font-bold text-slate-600">
+                                            Memperbarui data...
+                                        </p>
+                                    </div>
+                                ) : !attendance.data || attendance.data.length === 0 ? (
+                                    <div className="py-16 text-center">
+                                        <WifiOff className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                                        <h3 className="text-lg font-black text-slate-900">
+                                            Tidak Ada Data
                                         </h3>
-
-                                        <p className="mt-3 text-slate-500">
-                                            Belum terdapat data kehadiran untuk
-                                            filter yang dipilih.
+                                        <p className="text-xs text-slate-500 mt-1">
+                                            Belum ada presensi untuk filter ini.
                                         </p>
                                     </div>
                                 ) : (
                                     attendance.data.map((student) => (
-                                        <GlassCard
+                                        <div
                                             key={student.id}
-                                            className="rounded-3xl border border-white/70 bg-white/60 p-5 backdrop-blur-xl"
+                                            className="rounded-2xl border border-slate-100 bg-white/90 p-4 shadow-xs"
                                         >
-                                            <div className="flex items-start justify-between">
+                                            <div className="flex items-start justify-between gap-2">
                                                 <div>
-                                                    <h3 className="text-lg font-black text-slate-900">
+                                                    <h3 className="text-base font-black text-slate-900 leading-snug">
                                                         {student.nama}
                                                     </h3>
-
-                                                    <p className="mt-1 text-sm text-slate-500">
-                                                        {student.nisn} •{" "}
-                                                        {student.kelas}
+                                                    <p className="mt-0.5 text-xs text-slate-500">
+                                                        {student.nisn} &bull; {student.kelas}
                                                     </p>
                                                 </div>
-
-                                                <Badge
-                                                    variant={
-                                                        student.status.color
-                                                    }
-                                                >
-                                                    {student.status.icon}{" "}
-                                                    {student.status.label}
+                                                <Badge variant={student.status?.color || "neutral"}>
+                                                    {student.status?.label}
                                                 </Badge>
                                             </div>
 
-                                            <div className="my-5 border-t border-slate-100" />
-
-                                            <div className="grid grid-cols-2 gap-4 text-sm">
-                                                <div>
-                                                    <p className="text-slate-400">
+                                            {/* Grid Timestamps */}
+                                            <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+                                                <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                                                         Datang
-                                                    </p>
-
-                                                    <p className="mt-1 font-semibold text-slate-900">
-                                                        {student.jam_datang ??
-                                                            "-"}
-                                                    </p>
+                                                    </span>
+                                                    <span className="font-bold text-slate-800">
+                                                        {student.jam_datang || "—"}
+                                                    </span>
                                                 </div>
-
-                                                <div>
-                                                    <p className="text-slate-400">
+                                                <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                                                         Pulang
-                                                    </p>
-
-                                                    <p className="mt-1 font-semibold text-slate-900">
-                                                        {student.jam_pulang ??
-                                                            "-"}
-                                                    </p>
+                                                    </span>
+                                                    <span className="font-bold text-slate-800">
+                                                        {student.jam_pulang || "—"}
+                                                    </span>
                                                 </div>
-
-                                                <div>
-                                                    <p className="text-slate-400">
+                                                <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                                                         Dhuha
-                                                    </p>
-
-                                                    <p className="mt-1 font-semibold text-slate-900">
-                                                        {student.jam_dhuha ??
-                                                            "-"}
-                                                    </p>
+                                                    </span>
+                                                    <span className="font-bold text-slate-800">
+                                                        {student.jam_dhuha || "—"}
+                                                    </span>
                                                 </div>
-
-                                                <div>
-                                                    <p className="text-slate-400">
+                                                <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                                                         Dzuhur
-                                                    </p>
-
-                                                    <p className="mt-1 font-semibold text-slate-900">
-                                                        {student.jam_dzuhur ??
-                                                            "-"}
-                                                    </p>
+                                                    </span>
+                                                    <span className="font-bold text-slate-800">
+                                                        {student.jam_dzuhur || "—"}
+                                                    </span>
                                                 </div>
                                             </div>
 
-                                            <div className="my-5 border-t border-slate-100" />
-
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-slate-500">
-                                                    Sumber Kehadiran
+                                            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+                                                <span>Verifikasi RFID:</span>
+                                                <span className="font-bold text-slate-700">
+                                                    {student.rfid?.label || "Manual"}
                                                 </span>
-
-                                                <Badge
-                                                    variant={
-                                                        student.rfid.code ===
-                                                        "rfid"
-                                                            ? "primary"
-                                                            : "secondary"
-                                                    }
-                                                >
-                                                    {student.rfid.label}
-                                                </Badge>
                                             </div>
-                                        </GlassCard>
+                                        </div>
                                     ))
                                 )}
                             </div>
                         </GlassCard>
+
+                        {/* =======================================================
+                            PAGINATION
+                        ======================================================= */}
+                        {attendance.last_page > 1 && (
+                            <div className="mt-8 flex justify-center">
+                                <div className="flex flex-wrap items-center gap-1.5 rounded-2xl border border-white/80 bg-white/70 p-2 shadow-xs backdrop-blur-xl">
+                                    {attendance.links?.map((link, index) => (
+                                        <button
+                                            key={index}
+                                            disabled={!link.url}
+                                            onClick={() => {
+                                                if (!link.url) return;
+                                                const urlObj = new URL(link.url, window.location.origin);
+                                                const page = urlObj.searchParams.get("page") || 1;
+                                                loadAttendance(filters, page);
+                                            }}
+                                            className={cn(
+                                                "flex h-9 min-w-9 items-center justify-center rounded-xl px-3 text-xs font-bold transition-all cursor-pointer",
+                                                link.active
+                                                    ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/25"
+                                                    : "bg-transparent text-slate-700 hover:bg-emerald-50 hover:text-emerald-700",
+                                                !link.url && "cursor-not-allowed opacity-40",
+                                            )}
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </Container>
                 </section>
-                {/* =======================================================
-    PAGINATION
-======================================================= */}
-
-                {attendance.last_page > 1 && (
-                    <div className="mt-12 flex justify-center pb-4">
-                        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/70 bg-white/50 p-2 shadow-sm backdrop-blur-xl">
-                            {attendance.links.map((link, index) => (
-                                <button
-                                    key={index}
-                                    type="button"
-                                    disabled={!link.url || loading}
-                                    onClick={async () => {
-                                        if (!link.url || loading) {
-                                            return;
-                                        }
-
-                                        setLoading(true);
-
-                                        try {
-                                            const { data } = await axios.get(
-                                                link.url,
-                                            );
-
-                                            setAttendance(data.attendance);
-
-                                            setStatistics(data.statistics);
-                                        } catch (error) {
-                                            console.error(error);
-                                        } finally {
-                                            setLoading(false);
-                                        }
-                                    }}
-                                    className={cn(
-                                        "flex h-11 min-w-11 items-center justify-center rounded-2xl px-4 text-sm font-semibold transition-all duration-300",
-                                        link.active
-                                            ? "bg-linear-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-200"
-                                            : "bg-transparent text-slate-700 hover:bg-emerald-50",
-                                        !link.url &&
-                                            "cursor-not-allowed opacity-40",
-                                    )}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
             </main>
         </FrontendLayout>
     );

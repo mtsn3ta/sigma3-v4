@@ -8,19 +8,22 @@ const base = cn(
 );
 
 const variants = {
-    primary: cn("bg-teal-600 text-white hover:bg-teal-700", shadow.medium),
+    primary: cn(
+        "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20 hover:shadow-emerald-600/30",
+        shadow.medium,
+    ),
     secondary: cn(
-        "bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100",
+        "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300",
         shadow.low,
     ),
     outline:
-        "border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50 hover:border-slate-400 hover:text-teal-600",
+        "border border-slate-300 bg-white/60 text-slate-700 hover:bg-slate-50 hover:border-slate-400 hover:text-emerald-700",
     glass: cn(
         glass.default,
-        "text-slate-800 hover:bg-teal-50/60 hover:text-teal-700",
+        "text-slate-800 hover:bg-emerald-50/80 hover:text-emerald-700 hover:border-emerald-200",
         shadow.low,
     ),
-    danger: cn("bg-red-600 text-white hover:bg-red-700", shadow.medium),
+    danger: cn("bg-rose-600 text-white hover:bg-rose-700 shadow-rose-600/20", shadow.medium),
 };
 
 export default function Button({

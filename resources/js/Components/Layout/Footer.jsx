@@ -4,15 +4,16 @@ import { cn, css } from "@/Theme";
 import Container from "../UI/Container";
 
 const PORTAL_LINKS = [
-    { title: "Prestasi", href: "/prestasi" },
-    { title: "Monitoring RFID", href: "/rfid" },
-    { title: "Student Intelligence", href: "/student-intelligence" },
+    { title: "Prestasi Siswa", href: "/prestasi" },
+    { title: "Monitoring Presensi", href: "/monitoring" },
+    { title: "Student Intelligence", href: "/intelligence" },
+    { title: "Ekstrakurikuler", href: "/ekstrakurikuler" },
 ];
 
 const SCHOOL_LINKS = [
-    { title: "Profil Madrasah", href: "/profil" },
-    { title: "Galeri", href: "/galeri" },
-    { title: "Kontak", href: "/kontak" },
+    { title: "Dokumentasi Galeri", href: "/galeri" },
+    { title: "Presensi RFID", href: "/absensi" },
+    { title: "Portal Masuk Sistem", href: "/login" },
 ];
 
 export default function Footer() {
