@@ -759,16 +759,16 @@
                     $activeRole = \App\Support\ActiveRole::get();
 
                     $roleGroupMap = [
-                        'guru'            => ['Guru'],
-                        'piket'           => ['Guru Piket'],
-                        'bk'              => ['BK'],
-                        'pembina'         => ['Ekstrakurikuler'],
-                        'pelatih'         => ['Ekstrakurikuler'],
-                        'kepala_madrasah' => ['Monitoring', 'Akademik', 'Publikasi'],
-                        'waka_kesiswaan'  => ['Master Data', 'BK', 'Guru Piket', 'Monitoring', 'Ekstrakurikuler'],
+                        'guru'            => ['Guru', 'Monitoring'],
+                        'piket'           => ['Guru Piket', 'Monitoring'],
+                        'bk'              => ['BK', 'Monitoring'],
+                        'pembina'         => ['Ekstrakurikuler', 'Publikasi', 'Monitoring'],
+                        'pelatih'         => ['Ekstrakurikuler', 'Publikasi', 'Monitoring'],
+                        'kepala_madrasah' => ['Monitoring', 'Akademik', 'Publikasi', 'Master Data', 'Ekstrakurikuler', 'BK', 'Guru Piket', 'Guru', 'Pengaturan'],
+                        'waka_kesiswaan'  => ['Master Data', 'BK', 'Guru Piket', 'Monitoring', 'Ekstrakurikuler', 'Publikasi'],
                         'waka_kurikulum'  => ['Master Data', 'Akademik', 'Guru', 'Monitoring'],
                         'waka_humas'      => ['Publikasi'],
-                        'waka_sarpras'    => [],
+                        'waka_sarpras'    => ['Publikasi', 'Master Data'],
                         'super_admin'     => null, // all groups allowed
                     ];
 
@@ -783,10 +783,14 @@
                             continue;
                         }
 
+                        $groupItems = $group->getItems();
+                        if (empty($groupItems)) {
+                            continue;
+                        }
+
                         $isGroupActive = $group->isActive();
                         $isGroupCollapsible = $group->isCollapsible();
                         $groupIcon = $group->getIcon();
-                        $groupItems = $group->getItems();
                         $groupExtraSidebarAttributeBag = $group->getExtraSidebarAttributeBag();
                     @endphp
 

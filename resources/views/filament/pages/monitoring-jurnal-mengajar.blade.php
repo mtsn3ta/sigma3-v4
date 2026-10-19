@@ -212,6 +212,8 @@
                                                     Mapel</th>
                                                 <th style="padding: 0.6rem 0.9rem; font-weight: 600; color: #374151;">
                                                     Materi</th>
+                                                <th style="padding: 0.6rem 0.9rem; font-weight: 600; color: #374151; text-align: center; width: 90px;">
+                                                    Dokumentasi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -262,6 +264,24 @@
                                                     <td style="padding: 0.6rem 0.9rem;">{{ $row['mapel'] ?: '-' }}
                                                     </td>
                                                     <td style="padding: 0.6rem 0.9rem;">{{ $row['materi'] ?: '-' }}
+                                                    </td>
+                                                    <td style="padding: 0.6rem 0.9rem; text-align: center;">
+                                                        @if(!empty($row['dokumentasi_foto']) || !empty($row['dokumentasi_video']))
+                                                            <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+                                                                @if(!empty($row['dokumentasi_foto']))
+                                                                    <a href="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($row['dokumentasi_foto']) }}" target="_blank" title="Buka Foto KBM" style="display: inline-block;">
+                                                                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($row['dokumentasi_foto']) }}" style="width: 32px; height: 32px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db;">
+                                                                    </a>
+                                                                @endif
+                                                                @if(!empty($row['dokumentasi_video']))
+                                                                    <a href="{{ $row['dokumentasi_video'] }}" target="_blank" title="Buka Video KBM" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;">
+                                                                        <x-heroicon-o-video-camera style="width: 18px; height: 18px;" />
+                                                                    </a>
+                                                                @endif
+                                                            </div>
+                                                        @else
+                                                            <span style="color: #9ca3af; font-size: 0.8rem;">-</span>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -537,6 +557,8 @@
                                             </th>
                                             <th style="padding: 0.75rem 1rem; font-weight: 600; color: #374151;">Catatan
                                             </th>
+                                            <th style="padding: 0.75rem 1rem; font-weight: 600; color: #374151; text-align: center; width: 95px;">Dokumentasi
+                                            </th>
                                         </tr>
                                     </thead>
 
@@ -611,6 +633,25 @@
                                                 <td
                                                     style="padding: 0.75rem 1rem; white-space: pre-wrap; font-size: 0.8125rem; font-style: italic;">
                                                     {{ $row['catatan'] ?: '-' }}
+                                                </td>
+
+                                                <td style="padding: 0.75rem 1rem; text-align: center;">
+                                                    @if(!empty($row['dokumentasi_foto']) || !empty($row['dokumentasi_video']))
+                                                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                                            @if(!empty($row['dokumentasi_foto']))
+                                                                <a href="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($row['dokumentasi_foto']) }}" target="_blank" title="Buka Foto KBM" style="display: inline-block;">
+                                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($row['dokumentasi_foto']) }}" style="width: 34px; height: 34px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db;">
+                                                                </a>
+                                                            @endif
+                                                            @if(!empty($row['dokumentasi_video']))
+                                                                <a href="{{ $row['dokumentasi_video'] }}" target="_blank" title="Buka Video KBM" style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 6px; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;">
+                                                                    <x-heroicon-o-video-camera style="width: 18px; height: 18px;" />
+                                                                </a>
+                                                            @endif
+                                                        </div>
+                                                    @else
+                                                        <span style="color: #9ca3af; font-size: 0.8rem;">-</span>
+                                                    @endif
                                                 </td>
 
                                             </tr>

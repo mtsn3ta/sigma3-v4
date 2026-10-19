@@ -79,17 +79,19 @@ class AdminPanelProvider extends PanelProvider
                         )
                     ),
 
-                NavigationItem::make('Izin Keluar')
-                    ->group('Guru Piket')
-                    ->icon('heroicon-o-arrow-right-start-on-rectangle')
-                    ->visible(fn() => \App\Support\ActiveRole::is('piket'))
-                    ->url(fn(): string => IzinKeluarResource::getUrl())
-                    ->isActiveWhen(
-                        fn() =>
-                        request()->routeIs(
-                            IzinKeluarResource::getRouteBaseName() . '.*'
-                        )
-                    ),
+                NavigationItem::make('Layar Monitor TV KBM')
+                    ->group('Monitoring')
+                    ->icon('heroicon-o-tv')
+                    ->url(fn(): string => url('/display/kbm-live'))
+                    ->openUrlInNewTab()
+                    ->sort(99),
+
+                NavigationItem::make('Scan Masuk Kelas')
+                    ->group('Guru')
+                    ->icon('heroicon-o-qr-code')
+                    ->url(fn(): string => url('/scan-kelas'))
+                    ->visible(fn() => \App\Support\ActiveRole::is('guru') || \App\Support\ActiveRole::is('super_admin'))
+                    ->sort(1),
 
             ])
             ->renderHook(

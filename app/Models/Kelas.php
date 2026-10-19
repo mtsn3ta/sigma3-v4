@@ -15,7 +15,22 @@ class Kelas extends Model
         'nama_kelas',
         'tingkat',
         'status',
+        'qr_token',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Kelas $kelas) {
+            if (empty($kelas->qr_token)) {
+                $kelas->qr_token = \Illuminate\Support\Str::random(32);
+            }
+        });
+    }
+
+    public function presensiGuruKelas()
+    {
+        return $this->hasMany(PresensiGuruKelas::class);
+    }
 
     public function kelasSiswa()
     {

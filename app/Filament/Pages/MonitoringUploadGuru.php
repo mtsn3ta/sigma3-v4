@@ -32,7 +32,7 @@ class MonitoringUploadGuru extends Page
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
-        return ($user?->hasRole('kepala_madrasah') ?? false)
+        return ($user?->hasRole(['kepala_madrasah', 'waka_kurikulum']) ?? false)
             || ActiveRole::is('super_admin');
     }
 

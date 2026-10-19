@@ -27,6 +27,11 @@ Route::post(
     [EkstrakurikulerRfidController::class, 'scan']
 );
 
+Route::post(
+    '/rfid/kelas',
+    \App\Http\Controllers\Api\RFID\KelasRfidController::class
+);
+
 Route::get(
     '/monitoring',
     MonitoringAttendanceController::class

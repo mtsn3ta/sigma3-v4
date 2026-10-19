@@ -20,6 +20,30 @@ class ListKelas extends ListRecords
     {
         return [
 
+            \Filament\Actions\ActionGroup::make([
+                Action::make('cetak_semua_a4')
+                    ->label('Poster A4 (Pintu/Dinding Kelas)')
+                    ->icon('heroicon-o-document-text')
+                    ->url(fn() => route('kelas.print-qr', ['format' => 'a4']))
+                    ->openUrlInNewTab(),
+
+                Action::make('cetak_semua_a5')
+                    ->label('Kartu A5 (Akrilik Meja Guru)')
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->url(fn() => route('kelas.print-qr', ['format' => 'a5']))
+                    ->openUrlInNewTab(),
+
+                Action::make('cetak_semua_stiker')
+                    ->label('Stiker Mini (Grid 4 per Halaman)')
+                    ->icon('heroicon-o-qr-code')
+                    ->url(fn() => route('kelas.print-qr', ['format' => 'stiker']))
+                    ->openUrlInNewTab(),
+            ])
+                ->label('Cetak QR Semua Kelas')
+                ->icon('heroicon-o-printer')
+                ->color('info')
+                ->button(),
+
             CreateAction::make()
                 ->label('Tambah Kelas'),
 

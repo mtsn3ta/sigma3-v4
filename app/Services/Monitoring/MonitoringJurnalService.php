@@ -133,6 +133,7 @@ class MonitoringJurnalService
             }
 
             $timeline[$item->jam_ke] = [
+                'id' => $item->id,
                 'jam' => $item->jam_ke,
                 'status' => 'mengajar',
                 'guru' => $item->pegawai->nama,
@@ -140,6 +141,8 @@ class MonitoringJurnalService
                 'materi' => $item->materi,
                 'tidak_hadir' => count($tidakHadir) ? implode(', ', $tidakHadir) : '-',
                 'catatan' => $item->catatan ?: '-',
+                'dokumentasi_foto' => $item->dokumentasi_foto,
+                'dokumentasi_video' => $item->dokumentasi_video,
             ];
         }
 

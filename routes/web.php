@@ -57,7 +57,13 @@ Route::prefix('absensi')
         Route::get('/ekskul', function () {
             return Inertia::render('RFID/Ekskul');
         })->name('ekskul');
+
+        Route::get('/kelas', \App\Http\Controllers\KelasKioskController::class)
+            ->name('kelas');
     });
+
+Route::get('/scan-kelas', [\App\Http\Controllers\ScanKelasController::class, 'show'])->name('scan-kelas');
+Route::post('/api/kelas/checkin-qr', [\App\Http\Controllers\ScanKelasController::class, 'checkinApi'])->name('scan-kelas.api');
 Route::get('/intelligence', [IntelligenceController::class, 'index'])->name('intelligence');
 Route::get(
     '/wali_murid/{nisn}',
@@ -76,7 +82,16 @@ Route::get(
     [MonitoringAttendanceController::class, 'index']
 )->name('monitoring');
 Route::get(
-    '/pengumuman/{pengumuman}',
+    '/display/kbm-live',
+    \App\Http\Controllers\DisplayKbmController::class
+)->name('display.kbm-live');
+
+Route::get(
+    '/kelas/print-qr',
+    \App\Http\Controllers\PrintQrKelasController::class
+)->name('kelas.print-qr');
+
+Route::get('/pengumuman/{pengumuman}',
     PengumumanController::class
 )->name('frontend.pengumuman.show');
 Route::get(

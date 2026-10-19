@@ -7,6 +7,7 @@ use App\Models\KehadiranSekolah;
 use App\Models\Kelas;
 use App\Models\AgendaMadrasah;
 use App\Models\JadwalPelajaran;
+use App\Models\PresensiGuruKelas;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\DatePicker;
@@ -572,22 +573,27 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                     ])
                     ->visible(fn() => !$this->isLocked),
 
-                Section::make('Dokumentasi KBM (Foto / Video)')
+                Section::make('Dokumentasi KBM')
                     ->icon('heroicon-o-camera')
                     ->collapsible()
                     ->schema([
                         FileUpload::make('dokumentasi_foto')
-                            ->label('Foto Kegiatan KBM')
+                            ->label('Foto Kegiatan KBM (Opsional)')
+                            ->helperText('Otomatis dioptimasi dan dikompres ke ~100 KB untuk menghemat kuota & ruang server.')
                             ->image()
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth('1024')
+                            ->imageResizeTargetHeight('768')
                             ->disk('public')
                             ->directory('jurnal/foto')
-                            ->maxSize(5120),
-                        FileUpload::make('dokumentasi_video')
-                            ->label('Video Kegiatan KBM (Opsional)')
-                            ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-m4v'])
-                            ->disk('public')
-                            ->directory('jurnal/video')
-                            ->maxSize(20480),
+                            ->maxSize(10240),
+                        TextInput::make('dokumentasi_video')
+                            ->label('Tautan Video Kegiatan KBM (Opsional)')
+                            ->placeholder('Contoh: https://youtu.be/... atau link Google Drive')
+                            ->url()
+                            ->prefixIcon('heroicon-o-link')
+                            ->helperText('Gunakan tautan video YouTube (Unlisted) atau Google Drive untuk menghemat kapasitas server.')
+                            ->maxLength(255),
                     ])
                     ->visible(fn() => !$this->isLocked),
             ])
@@ -639,7 +645,30 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                     'keterangan' => $item['keterangan'],
                 ]);
             }
+
+            // Sinkronisasi otomatis ke tabel Presensi Guru Kelas
+            if (Auth::user()?->pegawai) {
+                PresensiGuruKelas::firstOrCreate(
+                    [
+                        'tanggal' => $data['tanggal'],
+                        'kelas_id' => $data['kelas_id'],
+                        'jam_ke' => (string) $data['jam_ke'],
+                    ],
+                    [
+                        'pegawai_id' => Auth::user()->pegawai->id,
+                        'metode' => 'jurnal',
+                        'waktu_masuk' => now(),
+                        'is_guru_pengganti' => false,
+                        'catatan' => 'Presensi via Jurnal Mengajar',
+                    ]
+                );
+            }
         });
+
+        // Kompresi foto secara otomatis ke ukuran ~100 KB
+        if (!empty($data['dokumentasi_foto'])) {
+            \App\Support\ImageCompressor::compress($data['dokumentasi_foto'], 'public', 1024, 768, 72);
+        }
 
         Notification::make()
             ->title($isEdit ? 'Jurnal diperbarui.' : 'Jurnal berhasil disimpan.')
