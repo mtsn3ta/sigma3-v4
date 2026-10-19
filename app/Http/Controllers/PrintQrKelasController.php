@@ -31,9 +31,8 @@ class PrintQrKelasController extends Controller
 
         $options = new QROptions([
             'outputType' => QRCode::OUTPUT_MARKUP_SVG,
-            'eccLevel' => QRCode::ECC_H, // High error correction agar mudah dipindai dari jauh
+            'eccLevel' => QRCode::ECC_M,
         ]);
-        $qrCode = new QRCode($options);
 
         $items = [];
         foreach ($kelasList as $kelas) {
@@ -43,7 +42,8 @@ class PrintQrKelasController extends Controller
             }
 
             $url = url('/scan-kelas?token=' . $kelas->qr_token);
-            $qrSvg = $qrCode->render($url);
+            // Buat instance QRCode baru per kelas agar segmen buffer tidak menumpuk
+            $qrSvg = (new QRCode($options))->render($url);
 
             $items[] = [
                 'kelas' => $kelas,
@@ -64,7 +64,7 @@ class PrintQrKelasController extends Controller
         };
 
         $paper = ($format === 'a5') ? 'a5' : 'a4';
-        $orientation = ($format === 'a5') ? 'landscape' : 'portrait';
+        $orientation = 'portrait';
 
         $pdf = Pdf::loadView($viewName, [
             'items' => $items,
