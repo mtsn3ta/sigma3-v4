@@ -25,7 +25,7 @@ class AnggotaEkskulForm
                         Grid::make(2)->schema([
                             Select::make('siswa_id')
                                 ->label('Pilih Siswa')
-                                ->relationship('siswa', 'nama')
+                                ->relationship('siswa', 'nama', fn ($query) => $query->where('status', 'aktif'))
                                 ->searchable()
                                 ->preload()
                                 ->required(),

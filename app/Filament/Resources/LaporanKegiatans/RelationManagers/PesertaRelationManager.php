@@ -14,9 +14,11 @@ class PesertaRelationManager extends RelationManager
 {
     protected static string $relationship = 'peserta';
 
+    protected static ?string $title = 'Daftar Kehadiran Peserta';
+
     public function isReadOnly(): bool
     {
-        return false;
+        return $this->ownerRecord->isLocked();
     }
 
     public function form(Schema $schema): Schema
@@ -32,9 +34,12 @@ class PesertaRelationManager extends RelationManager
                         'sakit' => 'Sakit',
                         'alpha' => 'Alpha',
                     ])
+                    ->native(false)
                     ->required(),
 
                 Textarea::make('keterangan')
+                    ->label('Keterangan / Alasan')
+                    ->placeholder('Catatan jika berhalangan hadir atau dispensasi')
                     ->rows(3),
 
             ]);
@@ -49,17 +54,31 @@ class PesertaRelationManager extends RelationManager
 
                 TextColumn::make('siswa.nisn')
                     ->label('NISN')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->color('gray'),
 
                 TextColumn::make('siswa.nama')
-                    ->label('Nama')
-                    ->searchable(),
+                    ->label('Nama Peserta')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('medium'),
 
                 TextColumn::make('siswa.nama_kelas_aktif')
-                    ->label('Kelas'),
+                    ->label('Kelas')
+                    ->badge()
+                    ->color('info'),
 
                 TextColumn::make('status')
+                    ->label('Kehadiran')
                     ->badge()
+                    ->formatStateUsing(fn(string $state) => match ($state) {
+                        'hadir' => 'Hadir',
+                        'izin' => 'Izin',
+                        'sakit' => 'Sakit',
+                        'alpha' => 'Alpha',
+                        default => ucfirst($state),
+                    })
                     ->color(fn(string $state) => match ($state) {
                         'hadir' => 'success',
                         'izin' => 'warning',
@@ -69,6 +88,8 @@ class PesertaRelationManager extends RelationManager
                     }),
 
                 TextColumn::make('keterangan')
+                    ->label('Catatan')
+                    ->placeholder('-')
                     ->limit(40),
 
             ])
@@ -83,7 +104,9 @@ class PesertaRelationManager extends RelationManager
 
             ->recordActions([
 
-                EditAction::make(),
+                EditAction::make()
+                    ->modalWidth('md')
+                    ->modalHeading('Ubah Status Kehadiran Peserta'),
 
             ])
 

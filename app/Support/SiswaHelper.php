@@ -26,11 +26,22 @@ class SiswaHelper
                     ->where('aktif', true)
                     ->value('id')
             )
-            ->with('siswa')
+            ->whereHas('siswa', fn ($q) => $q->where('status', 'aktif'))
+            ->with(['siswa' => fn ($q) => $q->where('status', 'aktif')])
             ->get()
+            ->filter(fn ($item) => $item->siswa !== null)
             ->pluck('siswa.nama', 'siswa.id')
             ->toArray();
     }
+
+    /**
+     * Alias untuk dropdown opsi siswa berdasarkan kelas.
+     */
+    public static function optionsByKelas(?int $kelasId): array
+    {
+        return self::byKelas($kelasId);
+    }
+
 
     /**
      * Collection siswa yang belum melakukan RFID hari ini.

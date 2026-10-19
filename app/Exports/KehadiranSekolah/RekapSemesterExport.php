@@ -42,6 +42,7 @@ class RekapSemesterExport implements FromCollection, WithHeadings, ShouldAutoSiz
     public function collection(): Collection
     {
         $query = Siswa::query()
+            ->where('status', 'aktif')
             ->with(['kelasAktif.kelas'])
             ->withCount([
                 'kehadiranSekolah as hadir_count' => fn($query) =>

@@ -26,6 +26,7 @@ class RekapBulananExport implements FromCollection, WithHeadings, ShouldAutoSize
     public function collection(): Collection
     {
         $query = Siswa::query()
+            ->where('status', 'aktif')
             ->with(['kelasAktif.kelas'])
             ->withCount([
                 'kehadiranSekolah as hadir_count' => fn($q) =>

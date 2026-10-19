@@ -57,32 +57,28 @@
    PENEGAKAN JARAK KONTEN (Anti-Tabrakan Topbar)
    ========================================= */
 
-        /* 1. Mendorong Konten Utama (Kanal Kanan) Turun ke Bawah */
+        /* 1. Jarak Konten Utama Normal di Bawah Topbar */
         .fi-main {
-            padding-top: 5.5rem !important;
-            /* Memberikan ruang kosong yang pas di bawah topbar */
+            padding-top: 1.25rem !important;
         }
 
-        /* 2. Mendorong Isi Menu Sidebar agar Tidak Tertutup Header Topbar */
+        /* 2. Jarak Menu Sidebar Normal */
         .fi-sidebar-nav {
-            padding-top: 1.5rem !important;
-            /* Dirapatkan kembali karena tidak ada tabrakan lagi */
+            padding-top: 0.5rem !important;
             background: transparent !important;
         }
 
         /* 💻 PENYESUAIAN KHUSUS LAYAR BESAR (Desktop) */
         @media (min-width: 1024px) {
             .fi-main {
-                padding-top: 5.5rem !important;
-                /* Tetap menjaga jarak dari sidebar desktop Anda */
+                padding-top: 1.25rem !important;
             }
         }
 
         /* 📱 PENYESUAIAN KHUSUS LAYAR KECIL (Mobile) */
         @media (max-width: 1023px) {
             .fi-main {
-                padding-top: 6rem !important;
-                /* Sedikit lebih longgar di mobile agar header halaman aman */
+                padding-top: 1.25rem !important;
                 margin-left: 0 !important;
             }
         }
@@ -759,13 +755,38 @@
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
             <ul class="fi-sidebar-nav-groups">
+                @php
+                    $activeRole = \App\Support\ActiveRole::get();
+
+                    $roleGroupMap = [
+                        'guru'            => ['Guru'],
+                        'piket'           => ['Guru Piket'],
+                        'bk'              => ['BK'],
+                        'pembina'         => ['Ekstrakurikuler'],
+                        'pelatih'         => ['Ekstrakurikuler'],
+                        'kepala_madrasah' => ['Monitoring', 'Akademik', 'Publikasi'],
+                        'waka_kesiswaan'  => ['Master Data', 'BK', 'Guru Piket', 'Monitoring', 'Ekstrakurikuler'],
+                        'waka_kurikulum'  => ['Master Data', 'Akademik', 'Guru', 'Monitoring'],
+                        'waka_humas'      => ['Publikasi'],
+                        'waka_sarpras'    => [],
+                        'super_admin'     => null, // all groups allowed
+                    ];
+
+                    $allowedGroups = $roleGroupMap[$activeRole] ?? null;
+                @endphp
+
                 @foreach ($navigation as $group)
                     @php
+                        $groupLabel = $group->getLabel();
+
+                        if ($allowedGroups !== null && !empty($groupLabel) && !in_array($groupLabel, $allowedGroups, true)) {
+                            continue;
+                        }
+
                         $isGroupActive = $group->isActive();
                         $isGroupCollapsible = $group->isCollapsible();
                         $groupIcon = $group->getIcon();
                         $groupItems = $group->getItems();
-                        $groupLabel = $group->getLabel();
                         $groupExtraSidebarAttributeBag = $group->getExtraSidebarAttributeBag();
                     @endphp
 

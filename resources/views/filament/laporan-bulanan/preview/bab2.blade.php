@@ -9,17 +9,7 @@
     $statistik = LaporanBulananHelper::statistik($record);
 @endphp
 
-<div
-    style="
-    width: 210mm;
-    min-height: 297mm;
-    margin: 2rem auto;
-    background: #ffffff;
-    padding: 25mm;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    box-sizing: border-box;
-    color: #111827;
-">
+<div class="page-container mt-30">
 
     {{-- Judul BAB --}}
     <div style="text-align: center; margin-bottom: 2.5rem;">
@@ -40,6 +30,7 @@
             2.1 Jadwal Pelaksanaan Pembinaan
         </h3>
 
+        <div class="table-responsive">
         <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
             <thead style="background-color: #f3f4f6;">
                 <tr>
@@ -83,6 +74,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     {{-- ========================================================= --}}
@@ -93,6 +85,7 @@
             2.2 Rekap Kehadiran Anggota
         </h3>
 
+        <div class="table-responsive">
         <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem; color: #111827;">
             <thead style="background-color: #f3f4f6;">
                 <tr>
@@ -170,6 +163,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
 
         {{-- Legenda --}}
         <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #374151;">
@@ -189,7 +183,8 @@
             2.3 Statistik Pembinaan
         </h3>
 
-        <table style="width: 70%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
+        <div class="table-responsive">
+        <table style="width: 100%; max-width: 500px; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
             <thead style="background-color: #f3f4f6;">
                 <tr>
                     <th style="border: 1px solid #374151; padding: 0.5rem; text-align: left; width: 70%;">Uraian</th>
@@ -217,6 +212,7 @@
                 </tr>
             </tbody>
         </table>
+        </div>
     </div>
 
 </div>

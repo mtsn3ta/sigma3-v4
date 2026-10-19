@@ -137,6 +137,7 @@ class RekapBulananTable extends Component implements HasActions, HasForms, HasTa
             ->description('Periode: ' . $namaBulan[$this->getBulan()] . ' ' . $this->getTahun())
             ->query(
                 Siswa::query()
+                    ->where('status', 'aktif')
                     ->when(
                         $this->getKelasId(),
                         fn(Builder $query, $kelasId) =>

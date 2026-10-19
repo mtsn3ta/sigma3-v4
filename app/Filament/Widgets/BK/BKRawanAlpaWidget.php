@@ -28,6 +28,7 @@ class BKRawanAlpaWidget extends BaseWidget
             ->description('Siswa dengan akumulasi ketidakhadiran tanpa keterangan (≥ 3 Hari).')
             ->query(
                 Siswa::query()
+                    ->where('siswa.status', 'aktif')
                     ->select('siswa.*')
                     ->selectSub(
                         KehadiranSekolah::selectRaw('COUNT(*)')

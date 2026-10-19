@@ -1,14 +1,4 @@
-<div
-    style="
-    width: 210mm;
-    min-height: 297mm;
-    margin: 2rem auto;
-    background: #ffffff;
-    padding: 25mm;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    box-sizing: border-box;
-    color: #111827;
-">
+<div class="page-container mt-30">
 
     {{-- Judul LAMPIRAN --}}
     <div style="text-align: center; margin-bottom: 2.5rem;">
@@ -21,57 +11,21 @@
         </h2>
     </div>
 
-    {{-- Grid Dokumentasi --}}
+    {{-- Grid Dokumentasi Responsif --}}
     @if (!empty($record->dokumentasi))
-        <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem;">
             @foreach ($record->dokumentasi as $foto)
-                @if ($loop->first || $loop->iteration % 2 == 1)
-                    <tr>
-                @endif
+                <div style="border: 1px solid #e5e7eb; padding: 0.75rem; border-radius: 0.5rem; background-color: #f9fafb; text-align: center;">
+                    <img src="{{ Storage::disk('public')->url($foto) }}"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 0.375rem; display: block;"
+                        alt="Dokumentasi {{ $loop->iteration }}">
 
-                <td
-                    style="
-                    width: 50%;
-                    padding: 0.75rem;
-                    text-align: center;
-                    vertical-align: top;
-                ">
-                    {{-- Frame Foto --}}
-                    <div
-                        style="
-                        border: 1px solid #e5e7eb;
-                        padding: 0.5rem;
-                        border-radius: 0.5rem;
-                        background-color: #f9fafb;
-                    ">
-                        <img src="{{ Storage::disk('public')->url($foto) }}"
-                            style="
-                            max-width: 100%;
-                            height: 220px;
-                            object-fit: cover;
-                            border-radius: 0.25rem;
-                            display: block;
-                            margin: 0 auto;
-                        "
-                            alt="Dokumentasi {{ $loop->iteration }}">
-
-                        <div
-                            style="
-                            margin-top: 0.75rem;
-                            font-size: 0.875rem;
-                            color: #4b5563;
-                            font-weight: 500;
-                        ">
-                            Gambar {{ $loop->iteration }}
-                        </div>
+                    <div style="margin-top: 0.75rem; font-size: 0.875rem; color: #4b5563; font-weight: 500;">
+                        Dokumentasi #{{ $loop->iteration }}
                     </div>
-                </td>
-
-                @if ($loop->last || $loop->iteration % 2 == 0)
-                    </tr>
-                @endif
+                </div>
             @endforeach
-        </table>
+        </div>
     @else
         <div
             style="

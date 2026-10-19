@@ -78,25 +78,22 @@ class SesiKegiatansTable
             ->recordActions([
 
                 Action::make('absensi')
-
                     ->label('Absensi')
-
                     ->icon('heroicon-o-clipboard-document-check')
-
                     ->color('success')
-
-                    ->visible(fn($record) => $record->status === 'aktif')
-
+                    ->visible(fn($record) => in_array($record->status, ['aktif', 'draft']))
                     ->url(fn($record) => Pages\Absensi::getUrl([
                         'record' => $record,
                     ])),
 
                 Action::make('lihat_absensi')
-                    ->label('Lihat')
+                    ->label('Lihat Absensi')
                     ->icon('heroicon-o-eye')
                     ->color('gray')
                     ->visible(fn($record) => $record->status === 'selesai')
-                    ->url(fn($record) => '#'),
+                    ->url(fn($record) => Pages\Absensi::getUrl([
+                        'record' => $record,
+                    ])),
 
                 EditAction::make()
                     ->label(fn($record) => $record->status === 'draft' ? 'Lengkapi' : 'Edit'),

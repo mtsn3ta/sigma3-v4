@@ -117,27 +117,32 @@
 
                         {{-- Data --}}
                         <div>
-                            <h3 style="margin:0 0 .75rem;font-size:1rem;font-weight:700;color:#0f172a;">Data Pengajuan
-                            </h3>
+                            <h3 style="margin:0 0 .75rem;font-size:1rem;font-weight:700;color:#0f172a;">Data Pengajuan</h3>
 
                             <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.95rem;color:#334155;">
                                 <div
                                     style="display:flex;justify-content:space-between;border-bottom:1px dashed #e2e8f0;padding-bottom:.4rem;">
-                                    <span style="color:#64748b;">Nama</span>
+                                    <span style="color:#64748b;">Nama Siswa</span>
                                     <span style="font-weight:600;">{{ $previewRequest->siswa->nama }}</span>
                                 </div>
                                 <div
                                     style="display:flex;justify-content:space-between;border-bottom:1px dashed #e2e8f0;padding-bottom:.4rem;">
                                     <span style="color:#64748b;">Kelas</span>
-                                    <span style="font-weight:600;">{{ $previewRequest->siswa->nama_kelas_aktif }}</span>
+                                    <span style="font-weight:600;">{{ $previewRequest->siswa->nama_kelas_aktif ?? '-' }}</span>
                                 </div>
                                 <div
                                     style="display:flex;justify-content:space-between;border-bottom:1px dashed #e2e8f0;padding-bottom:.4rem;">
-                                    <span style="color:#64748b;">Jenis</span>
+                                    <span style="color:#64748b;">Wali / Pengirim</span>
+                                    <span style="font-weight:600;">{{ $previewRequest->nama_pengirim }} ({{ ucfirst($previewRequest->hubungan) }})</span>
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;border-bottom:1px dashed #e2e8f0;padding-bottom:.4rem;">
+                                    <span style="color:#64748b;">Jenis Izin</span>
                                     <span style="font-weight:600;">{{ ucfirst($previewRequest->jenis) }}</span>
                                 </div>
-                                <div style="display:flex;justify-content:space-between;padding-bottom:.4rem;">
-                                    <span style="color:#64748b;">Tanggal</span>
+                                <div
+                                    style="display:flex;justify-content:space-between;border-bottom:1px dashed #e2e8f0;padding-bottom:.4rem;">
+                                    <span style="color:#64748b;">Tanggal Izin</span>
                                     <span style="font-weight:600;text-align:right;">
                                         {{ $previewRequest->tanggal_mulai->format('d M Y') }}
                                         @if ($previewRequest->tanggal_mulai != $previewRequest->tanggal_selesai)
@@ -145,14 +150,46 @@
                                         @endif
                                     </span>
                                 </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;border-bottom:1px dashed #e2e8f0;padding-bottom:.4rem;">
+                                    <span style="color:#64748b;">Status Verifikasi</span>
+                                    <span>
+                                        @if ($previewRequest->status === 'approved')
+                                            <span style="padding:.2rem .6rem;border-radius:9999px;background:#dcfce7;color:#15803d;font-weight:700;font-size:.8rem;">✓ Disetujui</span>
+                                        @elseif ($previewRequest->status === 'rejected')
+                                            <span style="padding:.2rem .6rem;border-radius:9999px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:.8rem;">✕ Ditolak</span>
+                                        @else
+                                            <span style="padding:.2rem .6rem;border-radius:9999px;background:#fef3c7;color:#92400e;font-weight:700;font-size:.8rem;">Menunggu</span>
+                                        @endif
+                                    </span>
+                                </div>
+                                @if ($previewRequest->verified_at)
+                                    <div
+                                        style="display:flex;justify-content:space-between;padding-bottom:.4rem;">
+                                        <span style="color:#64748b;">Diverifikasi Oleh</span>
+                                        <span style="font-weight:600;text-align:right;">
+                                            {{ $previewRequest->verifier?->nama ?? 'Guru Piket' }}<br>
+                                            <span style="font-size:.8rem;color:#94a3b8;font-weight:normal;">{{ $previewRequest->verified_at->format('d M Y, H:i') }} WIB</span>
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
 
                             <div
                                 style="margin-top:1.25rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:.75rem;padding:1rem;">
-                                <div style="font-weight:700;color:#0f172a;margin-bottom:.4rem;">Keterangan</div>
+                                <div style="font-weight:700;color:#0f172a;margin-bottom:.4rem;">Keterangan Orang Tua</div>
                                 <div style="color:#334155;font-size:.9rem;line-height:1.5;">
-                                    {{ $previewRequest->keterangan }}</div>
+                                    {{ $previewRequest->keterangan ?: 'Tidak ada catatan tambahan.' }}</div>
                             </div>
+
+                            @if ($previewRequest->verification_note)
+                                <div
+                                    style="margin-top:.75rem;background:#fef2f2;border:1px solid #fee2e2;border-radius:.75rem;padding:1rem;">
+                                    <div style="font-weight:700;color:#991b1b;margin-bottom:.4rem;">Catatan Verifikasi Guru</div>
+                                    <div style="color:#7f1d1d;font-size:.9rem;line-height:1.5;">
+                                        {{ $previewRequest->verification_note }}</div>
+                                </div>
+                            @endif
                         </div>
 
                         {{-- Lampiran --}}
@@ -164,7 +201,7 @@
                                     Selfie Orang Tua</div>
                                 @if ($previewRequest->parent_selfie)
                                     <img src="{{ asset('storage/' . $previewRequest->parent_selfie) }}"
-                                        style="width:100%;border-radius:.75rem;border:1px solid #e2e8f0;">
+                                        style="width:100%;max-height:220px;object-fit:cover;border-radius:.75rem;border:1px solid #e2e8f0;">
                                 @else
                                     <div
                                         style="padding:1rem;background:#f8fafc;border-radius:.75rem;color:#94a3b8;font-size:.85rem;text-align:center;">
@@ -175,14 +212,20 @@
                             <div style="margin-bottom:1.25rem;">
                                 <div style="font-weight:600;color:#334155;margin-bottom:.5rem;font-size:.9rem;">✍️ Tanda
                                     Tangan</div>
-                                <img src="{{ $previewRequest->parent_signature }}"
-                                    style="width:100%;border:1px solid #e2e8f0;border-radius:.75rem;background:#fff;">
+                                @if ($previewRequest->parent_signature)
+                                    <img src="{{ $previewRequest->parent_signature }}"
+                                        style="width:100%;max-height:120px;object-fit:contain;border:1px solid #e2e8f0;border-radius:.75rem;background:#fff;">
+                                @else
+                                    <div
+                                        style="padding:1rem;background:#f8fafc;border-radius:.75rem;color:#94a3b8;font-size:.85rem;text-align:center;">
+                                        Tidak tersedia</div>
+                                @endif
                             </div>
 
                             @if ($previewRequest->doctor_letter)
                                 <a href="{{ asset('storage/' . $previewRequest->doctor_letter) }}" target="_blank"
                                     style="display:inline-flex;align-items:center;gap:.5rem;color:#2563eb;font-weight:600;text-decoration:none;font-size:.9rem;">
-                                    📄 Lihat Surat Dokter
+                                    📄 Buka Surat Dokter (Dokumen/Foto)
                                 </a>
                             @endif
                         </div>

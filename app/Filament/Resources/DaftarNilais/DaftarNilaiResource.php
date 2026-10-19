@@ -21,9 +21,13 @@ class DaftarNilaiResource extends Resource
 {
     protected static ?string $model = DaftarNilai::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTableCells;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Guru';
+
+    protected static ?string $navigationLabel = 'Daftar Nilai Siswa';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $modelLabel = 'Daftar Nilai';
 

@@ -34,6 +34,10 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
     public function mount(): void
     {
         $this->resetForm();
+
+        if (request()->query('action') === 'tambah') {
+            $this->tambah();
+        }
     }
 
     protected function resetForm(): void
@@ -41,8 +45,8 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
         $this->record = null;
 
         $this->form->fill([
-            // PERBAIKAN 1: Mengunci nilai default tanggal ke Asia/Jakarta (WIB)
             'tanggal' => now('Asia/Jakarta')->toDateString(),
+            'jadwal_pilihan' => null,
             'kelas_id' => null,
             'mapel' => null,
             'jam_ke' => null,
@@ -68,6 +72,7 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
 
         $this->form->fill([
             'tanggal' => $this->record->tanggal->toDateString(),
+            'jadwal_pilihan' => null,
             'kelas_id' => $this->record->kelas_id,
             'mapel' => $this->record->mapel,
             'jam_ke' => $this->record->jam_ke,
@@ -80,30 +85,84 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
         );
     }
 
+    public static function optionsJadwalGuru(?string $tanggal): array
+    {
+        if (blank($tanggal) || !Auth::user()?->pegawai) {
+            return [];
+        }
+
+        $date = \Carbon\Carbon::parse($tanggal);
+        $namaHari = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'][$date->format('l')] ?? '';
+
+        $tahunAjaranId = \App\Models\TahunAjaran::aktifId();
+
+        $jadwalList = \App\Models\JadwalPelajaran::with(['kelas', 'plotingGuru'])
+            ->where('hari', $namaHari)
+            ->where('tahun_ajaran_id', $tahunAjaranId)
+            ->whereHas('plotingGuru', fn($q) => $q->where('pegawai_id', Auth::user()->pegawai->id))
+            ->get()
+            ->sortBy(fn($j) => (int) $j->jam_ke)
+            ->values();
+
+        $options = [];
+        foreach ($jadwalList as $jadwal) {
+            $key = "{$jadwal->kelas_id}|{$jadwal->plotingGuru?->mapel}|{$jadwal->jam_ke}";
+            $options[$key] = "Kelas {$jadwal->kelas?->nama_kelas} — {$jadwal->plotingGuru?->mapel} (Jam ke-{$jadwal->jam_ke})";
+        }
+
+        return $options;
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 DatePicker::make('tanggal')
-                    ->label('Tanggal')
+                    ->label('Tanggal Berhalangan')
+                    ->default(now('Asia/Jakarta')->toDateString())
+                    ->live()
+                    ->native(false)
                     ->required(),
+
+                Select::make('jadwal_pilihan')
+                    ->label('Pilih dari Jadwal Mengajar Anda (Otomatis)')
+                    ->placeholder('— Pilih jadwal untuk mengisi Kelas, Mapel & Jam otomatis —')
+                    ->options(fn ($get) => self::optionsJadwalGuru($get('tanggal')))
+                    ->live()
+                    ->afterStateUpdated(function (?string $state, $set) {
+                        if (filled($state)) {
+                            $parts = explode('|', $state);
+                            if (count($parts) === 3) {
+                                $set('kelas_id', (int) $parts[0]);
+                                $set('mapel', $parts[1]);
+                                $set('jam_ke', $parts[2]);
+                            }
+                        }
+                    })
+                    ->dehydrated(false)
+                    ->visible(fn ($get) => !empty(self::optionsJadwalGuru($get('tanggal')))),
 
                 Select::make('kelas_id')
                     ->label('Kelas')
                     ->options(
-                        // PERBAIKAN: Menampilkan SEMUA kelas secara aman, lalu membuang nama yang kembar lewat PHP ->unique()
                         Kelas::query()
                             ->orderBy('tingkat')
                             ->orderBy('nama_kelas')
-                            ->get()
-                            ->unique('nama_kelas') // Menghilangkan duplikasi jika ada nama kelas sama dari tahun lalu
                             ->pluck('nama_kelas', 'id')
                     )
                     ->searchable()
+                    ->preload()
                     ->required(),
 
                 TextInput::make('mapel')
                     ->label('Mata Pelajaran')
+                    ->placeholder('Ketik atau pilih mapel Anda')
+                    ->datalist(fn () => \App\Models\PlotingGuru::where('pegawai_id', Auth::user()?->pegawai?->id)
+                        ->whereNotNull('mapel')
+                        ->distinct()
+                        ->pluck('mapel')
+                        ->toArray()
+                    )
                     ->required(),
 
                 Select::make('jam_ke')
@@ -118,12 +177,10 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
                         '7' => '7',
                         '8' => '8',
                         '9' => '9',
-                        // Opsi gabungan bawaan awal
                         '1-2' => '1 - 2',
                         '3-4' => '3 - 4',
                         '5-6' => '5 - 6',
                         '7-8' => '7 - 8',
-                        // PERBAIKAN 3: Menambahkan opsi jam pelajaran silang
                         '2-3' => '2 - 3',
                         '4-5' => '4 - 5',
                         '6-7' => '6 - 7',
@@ -132,8 +189,9 @@ class GuruBerhalanganForm extends Component implements HasActions, HasSchemas
                     ->required(),
 
                 Textarea::make('isi_tugas')
-                    ->label('Isi Tugas')
-                    ->rows(8)
+                    ->label('Isi / Instruksi Tugas Siswa')
+                    ->placeholder('Tuliskan rincian tugas atau materi yang harus dikerjakan siswa selama jam pelajaran...')
+                    ->rows(6)
                     ->required(),
             ])
             ->statePath('data');

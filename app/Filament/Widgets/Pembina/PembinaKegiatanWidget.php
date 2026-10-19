@@ -57,21 +57,38 @@ class PembinaKegiatanWidget extends BaseWidget
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'selesai'     => 'success',
-                        'berlangsung' => 'warning',
-                        'terjadwal'   => 'info',
+                        'aktif'       => 'warning',
+                        'draft'       => 'gray',
+                        'batal'       => 'danger',
                         default       => 'gray',
                     })
                     ->icon(fn(string $state): string => match ($state) {
                         'selesai'     => 'heroicon-m-check-badge',
-                        'berlangsung' => 'heroicon-m-arrow-path',
-                        'terjadwal'   => 'heroicon-m-clock',
+                        'aktif'       => 'heroicon-m-arrow-path',
+                        'draft'       => 'heroicon-m-clock',
+                        'batal'       => 'heroicon-m-x-circle',
                         default       => 'heroicon-m-minus',
+                    })
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'selesai'     => 'Selesai',
+                        'aktif'       => 'Aktif',
+                        'draft'       => 'Draft',
+                        'batal'       => 'Batal',
+                        default       => ucfirst($state),
                     })
                     ->description(
                         fn(SesiKegiatan $record): string =>
                         $record->waktu_mulai ? Carbon::parse($record->waktu_mulai)->format('H:i') : '--:--'
                     )
                     ->alignEnd(),
+            ])
+            ->recordUrl(fn(SesiKegiatan $record) => \App\Filament\Resources\SesiKegiatans\Pages\Absensi::getUrl(['record' => $record]))
+            ->recordActions([
+                Tables\Actions\Action::make('absensi')
+                    ->label('Absensi')
+                    ->icon('heroicon-m-clipboard-document-check')
+                    ->color('success')
+                    ->url(fn(SesiKegiatan $record) => \App\Filament\Resources\SesiKegiatans\Pages\Absensi::getUrl(['record' => $record])),
             ])
             ->paginated(false)
             ->striped()

@@ -2,138 +2,159 @@
 
     <style>
         /* =========================================
-       1. GAYA TOPBAR (Floating Oval / Pill)
-       ========================================= */
-        /* 1. Tambahkan ini untuk mengatur container pembungkusnya */
+           TOPBAR MODERN (Docked Glassmorphism)
+           ========================================= */
         .fi-topbar-ctn {
-            position: fixed !important;
+            position: sticky !important;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 40 !important;
-            pointer-events: none;
-            /* Penting: Agar area kosong di luar topbar tidak menghalangi klik ke halaman utama */
+            z-index: 30 !important;
         }
 
-        /* 2. Ubah sedikit .fi-topbar milikmu */
         .fi-topbar {
-            /* GANTI dari fixed menjadi absolute */
-            position: absolute !important;
-
-            /* Aktifkan kembali fungsi klik khusus untuk elemen topbar */
-            pointer-events: auto;
-
-            /* === SISA KODEMU TETAP SAMA PERSIS DI BAWAH INI === */
-            top: 1.25rem !important;
-            border-radius: 9999px !important;
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
-            background-color: rgba(255, 255, 255, 0.7) !important;
-            backdrop-filter: blur(24px) saturate(150%) !important;
-            -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow:
-                0 10px 30px -10px rgba(34, 197, 94, 0.15),
-                inset 0 1px 1px rgba(255, 255, 255, 0.9) !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            left: 1.5rem !important;
-            width: calc(100% - 3rem) !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
+            position: relative !important;
+            min-height: 4rem !important;
+            height: 4rem !important;
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(16px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03) !important;
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            left: 0 !important;
+            top: 0 !important;
         }
 
-        /* (Media queries dan dark mode milikmu biarkan seperti semula) */
-
-        /* Mode Desktop: Topbar di sebelah kanan Sidebar */
-        @media (min-width: 1024px) {
-            .fi-topbar {
-                /* 320px (Lebar Sidebar) + 1rem (Margin Kiri Sidebar) + 1rem (Jarak antar elemen) */
-                left: calc(320px + 2rem) !important;
-
-                /* Sisa ruang layar dikurangi lebar sidebar dan margin */
-                width: calc(100% - 320px - 3.5rem) !important;
-            }
-        }
-
-        /* Mode Gelap untuk Topbar */
         .dark .fi-topbar {
-            background-color: rgba(15, 23, 42, 0.7) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow:
-                0 10px 30px -10px rgba(0, 0, 0, 0.6),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+            background: rgba(15, 23, 42, 0.85) !important;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.8) !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2) !important;
         }
 
-        /* =========================================
-           2. TEMA BRAND SIGMA (Premium Typography)
-           ========================================= */
+        .fi-topbar-start {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+        }
+
+        .fi-topbar-end {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            margin-left: auto !important;
+        }
+
+        /* Brand Typography */
         .sigma-brand {
-            margin-left: .75rem;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            line-height: 1.1;
+            align-items: center;
+            gap: 0.25rem;
+            margin-left: 0.25rem;
+            line-height: 1;
         }
 
         .sigma-brand-title {
             display: flex;
-            align-items: baseline;
-            gap: 4px;
+            align-items: center;
+            gap: 2px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
         }
 
         .sigma-brand-title span:first-child {
-            font-size: 1.125rem;
-            font-weight: 900;
             color: #042f2e;
-            /* Hijau super pekat */
-            letter-spacing: -.04em;
-            transition: color 0.3s ease;
         }
 
         .sigma-brand-title span:last-child {
-            font-size: 1.125rem;
-            font-weight: 900;
-            color: #0d9488;
-            /* Aksen Teal identitas kita */
-            transition: color 0.3s ease;
+            color: #10b981;
         }
 
-        .sigma-brand-subtitle {
-            margin-top: 4px;
-            font-size: .56rem;
-            font-weight: 800;
-            letter-spacing: .20em;
-            color: #475569;
-            text-transform: uppercase;
-            transition: color 0.3s ease;
-        }
-
-        .sigma-brand-school {
-            margin-top: 2px;
-            font-size: .50rem;
-            font-weight: 600;
-            letter-spacing: .28em;
-            color: #64748b;
-            text-transform: uppercase;
-            transition: color 0.3s ease;
-        }
-
-        /* Support Dark Mode untuk Teks Brand */
         .dark .sigma-brand-title span:first-child {
             color: #ffffff;
         }
 
         .dark .sigma-brand-title span:last-child {
-            color: #2dd4bf;
-            /* Teal menyala untuk background gelap */
+            color: #34d399;
         }
 
-        .dark .sigma-brand-subtitle {
-            color: #94a3b8;
+        /* Badges */
+        .sigma-context-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            white-space: nowrap;
         }
 
-        .dark .sigma-brand-school {
-            color: #64748b;
+        .sigma-context-badge-role {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .dark .sigma-context-badge-role {
+            background-color: rgba(6, 78, 59, 0.5);
+            color: #6ee7b7;
+            border-color: rgba(5, 150, 105, 0.4);
+        }
+
+        .sigma-context-badge-ta {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .dark .sigma-context-badge-ta {
+            background-color: rgba(30, 41, 59, 0.8);
+            color: #cbd5e1;
+            border-color: #334155;
+        }
+
+        .sigma-portal-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .sigma-portal-btn:hover {
+            color: #059669;
+            background: #f0fdf4;
+            border-color: #a7f3d0;
+        }
+
+        .dark .sigma-portal-btn {
+            background: rgba(30, 41, 59, 0.8);
+            color: #cbd5e1;
+            border-color: #334155;
+        }
+
+        .dark .sigma-portal-btn:hover {
+            color: #34d399;
+            background: rgba(6, 78, 59, 0.4);
+            border-color: rgba(5, 150, 105, 0.4);
         }
     </style>
 
@@ -144,6 +165,8 @@
         $hasTopNavigation = filament()->hasTopNavigation();
         $hasNavigation = filament()->hasNavigation();
         $hasTenancy = filament()->hasTenancy();
+        $activeRoleName = \App\Support\ActiveRole::get();
+        $academicYear = \App\Support\TahunAjaranHelper::aktif()?->tahun;
     @endphp
 
     <nav class="fi-topbar">
@@ -166,7 +189,7 @@
                     @if ($isSidebarCollapsibleOnDesktop)
                         <x-filament::icon-button color="gray" :icon="$isRtl
                             ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft
-                            : \Filament\Support\Icons\Heroicon::OutlinedChevronRight" {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` for RTL. --}}
+                            : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"
                             :icon-alias="$isRtl
                                 ? [
                                     \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
@@ -180,7 +203,7 @@
                     @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
                         <x-filament::icon-button color="gray" :icon="$isRtl
                             ? \Filament\Support\Icons\Heroicon::OutlinedChevronRight
-                            : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft" {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` for RTL. --}}
+                            : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft"
                             :icon-alias="$isRtl
                                 ? [
                                     \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
@@ -196,20 +219,44 @@
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_BEFORE) }}
 
             @if ($homeUrl = filament()->getHomeUrl())
-                <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
+                <a {{ \Filament\Support\generate_href_html($homeUrl) }} style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
                     <x-filament-panels::logo />
+                    <div class="sigma-brand">
+                        <div class="sigma-brand-title">
+                            <span>SIGMA</span>
+                            <span>3</span>
+                        </div>
+                    </div>
                 </a>
             @else
-                <x-filament-panels::logo />
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <x-filament-panels::logo />
+                    <div class="sigma-brand">
+                        <div class="sigma-brand-title">
+                            <span>SIGMA</span>
+                            <span>3</span>
+                        </div>
+                    </div>
+                </div>
             @endif
 
-            {{-- Bagian Brand Anda --}}
-            <div class="sigma-brand">
-                <div class="sigma-brand-title">
-                    <span>SIGMA</span>
-                    <span>3</span>
+            {{-- Context Badges (Active Role & Tahun Ajaran) --}}
+            @if ($activeRoleName || $academicYear)
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-left: 0.75rem; padding-left: 0.75rem; border-left: 1px solid #e2e8f0;">
+                    @if ($activeRoleName)
+                        <span class="sigma-context-badge sigma-context-badge-role">
+                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background-color: #10b981;"></span>
+                            {{ \App\Support\ActiveRole::label($activeRoleName) }}
+                        </span>
+                    @endif
+
+                    @if ($academicYear)
+                        <span class="sigma-context-badge sigma-context-badge-ta">
+                            TA {{ $academicYear }}
+                        </span>
+                    @endif
                 </div>
-            </div>
+            @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_AFTER) }}
         </div>
@@ -331,6 +378,11 @@
             @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
+
+            <a href="/" target="_blank" class="sigma-portal-btn" title="Buka Website Portal Depan">
+                <x-filament::icon icon="heroicon-m-arrow-top-right-on-square" style="width: 14px; height: 14px;" />
+                <span>Lihat Web</span>
+            </a>
 
             @if (filament()->auth()->check())
                 @if (filament()->hasDatabaseNotifications() &&

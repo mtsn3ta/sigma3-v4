@@ -18,10 +18,9 @@ class KelasSiswaForm
                     ->description('Tentukan siswa, kelas tujuan, dan tahun ajaran aktif.')
                     ->icon('heroicon-o-user-group')
                     ->schema([
-                        // Siswa diletakkan di baris sendiri karena ini entitas utama
                         Select::make('siswa_id')
                             ->label('Pilih Siswa')
-                            ->relationship('siswa', 'nama')
+                            ->relationship('siswa', 'nama', fn ($query) => $query->where('status', 'aktif'))
                             ->searchable()
                             ->preload()
                             ->validationMessages([

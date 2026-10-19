@@ -41,12 +41,16 @@ class GuruJurnalWidget extends BaseWidget
                     ->limit(8)
             )
             ->headerActions([
-                // PERBAIKAN: Ubah menjadi tombol Redirect ke halaman Jurnal Mengajar
                 Action::make('tambah_jurnal')
-                    ->label('Kelola Jurnal')
-                    ->icon('heroicon-m-arrow-right-circle')
+                    ->label('+ Isi Jurnal Baru')
+                    ->icon('heroicon-m-plus-circle')
                     ->color('primary')
-                    // Arahkan langsung ke Custom Page Jurnal Mengajar
+                    ->url(fn() => \App\Filament\Pages\JurnalMengajar::getUrl(['action' => 'tambah'])),
+
+                Action::make('kelola_jurnal')
+                    ->label('Lihat Semua')
+                    ->icon('heroicon-m-arrow-right-circle')
+                    ->color('gray')
                     ->url(fn() => \App\Filament\Pages\JurnalMengajar::getUrl()),
             ])
             ->columns([
@@ -85,6 +89,14 @@ class GuruJurnalWidget extends BaseWidget
             ->striped()
             ->emptyStateIcon('heroicon-o-book-open')
             ->emptyStateHeading('Belum Ada Jurnal')
-            ->emptyStateDescription('Mulai catat aktivitas mengajar Anda hari ini.');
+            ->emptyStateDescription('Mulai catat aktivitas mengajar Anda hari ini.')
+            ->emptyStateActions([
+                Action::make('isi_sekarang')
+                    ->label('Isi Jurnal Sekarang')
+                    ->icon('heroicon-m-plus-circle')
+                    ->button()
+                    ->color('primary')
+                    ->url(fn() => \App\Filament\Pages\JurnalMengajar::getUrl(['action' => 'tambah'])),
+            ]);
     }
 }

@@ -24,6 +24,8 @@ class ProposalKegiatanForm
             ->components([
 
                 Section::make('Informasi Kegiatan')
+                    ->icon('heroicon-o-calendar-days')
+                    ->description('Detail umum kegiatan ekstrakurikuler yang akan dilaksanakan')
                     ->schema([
 
                         Select::make('ekstrakurikuler_id')
@@ -32,6 +34,7 @@ class ProposalKegiatanForm
                                 fn(Get $get, Set $set) => ProposalTemplate::fill($get, $set)
                             )
                             ->label('Ekstrakurikuler')
+                            ->prefixIcon('heroicon-o-academic-cap')
                             ->options(function () {
 
                                 /** @var \App\Models\User|null $user */
@@ -64,27 +67,34 @@ class ProposalKegiatanForm
                                     );
                             })
                             ->searchable()
-                            ->required(),
+                            ->preload()
+                            ->required()
+                            ->columnSpan(['default' => 1, 'lg' => 1]),
 
                         TextInput::make('nama_kegiatan')
                             ->live()
                             ->afterStateUpdated(
                                 fn(Get $get, Set $set) => ProposalTemplate::fill($get, $set)
                             )
+                            ->label('Nama Kegiatan')
+                            ->placeholder('Contoh: Kejuaraan Karate Terbuka Piala Bupati 2026')
+                            ->prefixIcon('heroicon-o-document-text')
                             ->required()
-                            ->maxLength(150),
+                            ->maxLength(150)
+                            ->columnSpan(['default' => 1, 'lg' => 2]),
 
                         Select::make('jenis_kegiatan')
                             ->label('Jenis Kegiatan')
+                            ->prefixIcon('heroicon-o-tag')
                             ->options([
-                                'lomba' => 'Lomba',
-                                'festival' => 'Festival',
-                                'kemah' => 'Kemah',
-                                'pelatihan' => 'Pelatihan',
+                                'lomba' => 'Lomba / Kompetisi',
+                                'festival' => 'Festival / Pentas Seni',
+                                'kemah' => 'Kemah / Perkemahan',
+                                'pelatihan' => 'Pelatihan / Diklat',
                                 'seminar' => 'Seminar',
-                                'workshop' => 'Workshop',
+                                'workshop' => 'Workshop / Lokakarya',
                                 'studi_banding' => 'Studi Banding',
-                                'kunjungan' => 'Kunjungan',
+                                'kunjungan' => 'Kunjungan Edukasi',
                                 'bakti_sosial' => 'Bakti Sosial',
                                 'lainnya' => 'Lainnya',
                             ])
@@ -97,6 +107,8 @@ class ProposalKegiatanForm
                                 fn(Get $get, Set $set) => ProposalTemplate::fill($get, $set)
                             )
                             ->label('Penyelenggara')
+                            ->placeholder('Contoh: Kemenag Tulungagung / FORKI Jatim')
+                            ->prefixIcon('heroicon-o-building-office-2')
                             ->required()
                             ->maxLength(150),
 
@@ -106,9 +118,10 @@ class ProposalKegiatanForm
                                 fn(Get $get, Set $set) => ProposalTemplate::fill($get, $set)
                             )
                             ->label('Tingkat Kegiatan')
+                            ->prefixIcon('heroicon-o-trophy')
                             ->options([
                                 'kecamatan' => 'Kecamatan',
-                                'kabupaten' => 'Kabupaten',
+                                'kabupaten' => 'Kabupaten / Kota',
                                 'karesidenan' => 'Karesidenan',
                                 'provinsi' => 'Provinsi',
                                 'nasional' => 'Nasional',
@@ -117,33 +130,51 @@ class ProposalKegiatanForm
                             ->required(),
 
                         TextInput::make('tempat')
+                            ->label('Tempat / Lokasi')
+                            ->placeholder('Contoh: GOR Lembu Peteng Tulungagung')
+                            ->prefixIcon('heroicon-o-map-pin')
                             ->required()
-                            ->maxLength(150),
+                            ->maxLength(150)
+                            ->columnSpan(['default' => 1, 'sm' => 2, 'lg' => 3]),
 
                         DatePicker::make('tanggal_mulai')
+                            ->label('Tanggal Mulai')
+                            ->prefixIcon('heroicon-o-calendar')
                             ->native(false)
                             ->required(),
 
                         DatePicker::make('tanggal_selesai')
+                            ->label('Tanggal Selesai')
+                            ->prefixIcon('heroicon-o-calendar')
                             ->native(false)
+                            ->afterOrEqual('tanggal_mulai')
                             ->required(),
                     ])
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
                     ->columnSpanFull(),
+
                 Section::make('Dokumen Pendukung')
+                    ->icon('heroicon-o-paper-clip')
+                    ->description('Surat undangan resmi dan brosur/flyer terkait kegiatan')
+                    ->collapsible()
                     ->schema([
 
                         TextInput::make('nomor_surat_undangan')
-                            ->label('Nomor Surat Undangan'),
+                            ->label('Nomor Surat Undangan')
+                            ->placeholder('Contoh: 120/PAN-PEL/VIII/2026')
+                            ->prefixIcon('heroicon-o-envelope'),
 
                         DatePicker::make('tanggal_surat_undangan')
-                            ->label('Tanggal Surat')
+                            ->label('Tanggal Surat Undangan')
+                            ->prefixIcon('heroicon-o-calendar')
                             ->native(false),
 
                         FileUpload::make('surat_undangan')
                             ->label('Upload Surat Undangan')
+                            ->helperText('Format PDF, JPG, atau PNG (Maks. 5MB)')
                             ->disk('public')
                             ->directory('proposal/surat-undangan')
+                            ->maxSize(5120)
                             ->acceptedFileTypes([
                                 'application/pdf',
                                 'image/jpeg',
@@ -155,8 +186,10 @@ class ProposalKegiatanForm
 
                         FileUpload::make('brosur')
                             ->label('Upload Brosur / Flyer')
+                            ->helperText('Format PDF, JPG, atau PNG (Maks. 5MB)')
                             ->disk('public')
                             ->directory('proposal/brosur')
+                            ->maxSize(5120)
                             ->acceptedFileTypes([
                                 'application/pdf',
                                 'image/jpeg',
@@ -166,39 +199,51 @@ class ProposalKegiatanForm
                             ->openable(),
 
                     ])
-                    ->columns(2)
+                    ->columns(['default' => 1, 'sm' => 2])
                     ->columnSpanFull(),
 
                 Section::make('BAB I — Pendahuluan')
-                    ->description('Latar belakang dan dasar kegiatan')
+                    ->icon('heroicon-o-book-open')
+                    ->description('Latar belakang dan dasar pertimbangan kegiatan')
+                    ->collapsible()
                     ->schema([
 
                         RichEditor::make('latar_belakang')
                             ->label('Latar Belakang')
+                            ->placeholder('Uraikan latar belakang perlunya mengikuti/menyelenggarakan kegiatan ini...')
                             ->columnSpanFull(),
 
                         RichEditor::make('dasar_kegiatan')
                             ->label('Dasar Kegiatan')
+                            ->placeholder('Sebutkan program kerja, anggaran madrasah, atau instruksi terkait...')
                             ->columnSpanFull(),
 
                     ])
                     ->columnSpanFull(),
 
-                Section::make('BAB II — Tujuan')
+                Section::make('BAB II — Tujuan Kegiatan')
+                    ->icon('heroicon-o-flag')
+                    ->description('Maksud dan sasaran yang hendak dicapai dari kegiatan')
+                    ->collapsible()
                     ->schema([
 
                         RichEditor::make('tujuan')
                             ->label('Tujuan Kegiatan')
+                            ->placeholder('Tuliskan tujuan umum dan khusus yang diharapkan...')
                             ->columnSpanFull(),
 
                     ])
                     ->columnSpanFull(),
 
                 Section::make('BAB V — Penutup')
+                    ->icon('heroicon-o-check-circle')
+                    ->description('Harapan dan permohonan dukungan kepada pimpinan madrasah')
+                    ->collapsible()
                     ->schema([
 
                         RichEditor::make('penutup')
                             ->label('Penutup')
+                            ->placeholder('Tuliskan kesimpulan dan permohonan persetujuan proposal...')
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),

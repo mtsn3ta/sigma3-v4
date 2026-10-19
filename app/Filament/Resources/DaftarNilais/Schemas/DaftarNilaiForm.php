@@ -243,6 +243,12 @@ class DaftarNilaiForm
         $nilaiLama = collect($nilaiTersimpan)->keyBy('siswa_id');
 
         return Siswa::query()
+            ->where(function ($query) use ($nilaiLama): void {
+                $query->where('status', 'aktif');
+                if ($nilaiLama->isNotEmpty()) {
+                    $query->orWhereIn('id', $nilaiLama->keys());
+                }
+            })
             ->whereHas('kelasSiswa', function ($query) use ($kelasId, $tahunAjaranId): void {
                 $query->where('kelas_id', $kelasId);
 

@@ -25,22 +25,16 @@
     };
 @endphp
 
-<div
-    style="
-    width: 210mm;
-    min-height: 297mm;
-    margin: 2rem auto;
-    background: #ffffff;
-    padding: 25mm;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    box-sizing: border-box;
-    color: #111827;
-    font-family: Arial, sans-serif;
-">
+<div class="page-container mt-30">
 
     {{-- Header Pengesahan --}}
     <div style="text-align: center; margin-bottom: 3rem; border-bottom: 2px solid #111827; padding-bottom: 2rem;">
-        {{-- ... kode judul di atasnya ... --}}
+        <h1 style="font-size: 1.375rem; font-weight: 700; text-transform: uppercase; margin: 0; letter-spacing: 0.05em;">
+            LEMBAR PENGESAHAN
+        </h1>
+        <h2 style="font-size: 1.125rem; font-weight: 700; text-transform: uppercase; margin: 0.75rem 0 0 0; color: #374151;">
+            LAPORAN BULANAN {{ strtoupper($record->ekstrakurikuler->nama) }}
+        </h2>
 
         <p style="font-size: 1rem; font-weight: 500; margin: 0.25rem 0 0 0; color: #374151;">
             Bulan {{ \Carbon\Carbon::create()->month((int) $record->bulan)->translatedFormat('F') }}
@@ -55,14 +49,13 @@
 
         <p style="font-size: 0.9375rem; margin: 0.75rem 0 0 0; color: #4b5563;">
             MTsN 3 Tulungagung <br>
-            {{-- HAPUS HARDCODE 2026/2027, GANTI DENGAN VARIABEL $tapel --}}
             Tahun Pelajaran {{ $tapel }}
         </p>
     </div>
 
     {{-- Tanda Tangan: Mode Pelatih Merangkap Pembina (3 Orang) --}}
     @if ($record->isPelatihMerangkapPembina())
-        <table style="width: 100%; border-collapse: collapse;">
+        <table class="signature-table" style="width: 100%; border-collapse: collapse;">
             <tr>
                 <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
                     <div style="position:relative; text-align:center; font-size:0.9375rem; line-height:1.5;">
@@ -110,7 +103,7 @@
             </tr>
         </table>
 
-        <table style="width: 100%; margin-top: 3rem; border-collapse: collapse;">
+        <table class="signature-table" style="width: 100%; margin-top: 3rem; border-collapse: collapse;">
             <tr>
                 <td style="text-align:center; font-size:0.9375rem; line-height:1.5;">
                     <div style="position:relative;">
@@ -138,7 +131,7 @@
 
         {{-- Tanda Tangan: Mode Normal (4 Orang) --}}
     @else
-        <table style="width: 100%; border-collapse: collapse;">
+        <table class="signature-table" style="width: 100%; border-collapse: collapse;">
             <tr>
                 <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
                     <div style="position:relative; text-align:center; font-size:0.9375rem; line-height:1.5;">
@@ -183,7 +176,7 @@
             </tr>
         </table>
 
-        <table style="width: 100%; margin-top: 3rem; border-collapse: collapse;">
+        <table class="signature-table" style="width: 100%; margin-top: 3rem; border-collapse: collapse;">
             <tr>
                 <td style="width: 50%; vertical-align: top; padding: 0 1rem;">
                     <div style="position:relative; text-align:center; font-size:0.9375rem; line-height:1.5;">

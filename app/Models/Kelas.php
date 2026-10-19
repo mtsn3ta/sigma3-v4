@@ -29,12 +29,14 @@ class Kelas extends Model
             'kelas_siswa',
             'kelas_id',
             'siswa_id',
-        )->wherePivot(
-            'tahun_ajaran_id',
-            TahunAjaran::query()
-                ->where('aktif', true)
-                ->value('id'),
-        );
+        )
+            ->where('siswa.status', 'aktif')
+            ->wherePivot(
+                'tahun_ajaran_id',
+                TahunAjaran::query()
+                    ->where('aktif', true)
+                    ->value('id'),
+            );
     }
 
     public function getNamaAttribute(): string

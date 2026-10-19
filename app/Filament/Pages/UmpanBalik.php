@@ -23,7 +23,12 @@ class UmpanBalik extends Page
 
     protected static string|\UnitEnum|null $navigationGroup = 'Guru';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
+
+    public function getSubheading(): ?string
+    {
+        return 'Pantau catatan supervisi, evaluasi KBM, dan masukan pembinaan dari Kepala Madrasah.';
+    }
 
     public static function canAccess(): bool
     {

@@ -137,6 +137,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\BK\BKIzinKeluarWidget::class,
                 // Guru
                 \App\Filament\Widgets\Guru\GuruStatsWidget::class,
+                \App\Filament\Widgets\Guru\GuruQuickMenuWidget::class,
                 \App\Filament\Widgets\Guru\GuruJurnalWidget::class,
                 \App\Filament\Widgets\Guru\GuruTugasIzinWidget::class,
                 \App\Filament\Widgets\Guru\GuruUmpanBalikWidget::class,

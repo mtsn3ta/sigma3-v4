@@ -31,7 +31,8 @@ class KelasSiswaOverview extends StatsOverviewWidget
             ->where(
                 'tahun_ajaran_id',
                 $tahunAktif->id,
-            );
+            )
+            ->whereHas('siswa', fn ($q) => $q->where('status', 'aktif'));
 
         return [
 

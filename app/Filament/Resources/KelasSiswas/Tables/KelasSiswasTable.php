@@ -49,6 +49,17 @@ class KelasSiswasTable
                 TextColumn::make('tahunAjaran.tahun')
                     ->label('Tahun Ajaran')
                     ->sortable(),
+
+                TextColumn::make('siswa.status')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn(string $state) => ucfirst($state))
+                    ->color(fn(string $state) => match ($state) {
+                        'aktif' => 'success',
+                        'mutasi' => 'danger',
+                        'lulus' => 'info',
+                        default => 'gray',
+                    }),
             ])
 
             ->filters([
@@ -85,11 +96,14 @@ class KelasSiswasTable
                         'P' => 'Perempuan',
                     ]),
                 SelectFilter::make('status')
+                    ->label('Status Siswa')
+                    ->relationship('siswa', 'status')
                     ->options([
                         'aktif' => 'Aktif',
-                        'naik'  => 'Naik',
+                        'mutasi' => 'Mutasi',
                         'lulus' => 'Lulus',
-                    ]),
+                    ])
+                    ->default('aktif'),
 
             ])
 

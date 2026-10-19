@@ -28,6 +28,7 @@ class BKRankingPoinWidget extends BaseWidget
             ->description('Top 10 siswa dengan rekam jejak poin kedisiplinan tertinggi.')
             ->query(
                 Siswa::query()
+                    ->where('siswa.status', 'aktif')
                     ->select('siswa.*')
                     ->selectSub(
                         PermasalahanSiswa::selectRaw('COALESCE(SUM(poin), 0)')

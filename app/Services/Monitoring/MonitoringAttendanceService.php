@@ -19,11 +19,9 @@ class MonitoringAttendanceService
         ?string $search = null,
     ): LengthAwarePaginator {
         $query = Siswa::query()
-
+            ->where('status', 'aktif')
             ->with([
-
                 'kelasAktif.kelas',
-
             ]);
         if ($kelasId) {
 

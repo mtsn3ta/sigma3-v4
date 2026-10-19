@@ -8,17 +8,7 @@
     $prestasi = LaporanBulananHelper::prestasi($record);
 @endphp
 
-<div
-    style="
-    width: 210mm;
-    min-height: 297mm;
-    margin: 2rem auto;
-    background: #ffffff;
-    padding: 25mm;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    box-sizing: border-box;
-    color: #111827;
-">
+<div class="page-container mt-30">
 
     {{-- Judul BAB --}}
     <div style="text-align: center; margin-bottom: 2.5rem;">
@@ -39,6 +29,7 @@
             3.1 Proposal Kegiatan
         </h3>
 
+        <div class="table-responsive">
         <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
             <thead style="background-color: #f3f4f6;">
                 <tr>
@@ -78,6 +69,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     {{-- ========================================================= --}}
@@ -88,6 +80,7 @@
             3.2 Laporan Kegiatan
         </h3>
 
+        <div class="table-responsive">
         <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
             <thead style="background-color: #f3f4f6;">
                 <tr>
@@ -123,6 +116,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     {{-- ========================================================= --}}
@@ -133,6 +127,7 @@
             3.3 Prestasi
         </h3>
 
+        <div class="table-responsive">
         <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; color: #111827;">
             <thead style="background-color: #f3f4f6;">
                 <tr>
@@ -182,6 +177,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
 
         {{-- Kesimpulan Prestasi --}}
         @if ($prestasi->isNotEmpty())

@@ -8,10 +8,10 @@
         ->get();
 
     $historyRequests = ParentLeaveRequest::query()
-        ->with(['siswa.kelasAktif.kelas'])
+        ->with(['siswa.kelasAktif.kelas', 'verifier'])
         ->whereIn('status', ['approved', 'rejected'])
         ->latest('verified_at')
-        ->limit(20)
+        ->limit(30)
         ->get();
 @endphp
 
@@ -20,7 +20,7 @@
     {{-- ===== DAFTAR PENDING ===== --}}
     <div>
         <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;">
-            <h2 style="margin:0;font-size:1.2rem;font-weight:700;color:#0f172a;">Pengajuan Menunggu Verifikasi</h2>
+            <h2 style="margin:0;font-size:1.15rem;font-weight:700;color:#0f172a;">Pengajuan Menunggu Verifikasi</h2>
             @if ($requests->count())
                 <span
                     style="background:#fef3c7;color:#92400e;font-size:.8rem;font-weight:700;padding:.15rem .6rem;border-radius:9999px;">
@@ -41,7 +41,7 @@
 
                         <div>
                             <div style="font-size:1.1rem;font-weight:700;color:#0f172a;">{{ $siswa->nama }}</div>
-                            <div style="font-size:.9rem;color:#64748b;margin-top:.15rem;">{{ $siswa->nama_kelas_aktif }}
+                            <div style="font-size:.9rem;color:#64748b;margin-top:.15rem;">{{ $siswa->nama_kelas_aktif ?? '-' }}
                             </div>
                         </div>
 
@@ -66,6 +66,7 @@
                         <div>📷 {{ $request->parent_selfie ? 'Selfie tersedia' : 'Tidak ada selfie' }}</div>
                         <div>✍️ Tanda tangan tersedia</div>
                         <div>📄 {{ $request->doctor_letter ? 'Surat dokter tersedia' : 'Tanpa surat dokter' }}</div>
+                        <div>👤 Pengirim: <strong>{{ $request->nama_pengirim }} ({{ ucfirst($request->hubungan) }})</strong></div>
                     </div>
 
                     <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem;">
@@ -93,7 +94,7 @@
 
                 <div
                     style="padding:2.5rem 1rem;text-align:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:1rem;color:#94a3b8;font-size:.95rem;">
-                    Belum ada pengajuan izin dari orang tua.
+                    Belum ada pengajuan izin dari orang tua yang menunggu verifikasi.
                 </div>
             @endforelse
         </div>
@@ -101,58 +102,71 @@
 
     {{-- ===== TABEL RIWAYAT ===== --}}
     <div>
-        <h2 style="margin:0 0 1rem;font-size:1.2rem;font-weight:700;color:#0f172a;">Riwayat Pengajuan</h2>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <h2 style="margin:0;font-size:1.15rem;font-weight:700;color:#0f172a;">Riwayat Pengajuan Terverifikasi</h2>
+            <span style="font-size:.85rem;color:#64748b;">(30 Terakhir)</span>
+        </div>
 
         @if ($historyRequests->count())
-            <div style="overflow-x:auto;border:1px solid #e2e8f0;border-radius:1rem;">
+            <div style="overflow-x:auto;border:1px solid #e2e8f0;border-radius:1rem;background:#ffffff;">
                 <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
                     <thead>
                         <tr style="background:#f8fafc;">
-                            <th
-                                style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">
-                                Siswa</th>
-                            <th
-                                style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">
-                                Kelas</th>
-                            <th
-                                style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">
-                                Jenis</th>
-                            <th
-                                style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">
-                                Tanggal</th>
-                            <th
-                                style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">
-                                Status</th>
-                            <th
-                                style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">
-                                Diverifikasi</th>
+                            <th style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">Siswa</th>
+                            <th style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">Kelas</th>
+                            <th style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">Jenis</th>
+                            <th style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">Periode Izin</th>
+                            <th style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">Status</th>
+                            <th style="text-align:left;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">Petugas & Waktu</th>
+                            <th style="text-align:center;padding:.85rem 1rem;font-weight:700;color:#475569;border-bottom:1px solid #e2e8f0;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($historyRequests as $request)
                             <tr style="border-bottom:1px solid #f1f5f9;">
                                 <td style="padding:.85rem 1rem;font-weight:600;color:#0f172a;">
-                                    {{ $request->siswa->nama }}</td>
-                                <td style="padding:.85rem 1rem;color:#475569;">{{ $request->siswa->nama_kelas_aktif }}
+                                    {{ $request->siswa->nama }}
+                                    <div style="font-size:.78rem;color:#64748b;font-weight:normal;">
+                                        Oleh: {{ $request->nama_pengirim }} ({{ ucfirst($request->hubungan) }})
+                                    </div>
                                 </td>
-                                <td style="padding:.85rem 1rem;color:#475569;">{{ ucfirst($request->jenis) }}</td>
+                                <td style="padding:.85rem 1rem;color:#475569;">
+                                    {{ $request->siswa->nama_kelas_aktif ?? '-' }}
+                                </td>
+                                <td style="padding:.85rem 1rem;">
+                                    <span style="display:inline-block;padding:.2rem .6rem;border-radius:6px;font-size:.78rem;font-weight:700;
+                                        {{ $request->jenis === 'sakit' ? 'background:#ede9fe;color:#6d28d9;' : 'background:#dbeafe;color:#1d4ed8;' }}">
+                                        {{ ucfirst($request->jenis) }}
+                                    </span>
+                                </td>
                                 <td style="padding:.85rem 1rem;color:#475569;">
                                     {{ $request->tanggal_mulai->format('d M Y') }}
                                     @if ($request->tanggal_mulai != $request->tanggal_selesai)
-                                        - {{ $request->tanggal_selesai->format('d M Y') }}
+                                        <br><span style="font-size:.8rem;color:#94a3b8;">s/d {{ $request->tanggal_selesai->format('d M Y') }}</span>
                                     @endif
                                 </td>
                                 <td style="padding:.85rem 1rem;">
                                     @if ($request->status === 'approved')
-                                        <span
-                                            style="padding:.25rem .65rem;border-radius:9999px;background:#dcfce7;color:#15803d;font-weight:700;font-size:.8rem;">Disetujui</span>
+                                        <span style="padding:.25rem .65rem;border-radius:9999px;background:#dcfce7;color:#15803d;font-weight:700;font-size:.8rem;display:inline-flex;align-items:center;gap:.3rem;">
+                                            <span>✓</span> Disetujui
+                                        </span>
                                     @else
-                                        <span
-                                            style="padding:.25rem .65rem;border-radius:9999px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:.8rem;">Ditolak</span>
+                                        <span style="padding:.25rem .65rem;border-radius:9999px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:.8rem;display:inline-flex;align-items:center;gap:.3rem;">
+                                            <span>✕</span> Ditolak
+                                        </span>
                                     @endif
                                 </td>
-                                <td style="padding:.85rem 1rem;color:#64748b;">
-                                    {{ $request->verified_at?->format('d M Y, H:i') ?? '-' }}
+                                <td style="padding:.85rem 1rem;color:#475569;font-size:.85rem;">
+                                    <div style="font-weight:600;color:#0f172a;">{{ $request->verifier?->nama ?? 'Guru Piket' }}</div>
+                                    <div style="color:#94a3b8;font-size:.78rem;">
+                                        {{ $request->verified_at?->format('d M Y, H:i') ?? '-' }} WIB
+                                    </div>
+                                </td>
+                                <td style="padding:.85rem 1rem;text-align:center;">
+                                    <button type="button" wire:click="preview({{ $request->id }})"
+                                        style="padding:.45rem .85rem;background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;border-radius:.6rem;font-weight:600;font-size:.8rem;cursor:pointer;">
+                                        🔍 Detail
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -161,7 +175,7 @@
             </div>
         @else
             <div
-                style="padding:2rem 1rem;text-align:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:1rem;color:#94a3b8;font-size:.9rem;">
+                style="padding:2.5rem 1rem;text-align:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:1rem;color:#94a3b8;font-size:.9rem;">
                 Belum ada riwayat pengajuan yang diverifikasi.
             </div>
         @endif

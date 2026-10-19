@@ -69,13 +69,14 @@ class SiswasTable
                     ->options([
                         'aktif' => 'Aktif',
                         'mutasi' => 'Mutasi',
+                        'lulus' => 'Lulus',
                     ]),
             ])
             ->actions([
                 EditAction::make(),
 
                 Action::make('status')
-                    ->label('Status')
+                    ->label('Ubah Status')
                     ->icon('heroicon-o-arrow-path')
                     ->color('warning')
                     ->visible(function () {
@@ -97,86 +98,54 @@ class SiswasTable
                             ->content(fn($record) => ucfirst($record->status)),
 
                         Select::make('status')
-
                             ->label('Status Baru')
-
                             ->options([
+                                'aktif' => 'Aktif',
                                 'mutasi' => 'Mutasi',
+                                'lulus' => 'Lulus',
                             ])
-
                             ->required(),
 
                     ])
                     ->action(function ($record, array $data) {
 
-                        if ($record->status === 'mutasi') {
-
-                            Notification::make()
-
-                                ->title('Siswa sudah berstatus Mutasi')
-
-                                ->danger()
-
-                                ->send();
-
-                            return;
-                        }
-
                         if ($record->status === $data['status']) {
 
                             Notification::make()
-
                                 ->title('Tidak Ada Perubahan')
-
                                 ->warning()
-
                                 ->send();
 
                             return;
                         }
 
                         $statusLama = ucfirst($record->status);
+                        $statusBaru = ucfirst($data['status']);
 
                         $record->update([
-
-                            'status' => 'mutasi',
-
+                            'status' => $data['status'],
                         ]);
 
                         ActivityLogService::log(
-
-                            'Mutasi Keluar',
-
+                            'Perubahan Status Siswa',
                             sprintf(
-
-                                '%s | %s → Mutasi',
-
+                                '%s | %s → %s',
                                 $record->nama,
-
                                 $statusLama,
-
+                                $statusBaru,
                             )
-
                         );
 
                         Notification::make()
-
-                            ->title('Mutasi Berhasil')
-
+                            ->title('Status Berhasil Diubah')
                             ->body(
-
                                 sprintf(
-
-                                    '%s berhasil dimutasikan.',
-
+                                    'Status %s berhasil diubah menjadi %s.',
                                     $record->nama,
-
+                                    $statusBaru,
                                 )
-
                             )
-
                             ->success()
-
                             ->send();
                     }),
 

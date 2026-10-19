@@ -37,6 +37,19 @@ class GuruTugasIzinWidget extends BaseWidget
                     ->latest('tanggal')
                     ->limit(8)
             )
+            ->headerActions([
+                \Filament\Actions\Action::make('buat_tugas')
+                    ->label('+ Buat Tugas')
+                    ->icon('heroicon-m-plus-circle')
+                    ->color('warning')
+                    ->url(fn() => \App\Filament\Pages\GuruBerhalangan::getUrl(['action' => 'tambah'])),
+
+                \Filament\Actions\Action::make('lihat_semua')
+                    ->label('Lihat Semua')
+                    ->icon('heroicon-m-arrow-right-circle')
+                    ->color('gray')
+                    ->url(fn() => \App\Filament\Pages\GuruBerhalangan::getUrl()),
+            ])
             ->columns([
                 // 1. Tanggal & Mapel (Digabung)
                 Tables\Columns\TextColumn::make('tanggal')
@@ -84,6 +97,14 @@ class GuruTugasIzinWidget extends BaseWidget
             // Empty State
             ->emptyStateIcon('heroicon-o-clipboard-document-list')
             ->emptyStateHeading('Belum Ada Riwayat')
-            ->emptyStateDescription('Tugas inval yang Anda buat akan muncul di sini.');
+            ->emptyStateDescription('Tugas inval yang Anda buat akan muncul di sini.')
+            ->emptyStateActions([
+                \Filament\Actions\Action::make('buat_tugas_empty')
+                    ->label('Buat Tugas Sekarang')
+                    ->icon('heroicon-m-plus-circle')
+                    ->button()
+                    ->color('warning')
+                    ->url(fn() => \App\Filament\Pages\GuruBerhalangan::getUrl(['action' => 'tambah'])),
+            ]);
     }
 }

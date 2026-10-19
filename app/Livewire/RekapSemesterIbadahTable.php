@@ -154,6 +154,8 @@ class RekapSemesterIbadahTable extends Component implements HasActions, HasForms
 
                 Siswa::query()
 
+                    ->where('status', 'aktif')
+
                     ->when(
 
                         $this->getKelasId(),

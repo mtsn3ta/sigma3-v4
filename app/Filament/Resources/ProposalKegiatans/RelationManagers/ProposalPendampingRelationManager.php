@@ -68,15 +68,30 @@ class ProposalPendampingRelationManager extends RelationManager
             ->columns([
 
                 TextColumn::make('pegawai.nama')
-                    ->label('Nama')
+                    ->label('Nama Pendamping')
+                    ->weight('medium')
                     ->searchable(),
 
                 TextColumn::make('pegawai.nip')
-                    ->label('NIP'),
+                    ->label('NIP')
+                    ->placeholder('-'),
 
                 TextColumn::make('peran')
                     ->label('Peran')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'pembina' => 'success',
+                        'pelatih' => 'info',
+                        'guru_pendamping' => 'primary',
+                        'medis' => 'danger',
+                        'transportasi' => 'warning',
+                        'official' => 'secondary',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'guru_pendamping' => 'Guru Pendamping',
+                        default => ucfirst($state),
+                    }),
 
             ])
 
@@ -87,14 +102,19 @@ class ProposalPendampingRelationManager extends RelationManager
             ->headerActions([
 
                 CreateAction::make()
+                    ->label('Tambah Pendamping')
+                    ->icon('heroicon-o-user-plus')
+                    ->modalWidth('lg')
                     ->visible(fn() => ! $this->ownerRecord->isLocked()),
 
                 Action::make('ambilPengampu')
-                    ->label('Ambil Pengampu')
+                    ->label('Ambil dari Pengampu Ekskul')
                     ->icon('heroicon-o-users')
                     ->color('success')
                     ->visible(fn() => ! $this->ownerRecord->isLocked())
                     ->requiresConfirmation()
+                    ->modalHeading('Sinkronisasi Pengampu Ekskul')
+                    ->modalDescription('Apakah Anda yakin ingin menambahkan semua pelatih dan pembina resmi dari ekstrakurikuler ini ke daftar pendamping?')
                     ->action(function () {
 
                         $proposal = $this->ownerRecord;

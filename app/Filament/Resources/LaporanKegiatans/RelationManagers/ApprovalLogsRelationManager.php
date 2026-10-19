@@ -11,7 +11,7 @@ class ApprovalLogsRelationManager extends RelationManager
 {
     protected static string $relationship = 'approvalLogs';
 
-    protected static ?string $title = 'Timeline Approval';
+    protected static ?string $title = 'Riwayat Persetujuan (Approval Log)';
 
     public function isReadOnly(): bool
     {
@@ -27,38 +27,43 @@ class ApprovalLogsRelationManager extends RelationManager
     {
         return $table
 
-            ->defaultSort('created_at')
+            ->defaultSort('created_at', 'desc')
 
             ->columns([
 
                 TextColumn::make('created_at')
                     ->label('Waktu')
-                    ->since(),
+                    ->since()
+                    ->dateTimeTooltip(),
 
                 TextColumn::make('user.name')
-                    ->label('Pengguna'),
+                    ->label('Nama Pengguna')
+                    ->weight('medium'),
 
                 TextColumn::make('action')
+                    ->label('Aksi')
                     ->badge()
                     ->formatStateUsing(fn(string $state) => match ($state) {
-
-                        'submit' => 'Submit',
-
-                        'approve_pembina' => 'Approve Pembina',
-
-                        'approve_waka' => 'Approve Waka',
-
-                        'approve_kepala' => 'Approve Kepala',
-
-                        'revision' => 'Request Revision',
-
-                        'reject' => 'Reject',
-
+                        'submit' => 'Diajukan',
+                        'approve_pembina' => 'Disetujui Pembina',
+                        'approve_waka' => 'Disetujui Waka',
+                        'approve_kepala' => 'Disetujui Kamad',
+                        'revision' => 'Minta Revisi',
+                        'reject' => 'Ditolak',
                         default => ucfirst($state),
+                    })
+                    ->color(fn(string $state) => match ($state) {
+                        'submit' => 'info',
+                        'approve_pembina', 'approve_waka', 'approve_kepala' => 'success',
+                        'revision' => 'warning',
+                        'reject' => 'danger',
+                        default => 'gray',
                     }),
 
                 TextColumn::make('catatan')
-                    ->limit(60),
+                    ->label('Catatan / Alasan')
+                    ->placeholder('-')
+                    ->wrap(),
 
             ])
 

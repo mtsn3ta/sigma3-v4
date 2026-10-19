@@ -49,7 +49,7 @@ class RekapSemesterIbadahExport implements FromCollection, WithHeadings, ShouldA
     public function collection(): Collection
     {
         $query = Siswa::query()
-
+            ->where('status', 'aktif')
             ->with(['kelasAktif.kelas'])
 
             ->withCount([

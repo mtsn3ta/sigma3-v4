@@ -14,15 +14,15 @@ class GuruBerhalangan extends Page
     protected string $view = 'filament.pages.guru-berhalangan';
 
     protected static string|BackedEnum|null $navigationIcon =
-    Heroicon::OutlinedClipboardDocument;
+        Heroicon::OutlinedDocumentPlus;
 
     protected static ?string $navigationLabel =
-    'Tugas Guru Izin';
+        'Tugas Inval (Izin)';
 
     protected static string|\UnitEnum|null $navigationGroup =
-    'Guru';
+        'Guru';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
     public static function canAccess(): bool
     {
         /** @var User|null $user */
@@ -32,7 +32,12 @@ class GuruBerhalangan extends Page
     }
     public function getTitle(): string
     {
-        return 'Riwayat Guru Berhalangan';
+        return 'Tugas Inval (Guru Berhalangan)';
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Titipkan instruksi tugas dan materi pelajaran saat berhalangan hadir ke madrasah.';
     }
     protected function getHeaderActions(): array
     {

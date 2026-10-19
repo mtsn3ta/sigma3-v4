@@ -125,6 +125,7 @@ class RekapSemesterTable extends Component implements HasActions, HasForms, HasT
             ->description('Tahun Ajaran: ' . $this->getTahun() . ' - Semester ' . ucfirst($this->getSemester()))
             ->query(
                 Siswa::query()
+                    ->where('status', 'aktif')
                     ->when(
                         $this->getKelasId(),
                         fn(Builder $query, $kelasId) =>

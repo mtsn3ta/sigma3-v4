@@ -29,7 +29,15 @@ class ApprovalLogsRelationManager extends RelationManager
                     ->label('Oleh'),
 
                 TextColumn::make('aksi')
+                    ->label('Aksi')
                     ->badge()
+                    ->color(fn($state) => match ($state) {
+                        'submit' => 'info',
+                        'approve_pembina', 'approve_waka', 'approve_kepala' => 'success',
+                        'revision' => 'warning',
+                        'reject' => 'danger',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn($state) => match ($state) {
 
                         'submit' => 'Submit',

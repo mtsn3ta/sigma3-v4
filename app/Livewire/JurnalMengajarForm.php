@@ -54,6 +54,10 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
 
         $this->siswaTidakHadir = collect();
         $this->daftarSiswa = collect();
+
+        if (request()->query('action') === 'tambah') {
+            $this->tambah();
+        }
     }
 
     #[On('tambah-jurnal')]
@@ -281,6 +285,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
         $this->siswaTidakHadir = KehadiranSekolah::query()
             ->whereDate('tanggal', $tanggal)
             ->whereIn('status', ['izin', 'sakit', 'alfa'])
+            ->whereHas('siswa', fn ($query) => $query->where('status', 'aktif'))
             ->whereHas('siswa.kelasSiswa', function ($query) use ($kelasId, $tahunAjaranId) {
                 $query->where('kelas_id', $kelasId);
                 if ($tahunAjaranId) $query->where('tahun_ajaran_id', $tahunAjaranId);
@@ -290,6 +295,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
             ->get();
 
         $this->daftarSiswa = Siswa::query()
+            ->where('status', 'aktif')
             ->whereHas('kelasSiswa', function ($query) use ($kelasId, $tahunAjaranId) {
                 $query->where('kelas_id', $kelasId);
                 if ($tahunAjaranId) $query->where('tahun_ajaran_id', $tahunAjaranId);
@@ -502,6 +508,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
 
                                         $tahunAjaranId = TahunAjaran::aktifId();
                                         return Siswa::query()
+                                            ->where('status', 'aktif')
                                             ->whereHas('kelasSiswa', function ($query) use ($kelasId, $tahunAjaranId) {
                                                 $query->where('kelas_id', $kelasId);
                                                 if ($tahunAjaranId) $query->where('tahun_ajaran_id', $tahunAjaranId);

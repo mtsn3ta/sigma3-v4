@@ -17,6 +17,8 @@ class PesertaRelationManager extends RelationManager
 {
     protected static string $relationship = 'peserta';
 
+    protected static ?string $title = 'Peserta Kegiatan';
+
     public function isReadOnly(): bool
     {
         return $this->ownerRecord->isLocked();
@@ -28,7 +30,8 @@ class PesertaRelationManager extends RelationManager
             ->components([
 
                 Select::make('siswa_id')
-                    ->label('Peserta')
+                    ->label('Pilih Siswa Peserta')
+                    ->placeholder('Ketik nama siswa atau pilih dari anggota ekskul...')
                     ->options(function () {
 
                         $proposal = $this->ownerRecord;
@@ -44,14 +47,20 @@ class PesertaRelationManager extends RelationManager
                                 'siswa_id',
                                 $proposal->peserta()->pluck('siswa_id')
                             )
-                            ->with('siswa')
+                            ->with(['siswa.kelasAktif.kelas'])
                             ->get()
-                            ->mapWithKeys(fn($anggota) => [
-                                $anggota->siswa_id => $anggota->siswa?->nama,
-                            ])
+                            ->mapWithKeys(function ($anggota) {
+                                $siswa = $anggota->siswa;
+                                $kelas = $siswa?->kelasAktif?->kelas?->nama ?? '-';
+                                $nisn = $siswa?->nisn ?? '-';
+                                return [
+                                    $anggota->siswa_id => ($siswa?->nama ?? 'Siswa') . " (Kelas: {$kelas} | NISN: {$nisn})",
+                                ];
+                            })
                             ->toArray();
                     })
                     ->searchable()
+                    ->preload()
                     ->required(),
 
             ]);
@@ -63,27 +72,39 @@ class PesertaRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
 
-                TextColumn::make('siswa.nisn')
-                    ->label('NISN')
+                TextColumn::make('siswa.nama')
+                    ->label('Nama Lengkap')
+                    ->weight('medium')
                     ->searchable(),
 
-                TextColumn::make('siswa.nama')
-                    ->label('Nama')
+                TextColumn::make('siswa.nisn')
+                    ->label('NISN')
+                    ->copyable()
                     ->searchable(),
 
                 TextColumn::make('siswa.nama_kelas_aktif')
-                    ->label('Kelas'),
+                    ->label('Kelas')
+                    ->badge()
+                    ->color('info'),
 
                 TextColumn::make('siswa.jenis_kelamin')
-                    ->label('JK')
-                    ->badge(),
+                    ->label('L/P')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'L' => 'primary',
+                        'P' => 'warning',
+                        default => 'gray',
+                    }),
 
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->label('Tambah Peserta')
+                    ->icon('heroicon-o-user-plus')
+                    ->modalWidth('lg'),
             ])
             ->recordActions([
                 DeleteAction::make(),

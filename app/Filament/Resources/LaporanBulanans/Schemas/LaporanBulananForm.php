@@ -23,14 +23,18 @@ class LaporanBulananForm
                 |--------------------------------------------------------------------------
                 */
                 Section::make('Informasi Laporan')
+                    ->icon('heroicon-o-information-circle')
                     ->description('Detail periode laporan bulanan ekstrakurikuler')
                     ->schema([
                         Select::make('ekstrakurikuler_id')
                             ->relationship('ekstrakurikuler', 'nama')
                             ->label('Ekstrakurikuler')
+                            ->prefixIcon('heroicon-o-academic-cap')
                             ->disabled(),
 
                         Select::make('bulan')
+                            ->label('Bulan')
+                            ->prefixIcon('heroicon-o-calendar')
                             ->options([
                                 1 => 'Januari',
                                 2 => 'Februari',
@@ -48,13 +52,17 @@ class LaporanBulananForm
                             ->disabled(),
 
                         TextInput::make('tahun')
+                            ->label('Tahun')
+                            ->prefixIcon('heroicon-o-calendar-days')
                             ->disabled(),
 
                         TextInput::make('status')
+                            ->label('Status')
+                            ->prefixIcon('heroicon-o-check-badge')
                             ->formatStateUsing(fn($state) => ucfirst(str_replace('_', ' ', $state)))
                             ->disabled(),
                     ])
-                    ->columns(4)
+                    ->columns(['default' => 1, 'sm' => 2, 'md' => 4])
                     ->columnSpanFull(),
 
                 /*
@@ -63,15 +71,19 @@ class LaporanBulananForm
                 |--------------------------------------------------------------------------
                 */
                 Section::make('BAB I — Pendahuluan')
+                    ->icon('heroicon-o-book-open')
                     ->description('Latar belakang dan tujuan penyusunan laporan bulanan')
+                    ->collapsible()
                     ->schema([
                         RichEditor::make('pendahuluan')
                             ->label('Pendahuluan')
+                            ->placeholder('Uraikan latar belakang pelaksanaan pembinaan ekstrakurikuler pada bulan ini...')
                             ->required()
                             ->columnSpanFull(),
 
                         RichEditor::make('tujuan')
                             ->label('Maksud dan Tujuan')
+                            ->placeholder('Tuliskan tujuan dan sasaran capaian program bulanan...')
                             ->required()
                             ->columnSpanFull(),
                     ])
@@ -83,7 +95,9 @@ class LaporanBulananForm
                 |--------------------------------------------------------------------------
                 */
                 Section::make('BAB II — Program Pembinaan')
-                    ->description('Rekapitulasi kehadiran, program latihan, dan statistik bulanan')
+                    ->icon('heroicon-o-calendar-days')
+                    ->description('Rekapitulasi kehadiran anggota, agenda program latihan, dan statistik bulanan')
+                    ->collapsible()
                     ->schema([
                         View::make('filament.laporan-bulanan.rekap-kehadiran'),
                         View::make('filament.laporan-bulanan.program-latihan'),
@@ -97,7 +111,9 @@ class LaporanBulananForm
                 |--------------------------------------------------------------------------
                 */
                 Section::make('BAB III — Kegiatan dan Prestasi')
+                    ->icon('heroicon-o-trophy')
                     ->description('Daftar proposal, realisasi kegiatan, dan capaian prestasi selama satu bulan')
+                    ->collapsible()
                     ->schema([
                         View::make('filament.laporan-bulanan.proposal'),
                         View::make('filament.laporan-bulanan.laporan-kegiatan'),
@@ -111,20 +127,25 @@ class LaporanBulananForm
                 |--------------------------------------------------------------------------
                 */
                 Section::make('BAB IV — Evaluasi')
+                    ->icon('heroicon-o-clipboard-document-check')
                     ->description('Analisis kendala dan tindak lanjut dari program yang telah berjalan')
+                    ->collapsible()
                     ->schema([
                         RichEditor::make('evaluasi')
                             ->label('Evaluasi Program')
+                            ->placeholder('Uraikan evaluasi umum jalannya latihan/pembinaan...')
                             ->required()
                             ->columnSpanFull(),
 
                         RichEditor::make('kendala')
                             ->label('Kendala di Lapangan')
+                            ->placeholder('Sebutkan kendala teknis, sarana, atau kehadiran yang dihadapi...')
                             ->required()
                             ->columnSpanFull(),
 
                         RichEditor::make('solusi')
                             ->label('Solusi & Tindak Lanjut')
+                            ->placeholder('Jelaskan langkah penyelesaian dan rencana perbaikan ke depan...')
                             ->required()
                             ->columnSpanFull(),
                     ])
@@ -136,9 +157,13 @@ class LaporanBulananForm
                 |--------------------------------------------------------------------------
                 */
                 Section::make('BAB V — Penutup')
+                    ->icon('heroicon-o-check-circle')
+                    ->description('Kesimpulan dan harapan terhadap perkembangan kegiatan ekstrakurikuler')
+                    ->collapsible()
                     ->schema([
                         RichEditor::make('penutup')
                             ->label('Penutup')
+                            ->placeholder('Tuliskan kesimpulan akhir dan ucapan terima kasih kepada pihak madrasah...')
                             ->required()
                             ->columnSpanFull(),
                     ])
@@ -150,10 +175,13 @@ class LaporanBulananForm
                 |--------------------------------------------------------------------------
                 */
                 Section::make('Lampiran Dokumen')
+                    ->icon('heroicon-o-paper-clip')
                     ->description('Upload foto atau dokumen pendukung kegiatan bulanan')
+                    ->collapsible()
                     ->schema([
                         FileUpload::make('dokumentasi')
-                            ->label('Dokumentasi Bulanan')
+                            ->label('Dokumentasi Kegiatan Bulanan')
+                            ->helperText('Unggah foto-foto kegiatan atau latihan (Maks. 5MB per file, format JPG/PNG)')
                             ->disk('public')
                             ->directory('laporan-bulanan/dokumentasi')
                             ->multiple()

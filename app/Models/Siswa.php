@@ -90,6 +90,10 @@ class Siswa extends Model
     }
     public function getNamaKelasAktifAttribute(): ?string
     {
+        if ($this->status !== 'aktif') {
+            return ucfirst($this->status);
+        }
+
         return $this->kelasAktif?->kelas?->nama_kelas;
     }
     public function prestasi()
@@ -98,9 +102,13 @@ class Siswa extends Model
 
             Prestasi::class,
 
-            'prestasi_siswa'
+            'prestasi_siswa',
 
-        )->withTimestamps();
+            'siswa_id',
+
+            'prestasi_id',
+
+        );
     }
     public function konseling()
     {

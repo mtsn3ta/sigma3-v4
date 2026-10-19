@@ -66,6 +66,13 @@ class IntelligenceController extends Controller
                 ]);
             }
 
+            if ($siswa->status !== 'aktif') {
+                return response()->json([
+                    'status' => false,
+                    'msg' => 'Siswa sudah tidak aktif (Status: ' . ucfirst($siswa->status) . ')',
+                ]);
+            }
+
             return response()->json([
 
                 'status' => true,
@@ -134,6 +141,13 @@ class IntelligenceController extends Controller
                 return response()->json([
                     'status' => false,
                     'msg' => 'Data siswa tidak ditemukan',
+                ]);
+            }
+
+            if ($siswa->status !== 'aktif') {
+                return response()->json([
+                    'status' => false,
+                    'msg' => 'Siswa sudah tidak aktif (Status: ' . ucfirst($siswa->status) . ')',
                 ]);
             }
 

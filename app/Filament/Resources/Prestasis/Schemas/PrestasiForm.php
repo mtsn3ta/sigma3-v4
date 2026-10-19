@@ -91,6 +91,8 @@ class PrestasiForm
                                 titleAttribute: 'nama',
                                 // Pindahkan logika filter ke dalam modifyQueryUsing
                                 modifyQueryUsing: function (Builder $query, Get $get) {
+                                    $query->where('siswa.status', 'aktif');
+
                                     $ekstrakurikulerId = $get('ekstrakurikuler_id');
 
                                     if (!$ekstrakurikulerId) {

@@ -22,7 +22,12 @@ class JurnalMengajar extends Page
     protected static ?int $navigationSort = 1;
     public function getTitle(): string
     {
-        return 'Riwayat Jurnal Mengajar';
+        return 'Jurnal Mengajar & Presensi Kelas';
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Kelola rekam jejak KBM, isi jurnal pembelajaran harian, dan catat presensi siswa di kelas.';
     }
     public static function canAccess(): bool
     {
