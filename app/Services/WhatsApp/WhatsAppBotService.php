@@ -9,6 +9,7 @@ class WhatsAppBotService
 {
     public function __construct(
         protected ConversationService $conversation,
+        protected \App\Services\AI\OpenRouterService $ai,
     ) {}
 
     public function handle(string $phone, string $message): void
@@ -207,11 +208,18 @@ class WhatsAppBotService
 
         /*
     |--------------------------------------------------------------------------
-    | Fallback terakhir: state tidak dikenal / pesan random
+    | Fallback terakhir: tanyakan ke AI OpenRouter / fallback menu
     |--------------------------------------------------------------------------
     */
 
         $this->conversation->reset($phone);
+
+        $aiReply = $this->ai->ask($phone, $message);
+
+        if (! empty($aiReply)) {
+            $this->reply($phone, $aiReply);
+            return;
+        }
 
         $this->reply(
             $phone,

@@ -40,8 +40,12 @@ return [
         'host' => env('WHATSAPP_WEB_HOST', '127.0.0.1') . ':' . env('WHATSAPP_WEB_PORT', 3001),
     ],
     'telegram' => [
-    'bot_token' => env('TELEGRAM_BOT_TOKEN'),
-    'chat_id' => env('TELEGRAM_CHAT_ID'),
-],
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_id' => env('TELEGRAM_CHAT_ID'),
+    ],
+    'openrouter' => [
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'minimax/minimax-m3.1-flash:free'),
+    ],
 
 ];
