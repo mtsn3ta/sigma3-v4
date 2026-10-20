@@ -190,7 +190,17 @@
             <p class="subtitle">Hubungkan sesi WhatsApp untuk notifikasi SIGMA-3</p>
         </div>
 
-        @if (! empty($data['qr']))
+        @if (($data['status'] ?? '') === 'ready')
+            <div style="text-align: center; padding: 2rem 1.25rem; background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">✅</div>
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: #065f46; margin-bottom: 0.375rem;">WhatsApp Berhasil Terhubung!</h2>
+                <p style="font-size: 0.875rem; color: #047857; margin-bottom: 1rem; line-height: 1.5;">Bot <strong>CS AI SIGMA-3</strong> aktif online dan siap melayani 24 Jam.</p>
+                <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.875rem; border-radius: 9999px; background: #059669; color: #ffffff; font-size: 0.75rem; font-weight: 600;">
+                    <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: #86efac;"></span>
+                    STATUS: READY (ONLINE)
+                </div>
+            </div>
+        @elseif (! empty($data['qr']))
             <div class="qr-wrap">
                 <img src="{{ $data['qr'] }}" alt="QR Code WhatsApp">
                 <div class="status">
@@ -199,8 +209,8 @@
             </div>
         @else
             <div class="empty">
-                <h2>QR belum tersedia</h2>
-                <p>Server WhatsApp belum mengembalikan QR. Refresh halaman untuk mencoba lagi.</p>
+                <h2>Menunggu Sesi WhatsApp</h2>
+                <p>Status sesi: <b>{{ $data['status'] ?? 'Memulai...' }}</b>. Jika sedang menghubungkan, klik refresh untuk memperbarui status.</p>
                 @if (! empty($data))
                     <pre>{{ json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                 @endif
