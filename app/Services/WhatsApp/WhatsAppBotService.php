@@ -36,14 +36,14 @@ class WhatsAppBotService
         $conversation = $this->conversation->get($phone);
 
         /*
-    |--------------------------------------------------------------------------
-    | Sapaan (robust terhadap variasi ejaan & typo umum)
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Sapaan Murni (Hanya salam / sapaan singkat tanpa pertanyaan tambahan)
+        |--------------------------------------------------------------------------
+        */
 
-        $salamPattern = '/assalamu[\s\'`]*alaikum|askum|aslkm|assalamualaikum/i';
+        $pureSalamPattern = '/^(assalamu[\s\'`]*alaikum|askum|aslkm|assalamualaikum|halo|hai|p|selamat\s+(pagi|siang|sore|malam))[\s.!,?]*$/i';
 
-        if (preg_match($salamPattern, $message)) {
+        if (preg_match($pureSalamPattern, $message)) {
 
             $this->conversation->reset($phone);
 
@@ -98,29 +98,38 @@ class WhatsAppBotService
                 '2' => 'absensi',
                 '3' => 'prestasi',
                 '4' => 'portal',
-                '6' => 'bk_contact', // <-- TAMBAHKAN BARIS INI
+                '6' => 'bk_contact',
             ];
 
-            if (! isset($menuMap[$message])) {
+            if (isset($menuMap[$message])) {
+                $this->conversation->update(
+                    $phone,
+                    'waiting_nisn',
+                    $menuMap[$message],
+                );
 
                 $this->reply(
                     $phone,
-                    "Mohon maaf, Bapak/Ibu 🙏 Pesan belum kami mengerti.\n\nSilakan balas dengan angka *1* sampai *6* sesuai menu di bawah, atau ketik *menu* untuk melihat pilihan kembali."
-                        . "\n\n" . $this->mainMenu()
+                    $this->askNisn()
                 );
 
                 return;
             }
 
-            $this->conversation->update(
-                $phone,
-                'waiting_nisn',
-                $menuMap[$message],
-            );
+            // JIKA BUKAN ANGKA 1-6, JANGAN TOLAK: TANYAKAN KE AI OPENROUTER TERLEBIH DAHULU
+            $aiReply = $this->ai->ask($phone, $message);
 
+            if (! empty($aiReply)) {
+                $this->conversation->reset($phone);
+                $this->reply($phone, $aiReply);
+                return;
+            }
+
+            // Fallback jika AI tidak merespon
             $this->reply(
                 $phone,
-                $this->askNisn()
+                "Mohon maaf, Bapak/Ibu 🙏 Pesan belum kami mengerti.\n\nSilakan balas dengan angka *1* sampai *6* sesuai menu di bawah, atau tanyakan informasi madrasah yang Anda butuhkan."
+                    . "\n\n" . $this->mainMenu()
             );
 
             return;
@@ -135,6 +144,16 @@ class WhatsAppBotService
         if ($conversation->state === 'waiting_nisn') {
 
             if (!preg_match('/^\d{10}$/', $message)) {
+
+                // Jika pengguna malah bertanya kalimat / kata (misal: "lupa nisn", "pakai nama bisa?")
+                if (preg_match('/[a-zA-Z]/', $message)) {
+                    $aiReply = $this->ai->ask($phone, $message);
+                    if (! empty($aiReply)) {
+                        $this->conversation->reset($phone);
+                        $this->reply($phone, $aiReply);
+                        return;
+                    }
+                }
 
                 $this->reply(
                     $phone,
