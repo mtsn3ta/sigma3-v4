@@ -18,7 +18,7 @@ class OpenRouterService
     }
 
     /**
-     * Kirim pertanyaan wali murid ke AI OpenRouter
+     * Kirim pertanyaan wali murid ke AI OpenRouter dengan multi-model auto fallback
      */
     public function ask(string $phone, string $userMessage): ?string
     {
@@ -33,32 +33,49 @@ class OpenRouterService
             // 2. Susun System Prompt resmi madrasah
             $systemPrompt = $this->buildSystemPrompt($studentContext);
 
-            // 3. Panggil OpenRouter API
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'HTTP-Referer' => config('app.url', 'https://sigma3.mtsn3tulungagung.sch.id'),
-                'X-Title' => 'SIGMA-3 MTsN 3 Tulungagung',
-                'Content-Type' => 'application/json',
-            ])->timeout(20)->post('https://openrouter.ai/api/v1/chat/completions', [
-                'model' => $this->model,
-                'messages' => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ['role' => 'user', 'content' => $userMessage],
-                ],
-                'temperature' => 0.7,
-                'max_tokens' => 500,
-            ]);
+            // 3. Daftar model gratis dengan auto-fallback jika salah satu limit (429) / busy
+            $candidateModels = array_unique(array_filter([
+                $this->model,
+                'minimax/minimax-m3.1-flash:free',
+                'liquid/lfm-2.5-2.6b:free',
+                'nvidia/nemotron-3.5-lightning:free',
+                'google/gemma-4-26b-a4b-it:free',
+                'google/gemma-4-31b-it:free',
+            ]));
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $reply = $data['choices'][0]['message']['content'] ?? null;
+            foreach ($candidateModels as $candidate) {
+                try {
+                    $response = Http::withHeaders([
+                        'Authorization' => 'Bearer ' . $this->apiKey,
+                        'HTTP-Referer' => config('app.url', 'https://sigma3.mtsn3tulungagung.sch.id'),
+                        'X-Title' => 'SIGMA-3 MTsN 3 Tulungagung',
+                        'Content-Type' => 'application/json',
+                    ])->timeout(12)->post('https://openrouter.ai/api/v1/chat/completions', [
+                        'model' => $candidate,
+                        'messages' => [
+                            ['role' => 'system', 'content' => $systemPrompt],
+                            ['role' => 'user', 'content' => $userMessage],
+                        ],
+                        'temperature' => 0.6,
+                        'max_tokens' => 350,
+                    ]);
 
-                if (! empty($reply)) {
-                    return $this->sanitizeWhatsAppText(trim($reply));
+                    if ($response->successful()) {
+                        $data = $response->json();
+                        $reply = $data['choices'][0]['message']['content'] ?? null;
+
+                        if (! empty($reply)) {
+                            Log::info("OpenRouter AI dijawab sukses oleh: {$candidate}");
+                            return $this->sanitizeWhatsAppText(trim($reply));
+                        }
+                    }
+
+                    Log::warning("OpenRouter {$candidate} gagal HTTP {$response->status()} - mencoba model cadangan...");
+                } catch (\Throwable $e) {
+                    Log::warning("OpenRouter {$candidate} timeout/error ({$e->getMessage()}) - mencoba model cadangan...");
                 }
             }
 
-            Log::warning('OPENROUTER AI GAGAL: ' . $response->body());
             return null;
 
         } catch (\Throwable $e) {
@@ -82,19 +99,18 @@ class OpenRouterService
                 ->orWhere('telpon_wali', 'LIKE', "%{$local}%")
                 ->orWhere('telpon_ortu', 'LIKE', "%{$cleaned}%")
                 ->orWhere('telpon_wali', 'LIKE', "%{$cleaned}%")
-                ->with('kelas')
                 ->first();
 
             if ($siswa) {
                 $namaSiswa = $siswa->nama_siswa ?? $siswa->nama ?? 'Siswa';
-                $kelas = $siswa->kelas->nama_kelas ?? $siswa->kelas->nama ?? '-';
+                $kelas = $siswa->nama_kelas_aktif ?? '-';
                 $nisn = $siswa->nisn ?? '-';
                 $namaOrtu = $siswa->nama_ayah ?: ($siswa->nama_ibu ?: ($siswa->nama_wali ?: 'Bapak/Ibu'));
 
                 return "KONTEKS PENELPON:\nNomor ini teridentifikasi sebagai: {$namaOrtu}, orang tua/wali dari ananda {$namaSiswa} (Kelas {$kelas}, NISN: {$nisn}).";
             }
         } catch (\Throwable $e) {
-            // Abaikan jika tabel atau kolom belum cocok
+            // Abaikan jika tidak cocok
         }
 
         return null;
@@ -115,34 +131,31 @@ INFORMASI MADRASAH:
   * Senin - Kamis: 06.45 - 14.30 WIB
   * Jumat: 06.45 - 11.00 WIB (Persiapan Shalat Jumat)
   * Sabtu: 06.45 - 13.00 WIB (KBM & Ekstrakurikuler)
-- Aturan Seragam Madrasah:
+- Aturan Seragam Madrasah Harian:
   * Senin - Selasa: Seragam Putih Biru rapi lengkap dengan atribut madrasah & sepatu hitam.
   * Rabu - Kamis: Seragam Batik Khas Identitas MTsN 3 Tulungagung.
-  * Jumat: Kaos Olahraga / Busana Muslim Madrasah.
+  * Jumat: Baju Olahraga / Busana Muslim Madrasah.
   * Sabtu: Seragam Pramuka Lengkap.
 - Presensi & Ibadah Siswa:
-  * Siswa menggunakan Kartu Pintar RFID untuk presensi kedatangan/kepulangan di gerbang madrasah.
+  * Siswa tap kartu RFID di gerbang madrasah untuk presensi kedatangan/kepulangan.
   * Presensi Shalat Dhuha dan Shalat Dzuhur berjamaah dilakukan setiap hari secara tertib.
-- Fitur Menu Mandiri SIGMA-3 (Arahkan wali murid ke menu ini bila memerlukan data otomatis):
+- Menu Otomatis Database SIGMA-3:
   * Ketik 1 : Cek Profil Siswa (butuh NISN)
   * Ketik 2 : Cek Absensi Hari Ini & Ibadah Dhuha/Dzuhur (butuh NISN)
   * Ketik 3 : Cek Riwayat Prestasi Siswa (butuh NISN)
   * Ketik 4 : Portal Wali Murid (Pengajuan Izin Sakit/Keperluan Keluarga secara online)
   * Ketik 5 : Hubungi Komite Madrasah (Ibu Binti - 085736649582)
-  * Ketik 6 : Hubungi Guru BK sesuai tingkatan kelas (Kelas 7: Bu Laela, Kelas 8: Bu Ardila, Kelas 9: Bu Ulum)
+  * Ketik 6 : Hubungi Guru BK sesuai tingkatan kelas
 
 GAYA & PANDUAN MENJAWAB:
 - ATURAN SALAM & SAPAAN:
   * HANYA ucapkan salam (Waalaikumsalam) JIKA penanya mengucap salam (Assalamualaikum) terlebih dahulu!
-  * Jika penanya TIDAK mengucap salam (misal: "min kamu siapa", "halo", "pagi", atau langsung bertanya), JANGAN awali dengan Waalaikumsalam! Jawab langsung secara ramah dan wajar.
-- ATURAN FORMATTING WHATSAPP (SANGAT PENTING):
-  * Tulisan TEBAL (bold) HANYA boleh memakai SATU tanda bintang: *kata*.
-  * DILARANG KERAS menggunakan dua bintang **kata** karena itu format markdown yang rusak di WhatsApp!
+  * Jika penanya TIDAK mengucap salam (misal: "halo", "min", "besok seragam apa"), JANGAN awali dengan Waalaikumsalam! Jawab langsung secara ramah dan wajar.
+- ATURAN FORMATTING WHATSAPP:
+  * Tulisan TEBAL (bold) HANYA memakai SATU tanda bintang: *kata*.
+  * DILARANG KERAS menggunakan dua bintang **kata**.
   * Tulisan miring memakai satu garis bawah: _kata_.
-  * JANGAN gunakan header markdown seperti ### atau tanda strip ganda. Gunakan emotikon atau angka bila membuat daftar.
-- Bersikap ramah, mengayomi, solutif, dan doakan yang baik bila relevan (misal: Syafakallah untuk yang sakit).
-- Jawab maksimal 2-3 paragraf pendek, padat, dan nyaman dibaca di layar smartphone.
-- Jangan mengarang data spesifik kehadiran/nilai anak. Arahkan mereka mengetik nomor menu SIGMA-3 yang sesuai.
+- Jawab maksimal 2-3 paragraf pendek, padat, dan nyaman dibaca di layar HP.
 - Di akhir pesan, selalu sertakan footer: "\n\n_Ketik *menu* untuk kembali ke menu utama._"
 PROMPT;
 
@@ -165,7 +178,7 @@ PROMPT;
         $text = preg_replace('/\*\*(.*?)\*\*/s', '*$1*', $text);
 
         // Bersihkan triple asterisks jika ada
-        $text = preg_replace('/\*\*\*(.*?)\*\*\*/s', '*_$1_*', $text);
+        $text = preg_replace('/\*\*\*(.*?)\*\*\*/s', '*$1*', $text);
 
         return trim($text);
     }
