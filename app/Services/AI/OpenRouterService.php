@@ -54,7 +54,7 @@ class OpenRouterService
                 $reply = $data['choices'][0]['message']['content'] ?? null;
 
                 if (! empty($reply)) {
-                    return trim($reply);
+                    return $this->sanitizeWhatsAppText(trim($reply));
                 }
             }
 
@@ -132,9 +132,16 @@ INFORMASI MADRASAH:
   * Ketik 6 : Hubungi Guru BK sesuai tingkatan kelas (Kelas 7: Bu Laela, Kelas 8: Bu Ardila, Kelas 9: Bu Ulum)
 
 GAYA & PANDUAN MENJAWAB:
-- Awali balasan dengan salam islami bila penanya menyapa (Waalaikumsalam Warahmatullahi Wabarakatuh).
-- Bersikap ramah, mengayomi, dan doakan yang baik (misal: "Semoga ananda lekas sembuh" jika izin sakit).
-- Jawab maksimal 2-3 paragraf pendek, jelas, dan rapi menggunakan format *bold* WhatsApp.
+- ATURAN SALAM & SAPAAN:
+  * HANYA ucapkan salam (Waalaikumsalam) JIKA penanya mengucap salam (Assalamualaikum) terlebih dahulu!
+  * Jika penanya TIDAK mengucap salam (misal: "min kamu siapa", "halo", "pagi", atau langsung bertanya), JANGAN awali dengan Waalaikumsalam! Jawab langsung secara ramah dan wajar.
+- ATURAN FORMATTING WHATSAPP (SANGAT PENTING):
+  * Tulisan TEBAL (bold) HANYA boleh memakai SATU tanda bintang: *kata*.
+  * DILARANG KERAS menggunakan dua bintang **kata** karena itu format markdown yang rusak di WhatsApp!
+  * Tulisan miring memakai satu garis bawah: _kata_.
+  * JANGAN gunakan header markdown seperti ### atau tanda strip ganda. Gunakan emotikon atau angka bila membuat daftar.
+- Bersikap ramah, mengayomi, solutif, dan doakan yang baik bila relevan (misal: Syafakallah untuk yang sakit).
+- Jawab maksimal 2-3 paragraf pendek, padat, dan nyaman dibaca di layar smartphone.
 - Jangan mengarang data spesifik kehadiran/nilai anak. Arahkan mereka mengetik nomor menu SIGMA-3 yang sesuai.
 - Di akhir pesan, selalu sertakan footer: "\n\n_Ketik *menu* untuk kembali ke menu utama._"
 PROMPT;
@@ -144,5 +151,22 @@ PROMPT;
         }
 
         return $prompt;
+    }
+
+    /**
+     * Bersihkan teks agar 100% rapi di WhatsApp (ubah **teks** menjadi *teks*)
+     */
+    protected function sanitizeWhatsAppText(string $text): string
+    {
+        // Ubah markdown header ### Judul menjadi *Judul*
+        $text = preg_replace('/^#{1,6}\s*(.+)$/m', '*$1*', $text);
+
+        // Ubah double asterisks **bold** menjadi single asterisk *bold* WhatsApp
+        $text = preg_replace('/\*\*(.*?)\*\*/s', '*$1*', $text);
+
+        // Bersihkan triple asterisks jika ada
+        $text = preg_replace('/\*\*\*(.*?)\*\*\*/s', '*_$1_*', $text);
+
+        return trim($text);
     }
 }
