@@ -96,7 +96,7 @@ return [
         'timeout' => (int) env('WHATSAPP_WEB_TIMEOUT', 60),
 
         'sidecar' => [
-            'path' => env('WHATSAPP_WEB_SIDECAR_PATH', base_path('vendor/kstmostofa/laravel-whatsapp/sidecar')),
+            'path' => env('WHATSAPP_WEB_SIDECAR_PATH', file_exists(base_path('whatsapp-sidecar')) ? base_path('whatsapp-sidecar') : base_path('vendor/kstmostofa/laravel-whatsapp/sidecar')),
             'node_binary' => env('WHATSAPP_WEB_NODE_BINARY', 'node'),
             'npm_binary' => env('WHATSAPP_WEB_NPM_BINARY', 'npm'),
             // Path to a Chrome/Chromium binary for Puppeteer. Leave null to use

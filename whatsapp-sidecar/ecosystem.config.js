@@ -1,0 +1,18 @@
+module.exports = {
+  apps: [
+    {
+      name: 'sigma3-wa',
+      script: 'index.js',
+      cwd: __dirname,
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+        HOST: '127.0.0.1',
+      },
+    },
+  ],
+};

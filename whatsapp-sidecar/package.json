@@ -1,0 +1,18 @@
+{
+  "name": "sigma3-whatsapp-sidecar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WhatsApp Automation Sidecar for SIGMA-3 MTsN 3 Tulungagung",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "qrcode": "^1.5.3",
+    "whatsapp-web.js": "^1.26.0"
+  }
+}

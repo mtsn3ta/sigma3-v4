@@ -11,15 +11,30 @@ class WhatsAppQrController extends Controller
     {
         $sessionId = 'default';
 
-        $response = Http::withToken(config('services.whatsapp.token'))
-            ->timeout(30)
-            ->post(
-                'http://' . config('services.whatsapp.host') . '/sessions/' . $sessionId . '/start'
-            );
+        $host = config('services.whatsapp.host');
+        if (! str_contains($host, ':')) {
+            $host = $host . ':' . config('laravel-whatsapp.web.port', 3000);
+        }
 
-        return view('admin.whatsapp-qr', [
-            'httpCode' => $response->status(),
-            'data' => $response->json(),
-        ]);
+        try {
+            $response = Http::withToken(config('services.whatsapp.token'))
+                ->timeout(30)
+                ->post(
+                    'http://' . $host . '/sessions/' . $sessionId . '/start'
+                );
+
+            return view('admin.whatsapp-qr', [
+                'httpCode' => $response->status(),
+                'data' => $response->json(),
+            ]);
+        } catch (\Throwable $e) {
+            return view('admin.whatsapp-qr', [
+                'httpCode' => 500,
+                'data' => [
+                    'error' => 'Gagal menghubungi WhatsApp sidecar pada http://' . $host,
+                    'message' => $e->getMessage(),
+                ],
+            ]);
+        }
     }
 }
