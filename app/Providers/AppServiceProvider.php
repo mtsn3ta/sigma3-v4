@@ -18,6 +18,7 @@ use App\Services\ActivityLogService;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 use App\Http\Responses\LogoutResponse;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse as LogoutResponseContract;
@@ -31,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (app()->isProduction() || str_contains(config('app.url'), 'https://') || request()->header('X-Forwarded-Proto') === 'https') {
+            URL::forceScheme('https');
+        }
+
         Gate::before(function ($user, string $ability) {
             return $user->hasRole('super_admin')
                 ? true

@@ -87,6 +87,19 @@
         }
 
         /* Badges */
+        .sigma-topbar-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: 0.75rem;
+            padding-left: 0.75rem;
+            border-left: 1px solid #e2e8f0;
+        }
+
+        .dark .sigma-topbar-badges {
+            border-left-color: #334155;
+        }
+
         .sigma-context-badge {
             display: inline-flex;
             align-items: center;
@@ -155,6 +168,64 @@
             color: #34d399;
             background: rgba(6, 78, 59, 0.4);
             border-color: rgba(5, 150, 105, 0.4);
+        }
+
+        /* =========================================
+           RESPONSIVE MOBILE RULES
+           ========================================= */
+        @media (max-width: 1024px) {
+            .sigma-context-badge-ta {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fi-topbar {
+                height: 3.5rem !important;
+                min-height: 3.5rem !important;
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+
+            .fi-topbar-start {
+                gap: 0.35rem !important;
+            }
+
+            .fi-topbar-end {
+                gap: 0.35rem !important;
+            }
+
+            .sigma-topbar-badges {
+                display: none !important;
+            }
+
+            .sigma-portal-btn {
+                padding: 0.3rem 0.5rem !important;
+                font-size: 0.7rem !important;
+            }
+
+            .sigma-portal-btn span {
+                display: none !important;
+            }
+
+            .sigma-brand-title {
+                font-size: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fi-topbar {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+
+            .sigma-brand {
+                display: none !important;
+            }
+
+            .sigma-portal-btn {
+                display: none !important;
+            }
         }
     </style>
 
@@ -242,7 +313,7 @@
 
             {{-- Context Badges (Active Role & Tahun Ajaran) --}}
             @if ($activeRoleName || $academicYear)
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-left: 0.75rem; padding-left: 0.75rem; border-left: 1px solid #e2e8f0;">
+                <div class="sigma-topbar-badges">
                     @if ($activeRoleName)
                         <span class="sigma-context-badge sigma-context-badge-role">
                             <span style="display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background-color: #10b981;"></span>

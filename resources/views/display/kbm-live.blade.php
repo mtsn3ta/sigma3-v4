@@ -71,43 +71,43 @@
 <body class="min-h-screen flex flex-col justify-between p-3 lg:p-4 text-slate-100">
 
     <!-- TOP BAR: IDENTITAS & JAM DIGITAL -->
-    <header class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 lg:px-6 lg:py-3.5 backdrop-blur-md shadow-2xl flex flex-wrap items-center justify-between gap-4 mb-3">
+    <header class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 lg:px-6 lg:py-3.5 backdrop-blur-md shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 mb-3">
         <!-- Logo & Title -->
-        <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                 </svg>
             </div>
             <div>
                 <div class="flex items-center gap-2">
-                    <h1 class="text-xl lg:text-2xl font-black tracking-tight text-white uppercase">MONITORING KBM KELAS</h1>
-                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">LIVE</span>
+                    <h1 class="text-base sm:text-xl lg:text-2xl font-black tracking-tight text-white uppercase">MONITORING KBM</h1>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">LIVE</span>
                 </div>
-                <p class="text-xs text-slate-400 font-medium tracking-wide">MTsN 3 Tulungagung • Ruang Guru Display</p>
+                <p class="text-[11px] sm:text-xs text-slate-400 font-medium tracking-wide">MTsN 3 Tulungagung • Ruang Guru Display</p>
             </div>
         </div>
 
         <!-- Center: Slot Status Banner -->
-        <div id="slot-banner" class="flex items-center gap-3 bg-slate-950/80 px-4 py-2 rounded-xl border border-slate-800">
-            <div class="relative flex h-3.5 w-3.5">
+        <div id="slot-banner" class="flex items-center gap-3 bg-slate-950/80 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-slate-800 w-full sm:w-auto justify-center sm:justify-start">
+            <div class="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-emerald-500"></span>
             </div>
             <div class="text-left">
-                <div id="slot-title" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Memuat Slot...</div>
-                <div id="slot-desc" class="text-sm lg:text-base font-extrabold text-white">Mendeteksi Waktu KBM...</div>
+                <div id="slot-title" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Memuat Slot...</div>
+                <div id="slot-desc" class="text-xs sm:text-sm lg:text-base font-extrabold text-white">Mendeteksi Waktu KBM...</div>
             </div>
         </div>
 
         <!-- Right: Digital Clock & Fullscreen -->
-        <div class="flex items-center gap-4">
-            <div class="text-right">
-                <div id="digital-clock" class="text-2xl lg:text-3xl font-extrabold font-mono-num text-emerald-400 tracking-wider">00:00:00</div>
-                <div id="digital-date" class="text-xs text-slate-400 font-medium">Memuat Tanggal...</div>
+        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
+            <div class="text-left sm:text-right">
+                <div id="digital-clock" class="text-xl sm:text-2xl lg:text-3xl font-extrabold font-mono-num text-emerald-400 tracking-wider">00:00:00</div>
+                <div id="digital-date" class="text-[11px] sm:text-xs text-slate-400 font-medium">Memuat Tanggal...</div>
             </div>
-            <button onclick="toggleFullscreen()" title="Toggle Fullscreen" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700/60 shadow-md">
-                <svg id="fullscreen-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="toggleFullscreen()" title="Toggle Fullscreen" class="p-2 sm:p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700/60 shadow-md shrink-0">
+                <svg id="fullscreen-icon" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
                 </svg>
             </button>
