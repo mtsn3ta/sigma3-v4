@@ -91,7 +91,7 @@ return [
         //   Only set this to a domain/IP when sidecar and Laravel are on
         //   different machines.
         'host' => env('WHATSAPP_WEB_HOST', '127.0.0.1'),
-        'port' => (int) env('WHATSAPP_WEB_PORT', 3000),
+        'port' => (int) env('WHATSAPP_WEB_PORT', 3001),
         'token' => env('WHATSAPP_WEB_TOKEN'),
         'timeout' => (int) env('WHATSAPP_WEB_TIMEOUT', 60),
 

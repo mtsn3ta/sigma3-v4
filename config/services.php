@@ -37,7 +37,7 @@ return [
     'whatsapp' => [
         'webhook_secret' => env('WHATSAPP_WEB_WEBHOOK_SECRET', env('WHATSAPP_WEB_TOKEN')),
         'token' => env('WHATSAPP_WEB_TOKEN'),
-        'host' => env('WHATSAPP_WEB_HOST', '127.0.0.1') . ':' . env('WHATSAPP_WEB_PORT', 3000),
+        'host' => env('WHATSAPP_WEB_HOST', '127.0.0.1') . ':' . env('WHATSAPP_WEB_PORT', 3001),
     ],
     'telegram' => [
     'bot_token' => env('TELEGRAM_BOT_TOKEN'),

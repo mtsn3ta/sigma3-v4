@@ -59,7 +59,7 @@ loadEnv();
 // -----------------------------------------------------------------------------
 // Configuration
 // -----------------------------------------------------------------------------
-const PORT = parseInt(process.env.WHATSAPP_WEB_PORT || process.env.PORT || '3000', 10);
+const PORT = parseInt(process.env.WHATSAPP_WEB_PORT || process.env.PORT || '3001', 10);
 const HOST = process.env.WHATSAPP_WEB_HOST || process.env.HOST || '127.0.0.1';
 const TOKEN = process.env.WHATSAPP_WEB_TOKEN || process.env.SIDECAR_TOKEN || '';
 const SESSION_DIR = process.env.WHATSAPP_WEB_SESSION_DIR || process.env.SESSION_DIR || path.join(__dirname, 'sessions');
