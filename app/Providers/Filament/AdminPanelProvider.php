@@ -132,6 +132,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\Waka\WakaPrestasiWidget::class,
                 \App\Filament\Widgets\Waka\WakaQuickMenuWidget::class,
                 // BK
+                \App\Filament\Widgets\BK\BKQuickMenuWidget::class,
                 \App\Filament\Widgets\BK\BKStatsWidget::class,
                 \App\Filament\Widgets\BK\BKRankingPoinWidget::class,
                 \App\Filament\Widgets\BK\BKRawanAlpaWidget::class,

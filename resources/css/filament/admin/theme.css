@@ -552,4 +552,110 @@
     .sigma3-quick-menu[data-theme="sky"] .sigma3-quick-menu__link:hover .sigma3-quick-menu__label {
         color: #0369a1;
     }
+
+    /* ==========================================================
+       RESPONSIVE MOBILE STYLES FOR QUICK MENU
+       ========================================================== */
+    @media (max-width: 640px) {
+        .sigma3-quick-menu {
+            padding: 1rem 0.875rem !important;
+            border-radius: 0.875rem !important;
+        }
+
+        .sigma3-quick-menu__glow {
+            width: 140px !important;
+            height: 140px !important;
+            top: -30px !important;
+            right: -30px !important;
+        }
+
+        .sigma3-quick-menu__header {
+            margin-bottom: 0.75rem !important;
+            padding-bottom: 0.625rem !important;
+            gap: 0.5rem !important;
+        }
+
+        .sigma3-quick-menu__header-icon {
+            width: 1.875rem !important;
+            height: 1.875rem !important;
+        }
+
+        .sigma3-quick-menu__title {
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+        }
+
+        .sigma3-quick-menu__grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 0.5rem !important;
+        }
+
+        .sigma3-quick-menu__link {
+            padding: 0.75rem 0.375rem !important;
+            gap: 0.45rem !important;
+            border-radius: 0.75rem !important;
+        }
+
+        .sigma3-quick-menu__icon-wrap {
+            width: 2.35rem !important;
+            height: 2.35rem !important;
+            border-radius: 0.5rem !important;
+        }
+
+        .sigma3-quick-menu__icon-wrap svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+
+        .sigma3-quick-menu__label {
+            font-size: 0.7rem !important;
+            line-height: 1.2 !important;
+            font-weight: 600 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            word-break: break-word !important;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .sigma3-quick-menu__grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 0.5rem !important;
+        }
+    }
+
+    /* ==========================================================
+       DARK MODE SUPPORT FOR QUICK MENU
+       ========================================================== */
+    .dark .sigma3-quick-menu {
+        background: #0f172a !important;
+        border-color: #1e293b !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark .sigma3-quick-menu__header {
+        border-bottom-color: #1e293b !important;
+    }
+
+    .dark .sigma3-quick-menu__title {
+        color: #f1f5f9 !important;
+    }
+
+    .dark .sigma3-quick-menu__link {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .dark .sigma3-quick-menu__icon-wrap {
+        background: #0f172a !important;
+        border-color: #334155 !important;
+        color: #94a3b8 !important;
+    }
+
+    .dark .sigma3-quick-menu__label {
+        color: #cbd5e1 !important;
+    }
 }
