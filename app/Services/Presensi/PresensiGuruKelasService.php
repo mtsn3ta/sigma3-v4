@@ -84,21 +84,25 @@ class PresensiGuruKelasService
         $namaHari = $hariMap[$now->format('l')] ?? 'Senin';
         $tahunAjaranId = TahunAjaran::aktifId();
 
-        // Cek apakah guru sudah tercatat presensi di kelas ini pada jam_ke ini hari ini
+        // 1. Cek apakah guru sudah tercatat presensi di kelas ini pada jam_ke ini hari ini
         $existing = PresensiGuruKelas::whereDate('tanggal', $tanggalStr)
             ->where('kelas_id', $kelas->id)
-            ->where(function ($q) use ($jamKe) {
-                $q->where('jam_ke', (string) $jamKe)
-                  ->orWhere('jam_ke', 'LIKE', "%{$jamKe}%");
-            })
-            ->first();
+            ->get()
+            ->first(function ($p) use ($jamKe) {
+                return in_array((int) $jamKe, JamPelajaranHelper::parse($p->jam_ke), true);
+            });
 
         if ($existing) {
             $waktuFormatted = Carbon::parse($existing->waktu_masuk)->format('H:i');
+            $existingParsed = JamPelajaranHelper::parse($existing->jam_ke);
+            $existingLabel = count($existingParsed) > 1
+                ? "Jam Ke-{$existingParsed[0]} s/d " . end($existingParsed)
+                : "Jam Ke-{$existing->jam_ke}";
+
             return [
                 'success' => true,
                 'already_recorded' => true,
-                'message' => "Presensi kelas {$kelas->nama_kelas} (Jam Ke-{$jamKe}) sudah tercatat sebelumnya pada {$waktuFormatted} WIB oleh {$existing->pegawai->nama}.",
+                'message' => "Presensi kelas {$kelas->nama_kelas} ({$existingLabel}) sudah tercatat sebelumnya pada {$waktuFormatted} WIB oleh {$existing->pegawai->nama}.",
                 'data' => [
                     'guru' => $existing->pegawai->nama,
                     'kelas' => $kelas->nama_kelas,
@@ -109,30 +113,59 @@ class PresensiGuruKelasService
             ];
         }
 
-        // Cari jadwal pelajaran kelas ini
-        $jadwal = JadwalPelajaran::with('plotingGuru.pegawai')
+        // 2. Cari seluruh jadwal pelajaran kelas ini hari ini
+        $allJadwalKelasToday = JadwalPelajaran::with('plotingGuru.pegawai')
             ->where('hari', $namaHari)
             ->where('tahun_ajaran_id', $tahunAjaranId)
             ->where('kelas_id', $kelas->id)
-            ->get()
-            ->first(function ($j) use ($jamKe) {
-                return in_array((int) $jamKe, JamPelajaranHelper::parse($j->jam_ke), true);
-            });
+            ->orderByRaw('CAST(jam_ke AS UNSIGNED) ASC')
+            ->get();
 
+        $jadwal = $allJadwalKelasToday->first(function ($j) use ($jamKe) {
+            return in_array((int) $jamKe, JamPelajaranHelper::parse($j->jam_ke), true);
+        });
+
+        // 3. Deteksi otomatis jam blok berturut-turut (misal jam 5 dan jam 6 diajar oleh guru & mapel yang sama)
+        $startJam = (int) $jamKe;
+        $endJam = $startJam;
         $isGuruPengganti = false;
         $mapel = '-';
+
         if ($jadwal) {
             $mapel = $jadwal->plotingGuru?->mapel ?? '-';
             $guruTerjadwalId = $jadwal->plotingGuru?->pegawai_id;
+
             if ($guruTerjadwalId && $guruTerjadwalId != $pegawai->id) {
                 $isGuruPengganti = true;
+            } else {
+                // Cek jam-jam berikutnya yang berturut-turut untuk guru & mapel yang sama
+                while (true) {
+                    $nextJam = $endJam + 1;
+                    $nextJadwal = $allJadwalKelasToday->first(function ($j) use ($nextJam) {
+                        return in_array($nextJam, JamPelajaranHelper::parse($j->jam_ke), true);
+                    });
+
+                    if (
+                        $nextJadwal &&
+                        $nextJadwal->plotingGuru?->pegawai_id === $guruTerjadwalId &&
+                        $nextJadwal->plotingGuru?->mapel === $mapel
+                    ) {
+                        $endJam = $nextJam;
+                    } else {
+                        break;
+                    }
+                }
             }
         }
 
-        // Simpan Presensi
+        // Tentukan format jam_ke: '5-6' jika blok atau '5' jika 1 jam
+        $recordedJamKe = ($endJam > $startJam) ? "{$startJam}-{$endJam}" : (string) $startJam;
+        $jamLabel = ($endJam > $startJam) ? "Jam Ke-{$startJam} s/d {$endJam}" : "Jam Ke-{$startJam}";
+
+        // 4. Simpan Presensi Guru Kelas
         $presensi = PresensiGuruKelas::create([
             'tanggal' => $tanggalStr,
-            'jam_ke' => (string) $jamKe,
+            'jam_ke' => $recordedJamKe,
             'kelas_id' => $kelas->id,
             'pegawai_id' => $pegawai->id,
             'jadwal_pelajaran_id' => $jadwal?->id,
@@ -147,14 +180,14 @@ class PresensiGuruKelasService
         return [
             'success' => true,
             'already_recorded' => false,
-            'message' => "Presensi berhasil! Selamat mengajar di Kelas {$kelas->nama_kelas} (Jam Ke-{$jamKe}).",
+            'message' => "Presensi berhasil! Selamat mengajar di Kelas {$kelas->nama_kelas} ({$jamLabel}).",
             'data' => [
                 'id' => $presensi->id,
                 'guru' => $pegawai->nama,
                 'guru_foto' => $pegawai->foto ? asset('storage/' . $pegawai->foto) : null,
                 'kelas' => $kelas->nama_kelas,
                 'mapel' => $mapel,
-                'jam_ke' => (string) $jamKe,
+                'jam_ke' => $recordedJamKe,
                 'waktu' => $waktuMasukStr,
                 'metode' => $metode,
                 'is_guru_pengganti' => $isGuruPengganti,
