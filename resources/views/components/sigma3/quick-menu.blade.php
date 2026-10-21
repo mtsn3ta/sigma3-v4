@@ -79,7 +79,10 @@
 
     <div class="sigma3-quick-menu__grid">
         @foreach ($items as $item)
-            <a href="{{ $item['url'] }}" class="sigma3-quick-menu__link">
+            @php
+                $isExternalOrNonSpa = str_contains($item['url'], 'scan-kelas') || str_contains($item['url'], 'display');
+            @endphp
+            <a href="{{ $item['url'] }}" class="sigma3-quick-menu__link" @if($isExternalOrNonSpa) wire:navigate="false" data-navigate-ignore="true" @endif>
                 <div class="sigma3-quick-menu__icon-wrap">
                     <x-filament::icon :icon="$item['icon']" class="size-6" />
                 </div>

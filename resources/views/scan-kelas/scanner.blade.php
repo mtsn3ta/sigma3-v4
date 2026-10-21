@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pindai QR Kelas - MTsN 3 Tulungagung</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Primary & Fallback CDN for html5-qrcode -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <!-- Primary Local & CDN Fallback for html5-qrcode -->
+    <script src="{{ asset('js/html5-qrcode.min.js') }}"></script>
     <script>
         if (typeof Html5Qrcode === 'undefined') {
-            document.write('<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"><\/script>');
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"><\/script>');
         }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -193,62 +193,89 @@
         }
 
         async function requestCameraStart() {
-            document.getElementById('permission-prompt').classList.add('hidden');
-            document.getElementById('status-text').innerText = 'Membuka kamera...';
+            const promptEl = document.getElementById('permission-prompt');
+            const statusText = document.getElementById('status-text');
+            const scanStatus = document.getElementById('scan-status');
+
+            if (promptEl) promptEl.classList.add('hidden');
+            if (statusText) statusText.innerText = 'Menghubungkan kamera...';
 
             try {
+                // Pastikan library Html5Qrcode siap
+                if (typeof Html5Qrcode === 'undefined') {
+                    for (let i = 0; i < 30; i++) {
+                        if (typeof Html5Qrcode !== 'undefined') break;
+                        await new Promise(r => setTimeout(r, 100));
+                    }
+                }
+
+                if (typeof Html5Qrcode === 'undefined') {
+                    throw new Error("Library pemindai QR belum siap.");
+                }
+
                 if (!html5QrCode) {
                     html5QrCode = new Html5Qrcode("reader");
                 }
 
-                // Check available cameras
-                availableCameras = await Html5Qrcode.getCameras();
-                
                 const config = { 
                     fps: 15, 
                     qrbox: { width: 230, height: 230 },
                     aspectRatio: 1.0
                 };
 
-                if (availableCameras && availableCameras.length > 0) {
-                    // Try to find the back camera
-                    let backCamIndex = availableCameras.findIndex(c => 
-                        c.label.toLowerCase().includes('back') || 
-                        c.label.toLowerCase().includes('rear') || 
-                        c.label.toLowerCase().includes('belakang') ||
-                        c.label.toLowerCase().includes('environment')
-                    );
-                    if (backCamIndex === -1) backCamIndex = availableCameras.length - 1; // Last camera is usually the back camera
-                    
-                    currentCameraIndex = backCamIndex;
-                    const cameraId = availableCameras[currentCameraIndex].id;
-
-                    await html5QrCode.start(cameraId, config, onScanSuccess, onScanFailure);
-
-                    // Show flip camera button if multiple cameras exist
-                    if (availableCameras.length > 1) {
-                        document.getElementById('btn-flip-camera').classList.remove('hidden');
-                        document.getElementById('btn-flip-placeholder').classList.add('hidden');
-                    }
-                } else {
-                    // Fallback to facingMode
+                // 1. Prioritaskan start langsung dengan { facingMode: "environment" }
+                // Ini langsung memicu notifikasi "Izinkan Kamera" dari browser secara otomatis pada klik pertama
+                try {
                     await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure);
+                } catch (facingErr) {
+                    console.warn("FacingMode start failed, trying device list fallback:", facingErr);
+                    
+                    // Fallback jika facingMode ditolak atau butuh deviceId spesifik
+                    availableCameras = await Html5Qrcode.getCameras();
+                    if (availableCameras && availableCameras.length > 0) {
+                        let backCamIndex = availableCameras.findIndex(c => 
+                            c.label.toLowerCase().includes('back') || 
+                            c.label.toLowerCase().includes('rear') || 
+                            c.label.toLowerCase().includes('belakang') ||
+                            c.label.toLowerCase().includes('environment')
+                        );
+                        if (backCamIndex === -1) backCamIndex = availableCameras.length - 1;
+                        currentCameraIndex = backCamIndex;
+                        await html5QrCode.start(availableCameras[currentCameraIndex].id, config, onScanSuccess, onScanFailure);
+                    } else {
+                        throw facingErr;
+                    }
+                }
+
+                // 2. Setelah kamera aktif (izin sudah granted), baru deteksi kamera lain untuk tombol switch
+                try {
+                    availableCameras = await Html5Qrcode.getCameras();
+                    if (availableCameras && availableCameras.length > 1) {
+                        const btnFlip = document.getElementById('btn-flip-camera');
+                        const placeholderFlip = document.getElementById('btn-flip-placeholder');
+                        if (btnFlip) btnFlip.classList.remove('hidden');
+                        if (placeholderFlip) placeholderFlip.classList.add('hidden');
+                    }
+                } catch (camListErr) {
+                    // Abaikan jika enumerasi kedua gagal, kamera utama sudah jalan
                 }
 
                 document.getElementById('scanner-frame').classList.remove('hidden');
-                document.getElementById('status-text').innerText = 'Kamera Aktif • Arahkan ke QR Kelas';
+                if (statusText) statusText.innerText = 'Kamera Aktif • Arahkan ke QR Kelas';
 
             } catch (err) {
                 console.error("Camera start error:", err);
-                document.getElementById('permission-prompt').classList.remove('hidden');
-                document.getElementById('status-text').innerText = 'Kamera belum diizinkan';
+                if (promptEl) promptEl.classList.remove('hidden');
+                if (statusText) statusText.innerText = 'Kamera belum aktif';
                 
-                document.getElementById('scan-status').innerHTML = `
-                    <div class="p-3 bg-rose-950/80 border border-rose-800 rounded-xl text-rose-300 text-xs space-y-1">
-                        <p class="font-bold">Izin Kamera Belum Aktif</p>
-                        <p class="text-[11px] text-rose-200/80">Silakan izinkan kamera di setelan browser atau gunakan tombol <strong>"Ambil Foto QR"</strong> di bawah.</p>
-                    </div>
-                `;
+                if (scanStatus) {
+                    scanStatus.innerHTML = `
+                        <div class="p-3 bg-rose-950/80 border border-rose-800 rounded-xl text-rose-300 text-xs space-y-1">
+                            <p class="font-bold">Izin Kamera Diperlukan</p>
+                            <p class="text-[11px] text-rose-200/80">Silakan klik tombol <strong>"Nyalakan Kamera"</strong> di atas atau periksa izin kamera pada pengaturan browser HP Anda.</p>
+                        </div>
+                    `;
+                }
             }
         }
 
@@ -284,15 +311,35 @@
             }
         }
 
-        // Try auto-starting on page load if permitted
-        window.addEventListener('load', () => {
-            // Auto start if supported
+        // Inisialisasi otomatis pemindai kamera
+        let hasInitialized = false;
+
+        async function initScanner() {
+            if (hasInitialized || (html5QrCode && html5QrCode.isScanning)) return;
+            hasInitialized = true;
+
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                requestCameraStart();
+                await requestCameraStart();
             } else {
-                document.getElementById('permission-prompt').classList.remove('hidden');
-                document.getElementById('status-text').innerText = 'Klik tombol untuk mengaktifkan kamera';
+                const promptEl = document.getElementById('permission-prompt');
+                if (promptEl) promptEl.classList.remove('hidden');
+                const statusText = document.getElementById('status-text');
+                if (statusText) statusText.innerText = 'Klik tombol untuk menyalakan kamera';
             }
+        }
+
+        // Langsung jalankan saat DOM siap (tidak menunggu window load / reload)
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(initScanner, 50);
+        } else {
+            document.addEventListener('DOMContentLoaded', initScanner);
+            window.addEventListener('load', initScanner);
+        }
+
+        // Dukungan jika dibuka via SPA / Livewire
+        document.addEventListener('livewire:navigated', () => {
+            hasInitialized = false;
+            setTimeout(initScanner, 50);
         });
     </script>
 </body>
