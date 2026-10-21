@@ -57,6 +57,7 @@ class ScanKelasController extends Controller
             return view('scan-kelas.result', [
                 'success' => $result['success'] ?? false,
                 'already_recorded' => $result['already_recorded'] ?? false,
+                'status_code' => $result['status_code'] ?? null,
                 'message' => $result['message'],
                 'kelas' => $kelas,
                 'data' => $result['data'] ?? null,

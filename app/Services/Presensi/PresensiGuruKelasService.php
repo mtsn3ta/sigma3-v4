@@ -84,7 +84,94 @@ class PresensiGuruKelasService
         $namaHari = $hariMap[$now->format('l')] ?? 'Senin';
         $tahunAjaranId = TahunAjaran::aktifId();
 
-        // 1. Cek apakah guru sudah tercatat presensi di kelas ini pada jam_ke ini hari ini
+        // 1. Cek apakah guru ini pada jam ini seharusnya mengajar di kelas LAIN
+        $jadwalGuruDiKelasLain = JadwalPelajaran::with(['kelas', 'plotingGuru'])
+            ->where('hari', $namaHari)
+            ->where('tahun_ajaran_id', $tahunAjaranId)
+            ->where('kelas_id', '!=', $kelas->id)
+            ->whereHas('plotingGuru', function ($q) use ($pegawai) {
+                $q->where('pegawai_id', $pegawai->id);
+            })
+            ->get()
+            ->first(function ($j) use ($jamKe) {
+                return in_array((int) $jamKe, JamPelajaranHelper::parse($j->jam_ke), true);
+            });
+
+        if ($jadwalGuruDiKelasLain) {
+            $kelasSeharusnya = $jadwalGuruDiKelasLain->kelas?->nama_kelas ?? 'kelas lain';
+            $mapelSeharusnya = $jadwalGuruDiKelasLain->plotingGuru?->mapel ?? '';
+
+            // Deteksi jika ada jam blok berturut-turut di kelas yang seharusnya
+            $startOther = (int) $jamKe;
+            $endOther = $startOther;
+            $jadwalGuruDiKelasSeharusnya = JadwalPelajaran::where('hari', $namaHari)
+                ->where('tahun_ajaran_id', $tahunAjaranId)
+                ->where('kelas_id', $jadwalGuruDiKelasLain->kelas_id)
+                ->whereHas('plotingGuru', function ($q) use ($pegawai) {
+                    $q->where('pegawai_id', $pegawai->id);
+                })
+                ->get();
+
+            while (true) {
+                $nextJam = $endOther + 1;
+                $hasJadwalNext = $jadwalGuruDiKelasSeharusnya->contains(function ($j) use ($nextJam) {
+                    return in_array($nextJam, JamPelajaranHelper::parse($j->jam_ke), true);
+                });
+                if ($hasJadwalNext) {
+                    $endOther = $nextJam;
+                } else {
+                    break;
+                }
+            }
+
+            $jamLabelSeharusnya = ($endOther > $startOther)
+                ? "Jam Ke-{$startOther} s/d {$endOther}"
+                : "Jam Ke-{$startOther}";
+
+            $mapelInfo = $mapelSeharusnya ? " ({$mapelSeharusnya})" : '';
+
+            return [
+                'success' => false,
+                'status_code' => 'WRONG_CLASS',
+                'message' => "Salah ruang kelas! Berdasarkan jadwal resmi, Anda saat ini ({$jamLabelSeharusnya}) mengajar di Kelas {$kelasSeharusnya}{$mapelInfo}, bukan di Kelas {$kelas->nama_kelas}. Silakan scan stiker QR di Kelas {$kelasSeharusnya}.",
+                'data' => [
+                    'guru' => $pegawai->nama,
+                    'kelas_di_scan' => $kelas->nama_kelas,
+                    'kelas_seharusnya' => $kelasSeharusnya,
+                    'mapel' => $mapelSeharusnya,
+                    'jam_ke' => (string) $jamKe,
+                    'jam_label_seharusnya' => $jamLabelSeharusnya,
+                ],
+            ];
+        }
+
+        // 2. Cek apakah guru ini sudah tercatat presensi di kelas LAIN pada jam yang sama hari ini
+        $existingDiKelasLain = PresensiGuruKelas::with('kelas')
+            ->whereDate('tanggal', $tanggalStr)
+            ->where('pegawai_id', $pegawai->id)
+            ->where('kelas_id', '!=', $kelas->id)
+            ->get()
+            ->first(function ($p) use ($jamKe) {
+                return in_array((int) $jamKe, JamPelajaranHelper::parse($p->jam_ke), true);
+            });
+
+        if ($existingDiKelasLain) {
+            $namaKelasLain = $existingDiKelasLain->kelas?->nama_kelas ?? 'kelas lain';
+            $waktuFormatted = Carbon::parse($existingDiKelasLain->waktu_masuk)->format('H:i');
+            return [
+                'success' => false,
+                'status_code' => 'ALREADY_TEACHING_OTHER_CLASS',
+                'message' => "Anda sudah tercatat hadir mengajar di Kelas {$namaKelasLain} pada jam ini (pukul {$waktuFormatted} WIB).",
+                'data' => [
+                    'guru' => $pegawai->nama,
+                    'kelas_di_scan' => $kelas->nama_kelas,
+                    'kelas_sudah_presensi' => $namaKelasLain,
+                    'jam_ke' => (string) $jamKe,
+                ],
+            ];
+        }
+
+        // 3. Cek apakah kelas ini sudah tercatat presensi pada jam_ke ini hari ini
         $existing = PresensiGuruKelas::whereDate('tanggal', $tanggalStr)
             ->where('kelas_id', $kelas->id)
             ->get()
