@@ -95,7 +95,16 @@ export default function Landing() {
 
     return (
         <FrontendLayout>
-            <Head title={`SIGMA-3 - ${settings.school_name || "MTsN 3 Tulungagung"}`} />
+            <Head>
+                <title>{`SIGMA-3 - ${settings.school_name || "MTsN 3 Tulungagung"}`}</title>
+                <meta name="description" content="SIGMA-3: Sistem Informasi Digital Terpadu MTsN 3 Tulungagung. Presensi RFID pintar, monitoring ibadah, portal wali murid, rekap nilai, dan layanan asisten AI resmi madrasah." />
+                <link rel="canonical" href="https://sigma3.mtsn3tulungagung.sch.id/" />
+                <meta property="og:title" content={`SIGMA-3 - ${settings.school_name || "MTsN 3 Tulungagung"}`} />
+                <meta property="og:description" content="Sistem Informasi Digital Terpadu MTsN 3 Tulungagung: Presensi RFID, portal wali murid & layanan madrasah." />
+                <meta property="og:url" content="https://sigma3.mtsn3tulungagung.sch.id/" />
+                <meta property="og:type" content="website" />
+                {settings.logo && <meta property="og:image" content={settings.logo} />}
+            </Head>
 
             {/* ==========================================================
                 HERO SECTION

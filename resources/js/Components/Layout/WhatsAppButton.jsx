@@ -9,6 +9,7 @@ export default function WhatsAppButton() {
             rel="noopener noreferrer"
             className="sigma-ai-float"
             title="SIGMA-3 CS AI"
+            aria-label="Hubungi Asisten Virtual CS AI MTsN 3 Tulungagung melalui WhatsApp"
         >
             <div className="sigma-ai-badge">
                 <div className="sigma-ai-dot"></div>

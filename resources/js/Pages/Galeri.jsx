@@ -634,7 +634,7 @@ export default function Galeri() {
                         {/* Image */}
                         <img
                             src={selectedAlbum.photos[selectedPhoto]?.url}
-                            alt=""
+                            alt={selectedAlbum?.title || "Foto Dokumentasi Galeri Kegiatan MTsN 3 Tulungagung"}
                             onClick={(e) => e.stopPropagation()}
                             className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl select-none"
                         />
