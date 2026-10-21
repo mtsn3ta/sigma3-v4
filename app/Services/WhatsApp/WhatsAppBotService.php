@@ -136,17 +136,52 @@ class WhatsAppBotService
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Input NISN
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Input NISN atau Nama Siswa
+        |--------------------------------------------------------------------------
+        */
 
         if ($conversation->state === 'waiting_nisn') {
+            $keyword = trim($message);
 
-            if (!preg_match('/^\d{10}$/', $message)) {
+            // Cek apakah pesan berupa pertanyaan eksplisit (misal: "tidak tahu nisn", "lupa nisn", "gimana kalau ga tahu")
+            $lowerKeyword = strtolower($keyword);
+            $isExplicitQuestion = str_contains($lowerKeyword, 'tidak tahu') ||
+                                  str_contains($lowerKeyword, 'nggak tahu') ||
+                                  str_contains($lowerKeyword, 'lupa') ||
+                                  str_contains($lowerKeyword, 'gimana') ||
+                                  str_contains($lowerKeyword, 'bagaimana');
 
-                // Jika pengguna malah bertanya kalimat / kata (misal: "lupa nisn", "pakai nama bisa?")
-                if (preg_match('/[a-zA-Z]/', $message)) {
+            if ($isExplicitQuestion && !preg_match('/^\d{10}$/', $keyword)) {
+                $aiReply = $this->ai->ask($phone, $message);
+                if (! empty($aiReply)) {
+                    $this->conversation->reset($phone);
+                    $this->reply($phone, $aiReply);
+                    return;
+                }
+            }
+
+            // Panggil API Student Intelligence (Mendukung pencarian via NISN maupun Nama)
+            $response = Http::baseUrl(config('app.url'))
+                ->timeout(10)
+                ->get('/api/student-intelligence', [
+                    'keyword' => $keyword,
+                ]);
+
+            if (!$response->successful()) {
+                $this->reply(
+                    $phone,
+                    "Mohon maaf, sistem sedang mengalami gangguan 🙏\n\nSilakan coba lagi beberapa saat, atau ketik *menu* untuk mengulang."
+                );
+                return;
+            }
+
+            $json = $response->json();
+
+            // Jika tidak ditemukan
+            if (! ($json['status'] ?? false)) {
+                // Tanyakan ke AI jika mungkin itu pertanyaan kalimat panjang
+                if (preg_match('/[a-zA-Z]{4,}/', $keyword) && str_word_count($keyword) > 3) {
                     $aiReply = $this->ai->ask($phone, $message);
                     if (! empty($aiReply)) {
                         $this->conversation->reset($phone);
@@ -157,71 +192,130 @@ class WhatsAppBotService
 
                 $this->reply(
                     $phone,
-                    "Mohon maaf, NISN yang dimasukkan belum sesuai 🙏\n\nNISN terdiri dari *10 digit angka*, contoh: 3106123456\n\nSilakan coba masukkan kembali, atau ketik *menu* untuk kembali ke menu utama."
+                    "Mohon maaf, data siswa dengan kata kunci *\"{$message}\"* tidak ditemukan di database MTsN 3 Tulungagung 🙏\n\n"
+                    . "💡 *Tips Pencarian:*\n"
+                    . "• Masukkan *Nama Lengkap* atau *Nama Depan* siswa sesuai raport.\n"
+                    . "• Atau gunakan *10 digit NISN* (contoh: 3106123456).\n\n"
+                    . "Silakan ketik nama/NISN kembali, atau ketik *menu* untuk kembali ke menu utama."
                 );
-
                 return;
             }
 
-            $response = Http::baseUrl(config('app.url'))
-                ->timeout(10)
-                ->get('/api/student-intelligence', [
-                    'nisn' => $message,
-                ]);
+            // KASUS 1: Ditemukan Tepat 1 Siswa (Single)
+            if (($json['type'] ?? '') === 'single') {
+                $data = $json['data'];
+                $prefix = '';
+                if (!empty($json['searched_by_name'])) {
+                    $prefix = "✅ Ditemukan siswa: *{$data['nama']}* (Kelas {$data['kelas']} — NISN: *{$data['nisn']}*)\n\n";
+                }
 
-            if (!$response->successful()) {
+                $text = match ($conversation->menu) {
+                    'profil' => $this->profil($data),
+                    'absensi' => $this->absensi($data),
+                    'prestasi' => $this->prestasi($data),
+                    'portal' => $this->portal($data),
+                    'bk_contact' => $this->guruBk($data),
+                    default => "Mohon maaf, menu tidak dikenali. Ketik *menu* untuk kembali ke menu utama.",
+                };
 
-                $this->reply(
+                $this->conversation->reset($phone);
+                $this->reply($phone, $prefix . $text);
+                return;
+            }
+
+            // KASUS 2: Ditemukan Lebih Dari 1 Siswa (Multiple / Nama Mirip)
+            if (($json['type'] ?? '') === 'multiple' && !empty($json['candidates'])) {
+                $candidates = $json['candidates'];
+
+                $this->conversation->update(
                     $phone,
-                    "Mohon maaf, sistem sedang mengalami gangguan 🙏\n\nSilakan coba lagi beberapa saat, atau ketik *menu* untuk mengulang."
+                    'waiting_candidate_selection',
+                    $conversation->menu,
+                    ['candidates' => $candidates]
                 );
 
+                $replyText = "Ditemukan *" . count($candidates) . " siswa* dengan nama mirip *\"{$message}\"*:\n\n";
+                foreach ($candidates as $idx => $c) {
+                    $no = $idx + 1;
+                    $replyText .= "*{$no}️⃣* {$c['nama']} (Kelas {$c['kelas']} — NISN: *{$c['nisn']}*)\n";
+                }
+                $replyText .= "\nSilakan balas dengan angka urutan (*1*, *2*, dst) sesuai ananda Bapak/Ibu.\n\n_Ketik *menu* untuk membatalkan._";
+
+                $this->reply($phone, $replyText);
                 return;
             }
+        }
 
-            $json = $response->json();
+        /*
+        |--------------------------------------------------------------------------
+        | Pemilihan Kandidat Siswa (Jika ada lebih dari 1 siswa dengan nama serupa)
+        |--------------------------------------------------------------------------
+        */
 
-            if (!$json['status']) {
+        if ($conversation->state === 'waiting_candidate_selection') {
+            $candidates = $conversation->data['candidates'] ?? [];
+            $input = trim($message);
 
-                $this->reply(
-                    $phone,
-                    "Mohon maaf, data siswa dengan NISN tersebut tidak ditemukan 🙏\n\nMohon periksa kembali NISN yang dimasukkan, atau ketik *menu* untuk kembali ke menu utama."
-                );
+            // Jika orang tua membalas dengan nomor urutan (1, 2, 3...)
+            if (is_numeric($input) && isset($candidates[(int)$input - 1])) {
+                $selected = $candidates[(int)$input - 1];
+                $nisn = $selected['nisn'];
 
-                return;
+                $response = Http::baseUrl(config('app.url'))
+                    ->timeout(10)
+                    ->get('/api/student-intelligence', [
+                        'nisn' => $nisn,
+                    ]);
+
+                if ($response->successful() && ($response->json()['status'] ?? false)) {
+                    $data = $response->json()['data'];
+                    $prefix = "✅ Ditemukan siswa: *{$data['nama']}* (Kelas {$data['kelas']} — NISN: *{$data['nisn']}*)\n\n";
+
+                    $text = match ($conversation->menu) {
+                        'profil' => $this->profil($data),
+                        'absensi' => $this->absensi($data),
+                        'prestasi' => $this->prestasi($data),
+                        'portal' => $this->portal($data),
+                        'bk_contact' => $this->guruBk($data),
+                        default => "Mohon maaf, menu tidak dikenali. Ketik *menu* untuk kembali ke menu utama.",
+                    };
+
+                    $this->conversation->reset($phone);
+                    $this->reply($phone, $prefix . $text);
+                    return;
+                }
             }
 
-            $data = $json['data'];
+            // Jika orang tua memasukkan NISN 10 digit secara langsung
+            if (preg_match('/^\d{10}$/', $input)) {
+                $response = Http::baseUrl(config('app.url'))
+                    ->timeout(10)
+                    ->get('/api/student-intelligence', [
+                        'nisn' => $input,
+                    ]);
 
-            switch ($conversation->menu) {
+                if ($response->successful() && ($response->json()['status'] ?? false)) {
+                    $data = $response->json()['data'];
+                    $text = match ($conversation->menu) {
+                        'profil' => $this->profil($data),
+                        'absensi' => $this->absensi($data),
+                        'prestasi' => $this->prestasi($data),
+                        'portal' => $this->portal($data),
+                        'bk_contact' => $this->guruBk($data),
+                        default => "Mohon maaf, menu tidak dikenali. Ketik *menu* untuk kembali ke menu utama.",
+                    };
 
-                case 'profil':
-                    $text = $this->profil($data);
-                    break;
-
-                case 'absensi':
-                    $text = $this->absensi($data);
-                    break;
-
-                case 'prestasi':
-                    $text = $this->prestasi($data);
-                    break;
-
-                case 'portal':
-                    $text = $this->portal($data);
-                    break;
-
-                case 'bk_contact': // <-- TAMBAHKAN BLOK INI
-                    $text = $this->guruBk($data);
-                    break;
-
-                default:
-                    $text = "Mohon maaf, menu tidak dikenali. Ketik *menu* untuk kembali ke menu utama.";
+                    $this->conversation->reset($phone);
+                    $this->reply($phone, $text);
+                    return;
+                }
             }
 
-            $this->conversation->reset($phone);
-
-            $this->reply($phone, $text);
+            $maxNum = count($candidates);
+            $this->reply(
+                $phone,
+                "Mohon maaf, pilihan belum sesuai 🙏\nSilakan balas dengan angka urutan antara *1 sampai {$maxNum}*, atau ketik *menu* untuk kembali ke menu utama."
+            );
             return;
         }
 
@@ -281,9 +375,9 @@ TEXT;
     private function askNisn(): string
     {
         return <<<TEXT
-Baik, mohon masukkan *NISN* siswa (10 digit angka).
+Baik, mohon masukkan *NISN (10 digit)* atau *Nama Lengkap Siswa*.
 
-Contoh: 3106123456
+Contoh: *3106123456* atau *Ahmad Fauzi*
 
 _Ketik *menu* jika ingin kembali ke menu utama._
 TEXT;

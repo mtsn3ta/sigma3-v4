@@ -98,65 +98,115 @@ class IntelligenceController extends Controller
     }
 
     /**
+     * Helper query siswa dengan relasi lengkap untuk student intelligence
+     */
+    private function getSiswaQueryWithRelations()
+    {
+        return Siswa::with([
+            'kelasAktif.kelas',
+            'prestasi' => function ($query) {
+                $query
+                    ->orderByDesc('tanggal')
+                    ->take(10);
+            },
+            'anggotaEkskul' => function ($query) {
+                $query->where('status', 'aktif')
+                    ->with(['ekstrakurikuler', 'tahunAjaran']);
+            },
+        ]);
+    }
+
+    /**
      * API Student Intelligence
-     * Untuk WhatsApp Bot
+     * Untuk WhatsApp Bot (Mendukung pencarian via NISN maupun Nama Lengkap/Panggilan)
      */
     public function api(Request $request)
     {
         try {
-
-            $nisn = trim(
-                $request->query('nisn', '')
+            $keyword = trim(
+                $request->query('keyword', $request->query('nisn', ''))
             );
 
-            if ($nisn === '') {
-
+            if ($keyword === '') {
                 return response()->json([
                     'status' => false,
-                    'msg' => 'NISN kosong',
+                    'msg' => 'NISN atau Nama siswa kosong',
                 ]);
             }
 
-            $siswa = Siswa::with([
+            // 1. Jika persis 10 digit angka -> Prioritaskan pencarian langsung via NISN
+            if (preg_match('/^\d{10}$/', $keyword)) {
+                $siswa = $this->getSiswaQueryWithRelations()
+                    ->where('nisn', $keyword)
+                    ->first();
 
-                'kelasAktif.kelas',
+                if (! $siswa) {
+                    return response()->json([
+                        'status' => false,
+                        'msg' => 'Data siswa dengan NISN tersebut tidak ditemukan',
+                    ]);
+                }
 
-                'prestasi' => function ($query) {
-                    $query
-                        ->orderByDesc('tanggal')
-                        ->take(10);
-                },
-
-                'anggotaEkskul' => function ($query) {
-                    $query->where('status', 'aktif')
-                        ->with(['ekstrakurikuler', 'tahunAjaran']); // Memuat ekstrakurikuler dan tahun ajaran
-                },
-
-            ])
-                ->where('nisn', $nisn)
-                ->first();
-
-            if (! $siswa) {
+                if ($siswa->status !== 'aktif') {
+                    return response()->json([
+                        'status' => false,
+                        'msg' => 'Siswa sudah tidak aktif (Status: ' . ucfirst($siswa->status) . ')',
+                    ]);
+                }
 
                 return response()->json([
-                    'status' => false,
-                    'msg' => 'Data siswa tidak ditemukan',
+                    'status' => true,
+                    'type' => 'single',
+                    'searched_by_name' => false,
+                    'data' => $this->buildStudentIntelligence($siswa),
                 ]);
             }
 
-            if ($siswa->status !== 'aktif') {
+            // 2. Jika bukan 10 digit -> Cari berdasarkan Nama Siswa (atau potongan NISN)
+            $siswas = Siswa::with('kelasAktif.kelas')
+                ->where('status', 'aktif')
+                ->where(function ($q) use ($keyword) {
+                    $q->where('nama', 'LIKE', "%{$keyword}%")
+                      ->orWhere('nisn', 'LIKE', "%{$keyword}%");
+                })
+                ->take(6)
+                ->get();
+
+            if ($siswas->isEmpty()) {
                 return response()->json([
                     'status' => false,
-                    'msg' => 'Siswa sudah tidak aktif (Status: ' . ucfirst($siswa->status) . ')',
+                    'msg' => "Data siswa dengan nama/NISN '{$keyword}' tidak ditemukan di database madrasah.",
                 ]);
             }
 
+            // Jika ditemukan TEPAT 1 SISWA (Nama Unik)
+            if ($siswas->count() === 1) {
+                $siswa = $this->getSiswaQueryWithRelations()
+                    ->where('id', $siswas->first()->id)
+                    ->first();
+
+                return response()->json([
+                    'status' => true,
+                    'type' => 'single',
+                    'searched_by_name' => true,
+                    'data' => $this->buildStudentIntelligence($siswa),
+                ]);
+            }
+
+            // Jika ditemukan LEBIH DARI 1 SISWA (Nama Mirip/Kembar)
             return response()->json([
                 'status' => true,
-                'data' => $this->buildStudentIntelligence($siswa),
+                'type' => 'multiple',
+                'candidates' => $siswas->map(function ($s) {
+                    return [
+                        'nisn' => $s->nisn,
+                        'nama' => $s->nama,
+                        'kelas' => $s->kelasAktif?->kelas?->nama_kelas ?? '-',
+                    ];
+                })->values()->all(),
             ]);
-        } catch (\Throwable $th) {
 
+        } catch (\Throwable $th) {
             report($th);
 
             return response()->json([
