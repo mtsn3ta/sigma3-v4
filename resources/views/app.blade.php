@@ -30,20 +30,20 @@
 
     {{-- Structured Data (JSON-LD) Schema.org --}}
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "EducationalOrganization",
-      "name": "MTsN 3 Tulungagung",
-      "alternateName": "MATSANEGA",
-      "url": "https://sigma3.mtsn3tulungagung.sch.id",
-      "description": "Sistem Informasi Madrasah Terpadu MTsN 3 Tulungagung (SIGMA-3)",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Tulungagung",
-        "addressRegion": "Jawa Timur",
-        "addressCountry": "ID"
-      }
-    }
+    {!! json_encode([
+      '@context' => 'https://schema.org',
+      '@type' => 'EducationalOrganization',
+      'name' => 'MTsN 3 Tulungagung',
+      'alternateName' => 'MATSANEGA',
+      'url' => 'https://sigma3.mtsn3tulungagung.sch.id',
+      'description' => 'Sistem Informasi Madrasah Terpadu MTsN 3 Tulungagung (SIGMA-3)',
+      'address' => [
+        '@type' => 'PostalAddress',
+        'addressLocality' => 'Tulungagung',
+        'addressRegion' => 'Jawa Timur',
+        'addressCountry' => 'ID',
+      ],
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
 
     @viteReactRefresh
