@@ -37,11 +37,11 @@ class WhatsAppWebhookController extends Controller
                 return response()->json(['status' => 'ignored']);
             }
 
-            $phone = preg_replace('/@.*$/', '', $msg['from'] ?? '');
+            $from = $msg['from'] ?? '';
             $text = $msg['body'] ?? '';
 
-            if (! empty($text) && ! empty($phone)) {
-                $bot->handle($phone, $text);
+            if (! empty($text) && ! empty($from)) {
+                $bot->handle($from, $text);
             }
         }
 
