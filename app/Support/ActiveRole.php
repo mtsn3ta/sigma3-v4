@@ -72,9 +72,9 @@ class ActiveRole
             'waka_kurikulum',
             'waka_humas',
             'waka_sarpras',
-            'bk',
-            'piket',
             'guru',
+            'piket',
+            'bk',
             'pembina',
             'pelatih',
         ];

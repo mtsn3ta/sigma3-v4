@@ -31,6 +31,11 @@ class GuruQuickMenuWidget extends Widget
             'theme' => 'emerald',
             'items' => [
                 [
+                    'label' => 'Scan Masuk Kelas',
+                    'icon' => 'heroicon-o-qr-code',
+                    'url' => url('/scan-kelas'),
+                ],
+                [
                     'label' => 'Isi Jurnal Hari Ini',
                     'icon' => 'heroicon-o-clipboard-document-check',
                     'url' => JurnalMengajar::getUrl(['action' => 'tambah']),

@@ -91,7 +91,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-qr-code')
                     ->url(fn(): string => url('/scan-kelas'))
                     ->visible(fn() => \App\Support\ActiveRole::is('guru') || \App\Support\ActiveRole::is('super_admin'))
-                    ->sort(1),
+                    ->sort(0),
 
             ])
             ->renderHook(
