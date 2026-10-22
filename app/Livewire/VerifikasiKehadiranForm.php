@@ -145,13 +145,13 @@ class VerifikasiKehadiranForm extends Component implements HasActions, HasSchema
 
         foreach ($siswaList as $siswa) {
             match ($status) {
-                'hadir' => $service->markHadir(
+                'hadir' => $service->markManualHadir(
                     siswa: $siswa,
                     jamDatang: $jamDatang ?? now('Asia/Jakarta')->format('H:i:s'),
                     petugas: $petugas,
                     tanggal: $tanggal
                 ),
-                'terlambat' => $service->markTerlambat(
+                'terlambat' => $service->markManualTerlambat(
                     siswa: $siswa,
                     jamDatang: $jamDatang ?? now('Asia/Jakarta')->format('H:i:s'),
                     petugas: $petugas,

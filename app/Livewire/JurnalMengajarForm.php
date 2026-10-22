@@ -75,6 +75,8 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
             'mapel' => null,
             'materi' => null,
             'catatan' => null,
+            'dokumentasi_foto' => null,
+            'dokumentasi_video' => null,
             'kehadiran_pembelajaran' => [],
         ]);
 
@@ -151,7 +153,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
 
         foreach ($jadwalHariIni as $jadwal) {
             $jamInt = (int) $jadwal->jam_ke;
-            $mapel = $jadwal->plotingGuru->mapel;
+            $mapel = $jadwal->plotingGuru?->mapel ?? '';
 
             $tersambung = $current
                 && $current['kelas_id'] === $jadwal->kelas_id
@@ -169,7 +171,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                 $current = [
                     'ids' => [$jadwal->id],
                     'kelas_id' => $jadwal->kelas_id,
-                    'kelas_nama' => $jadwal->kelas->nama_kelas,
+                    'kelas_nama' => $jadwal->kelas?->nama_kelas ?? 'Kelas',
                     'mapel' => $mapel,
                     'jam_awal' => $jamInt,
                     'jam_akhir' => $jamInt,
@@ -375,7 +377,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
                                 $terakhir = $jadwalList->last();
 
                                 $set('kelas_id', $pertama->kelas_id);
-                                $set('mapel', $pertama->plotingGuru->mapel);
+                                $set('mapel', $pertama->plotingGuru?->mapel ?? '');
 
                                 // Kalau cuma 1 id -> jam_ke tunggal. Kalau lebih -> gabungan "awal-akhir".
                                 $jamKe = $pertama->jam_ke === $terakhir->jam_ke
@@ -610,64 +612,103 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
         $data = $this->form->getState();
         $isEdit = $this->record !== null;
 
-        DB::transaction(function () use ($data) {
-            if ($this->record) {
-                $this->record->update([
+        $pegawai = Auth::user()?->pegawai;
+        if (!$pegawai) {
+            Notification::make()
+                ->title('Akun Belum Terhubung')
+                ->body('Akun Anda belum terhubung dengan data profil guru/pegawai.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            DB::transaction(function () use ($data, $pegawai) {
+                // Periksa apakah jurnal pada jam, kelas, dan tanggal ini sudah pernah dibuat sebelumnya
+                $existing = JurnalMengajar::where('pegawai_id', $pegawai->id)
+                    ->where('kelas_id', $data['kelas_id'])
+                    ->whereDate('tanggal', $data['tanggal'])
+                    ->where('jam_ke', (string) $data['jam_ke'])
+                    ->when($this->record, fn($q) => $q->where('id', '!=', $this->record->id))
+                    ->first();
+
+                $payload = [
+                    'pegawai_id' => $pegawai->id,
                     'kelas_id' => $data['kelas_id'],
                     'tanggal' => $data['tanggal'],
-                    'jam_ke' => $data['jam_ke'],
+                    'jam_ke' => (string) $data['jam_ke'],
                     'mapel' => $data['mapel'],
                     'materi' => $data['materi'],
-                    'catatan' => $data['catatan'],
+                    'catatan' => $data['catatan'] ?? null,
                     'dokumentasi_foto' => $data['dokumentasi_foto'] ?? null,
                     'dokumentasi_video' => $data['dokumentasi_video'] ?? null,
-                ]);
-                $jurnal = $this->record;
-            } else {
-                $jurnal = JurnalMengajar::create([
-                    'pegawai_id' => Auth::user()->pegawai->id,
-                    'kelas_id' => $data['kelas_id'],
-                    'tanggal' => $data['tanggal'],
-                    'jam_ke' => $data['jam_ke'],
-                    'mapel' => $data['mapel'],
-                    'materi' => $data['materi'],
-                    'catatan' => $data['catatan'],
-                    'dokumentasi_foto' => $data['dokumentasi_foto'] ?? null,
-                    'dokumentasi_video' => $data['dokumentasi_video'] ?? null,
-                ]);
-            }
+                ];
 
-            $jurnal->kehadiranPembelajaran()->delete();
-            foreach ($data['kehadiran_pembelajaran'] ?? [] as $item) {
-                $jurnal->kehadiranPembelajaran()->create([
-                    'siswa_id' => $item['siswa_id'],
-                    'status' => $item['status'],
-                    'keterangan' => $item['keterangan'],
-                ]);
-            }
+                if ($this->record) {
+                    if ($existing) {
+                        // Jika slot jam yang dipilih sudah ada entri lain, update entri existing tersebut
+                        $existing->update($payload);
+                        $jurnal = $existing;
+                    } else {
+                        $this->record->update($payload);
+                        $jurnal = $this->record;
+                    }
+                } else {
+                    if ($existing) {
+                        // Jika sudah ada sebelumnya (misal submit ulang/double click), update data daripada melempar error SQL duplicate
+                        $existing->update($payload);
+                        $jurnal = $existing;
+                    } else {
+                        $jurnal = JurnalMengajar::create($payload);
+                    }
+                }
 
-            // Sinkronisasi otomatis ke tabel Presensi Guru Kelas
-            if (Auth::user()?->pegawai) {
-                PresensiGuruKelas::firstOrCreate(
+                $jurnal->kehadiranPembelajaran()->delete();
+                foreach ($data['kehadiran_pembelajaran'] ?? [] as $item) {
+                    $jurnal->kehadiranPembelajaran()->create([
+                        'siswa_id' => $item['siswa_id'],
+                        'status' => $item['status'],
+                        'keterangan' => $item['keterangan'] ?? null,
+                    ]);
+                }
+
+                // Sinkronisasi otomatis ke tabel Presensi Guru Kelas
+                PresensiGuruKelas::updateOrCreate(
                     [
                         'tanggal' => $data['tanggal'],
                         'kelas_id' => $data['kelas_id'],
                         'jam_ke' => (string) $data['jam_ke'],
                     ],
                     [
-                        'pegawai_id' => Auth::user()->pegawai->id,
+                        'pegawai_id' => $pegawai->id,
                         'metode' => 'jurnal',
                         'waktu_masuk' => now(),
                         'is_guru_pengganti' => false,
                         'catatan' => 'Presensi via Jurnal Mengajar',
                     ]
                 );
-            }
-        });
+            });
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error saat menyimpan jurnal mengajar: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            Notification::make()
+                ->title('Gagal Menyimpan Jurnal')
+                ->body('Terjadi kendala saat menyimpan data: ' . $e->getMessage())
+                ->danger()
+                ->send();
+            return;
+        }
 
         // Kompresi foto secara otomatis ke ukuran ~100 KB
         if (!empty($data['dokumentasi_foto'])) {
-            \App\Support\ImageCompressor::compress($data['dokumentasi_foto'], 'public', 1024, 768, 72);
+            try {
+                \App\Support\ImageCompressor::compress($data['dokumentasi_foto'], 'public', 1024, 768, 72);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Gagal kompres foto jurnal: ' . $e->getMessage());
+            }
         }
 
         Notification::make()

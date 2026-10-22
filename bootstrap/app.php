@@ -28,5 +28,27 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn(Request $request) => $request->is('api/*'),
         );
+
+        // Mencegah Livewire 500 saat file upload temporary Flysystem kadaluarsa / hilang
+        $exceptions->render(function (\League\Flysystem\UnableToRetrieveMetadata $e, Request $request) {
+            \Illuminate\Support\Facades\Log::warning('Temporary upload file missing/expired: ' . $e->getMessage());
+
+            if ($request->hasHeader('X-Livewire')) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'dokumentasi_foto' => 'File foto yang dipilih sudah kadaluarsa atau tidak ditemukan di penyimpanan sementara. Silakan pilih kembali foto kegiatan.',
+                ]);
+            }
+        });
+
+        // Mencegah Livewire 500 saat duplikasi unik jurnal / presensi terpicu
+        $exceptions->render(function (\Illuminate\Database\UniqueConstraintViolationException $e, Request $request) {
+            \Illuminate\Support\Facades\Log::warning('Database duplicate entry caught: ' . $e->getMessage());
+
+            if ($request->hasHeader('X-Livewire')) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'jam_ke' => 'Data untuk tanggal, jam pelajaran, dan kelas ini sudah pernah disimpan.',
+                ]);
+            }
+        });
     })
     ->create();

@@ -40,7 +40,7 @@ class RiwayatJurnalMengajarTable extends Component implements HasActions, HasSch
             ->query(
                 JurnalMengajar::query()
                     ->with(['kelas', 'kehadiranPembelajaran'])
-                    ->where('pegawai_id', Auth::user()->pegawai->id)
+                    ->where('pegawai_id', Auth::user()?->pegawai?->id ?? 0)
                     ->latest('tanggal')
                     ->latest('jam_ke')
             )
@@ -260,8 +260,7 @@ class RiwayatJurnalMengajarTable extends Component implements HasActions, HasSch
             ])
 
             ->striped()
-            ->paginated([10, 25, 50])
-            ->poll('60s'); // BARU: auto-refresh ringan tiap 1 menit, biar hasil isi jurnal terbaru langsung muncul tanpa reload manual
+            ->paginated([10, 25, 50]);
     }
 
     public function render(): View
