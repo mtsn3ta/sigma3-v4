@@ -20,8 +20,6 @@ class IzinKeluarResource extends Resource
 {
     protected static ?string $model = IzinKeluar::class;
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static string|BackedEnum|null $navigationIcon =
     Heroicon::OutlinedArrowRightStartOnRectangle;
 
@@ -32,6 +30,28 @@ class IzinKeluarResource extends Resource
     protected static ?string $modelLabel = 'Izin Keluar';
 
     protected static ?string $pluralModelLabel = 'Izin Keluar';
+
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): ?string
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (\App\Support\ActiveRole::is('bk') || ($user?->hasRole('bk') && !$user?->hasRole('piket'))) {
+            return 'BK';
+        }
+
+        if (\App\Support\ActiveRole::is('piket') || $user?->hasRole('piket')) {
+            return 'Guru Piket';
+        }
+
+        if ($user?->hasRole('waka_kesiswaan')) {
+            return 'Kesiswaan';
+        }
+
+        return 'Guru Piket';
+    }
 
     public static function canAccess(): bool
     {
@@ -70,16 +90,14 @@ class IzinKeluarResource extends Resource
     }
     public static function getNavigationBadge(): ?string
     {
-        return (string) IzinKeluar::query()
+        $count = IzinKeluar::query()
             ->where('status_proses', 'keluar')
             ->count();
+
+        return $count > 0 ? (string) $count : null;
     }
     public static function getNavigationBadgeColor(): ?string
     {
-        return IzinKeluar::query()
-            ->where('status_proses', 'keluar')
-            ->exists()
-            ? 'warning'
-            : 'success';
+        return 'warning';
     }
 }
