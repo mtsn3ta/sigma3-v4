@@ -37,6 +37,20 @@ class WhatsAppWebhookController extends Controller
                 return response()->json(['status' => 'ignored']);
             }
 
+            // Perlindungan pesan lama / backlog jika server sempat restart/offline
+            // Jika pesan dikirim lebih dari 30 menit yang lalu, abaikan agar bot tidak tiba-tiba membalas chat masa lalu
+            if (isset($msg['timestamp']) && is_numeric($msg['timestamp'])) {
+                $age = time() - (int) $msg['timestamp'];
+                if ($age > 1800) {
+                    Log::info('WA WEBHOOK: Pesan backlog kadaluwarsa diabaikan', [
+                        'from' => $msg['from'] ?? null,
+                        'age_seconds' => $age,
+                        'body' => $msg['body'] ?? '',
+                    ]);
+                    return response()->json(['status' => 'stale_message_ignored']);
+                }
+            }
+
             $from = $msg['from'] ?? '';
             $text = $msg['body'] ?? '';
 

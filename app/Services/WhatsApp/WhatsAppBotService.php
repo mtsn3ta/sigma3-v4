@@ -45,7 +45,7 @@ class WhatsAppBotService
         |--------------------------------------------------------------------------
         */
 
-        $pureSalamPattern = '/^(assalamu[\s\'`]*alaikum|askum|aslkm|assalamualaikum|halo|hai|p|selamat\s+(pagi|siang|sore|malam))[\s.!,?]*$/i';
+        $pureSalamPattern = '/^(assalamu[\s\'`]*alaikum|askum|aslkm|assalamualaikum|salam|halo+|hallo+|hello+|helo+|hai+|hi+|tes+|test+|ping+|p+|selamat\s+(pagi|siang|sore|malam)|kulonuwun|sampurasun)[\s.!,?]*$/i';
 
         if (preg_match($pureSalamPattern, $message)) {
 
