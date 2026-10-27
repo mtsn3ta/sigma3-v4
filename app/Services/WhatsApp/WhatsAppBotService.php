@@ -19,10 +19,14 @@ class WhatsAppBotService
         } catch (\Throwable $th) {
             report($th);
 
-            $this->reply(
-                $phone,
-                "⚠️ Mohon maaf, sistem sedang mengalami gangguan.\nSilakan coba lagi beberapa saat, atau ketik *menu* untuk mengulang."
-            );
+            try {
+                $this->reply(
+                    $phone,
+                    "⚠️ Mohon maaf, sistem sedang mengalami gangguan.\nSilakan coba lagi beberapa saat, atau ketik *menu* untuk mengulang."
+                );
+            } catch (\Throwable $replyError) {
+                \Illuminate\Support\Facades\Log::warning('WA: Gagal kirim pesan fallback error: ' . $replyError->getMessage());
+            }
 
             $this->conversation->reset($phone);
         }

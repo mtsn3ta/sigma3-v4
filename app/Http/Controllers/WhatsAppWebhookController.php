@@ -41,7 +41,14 @@ class WhatsAppWebhookController extends Controller
             $text = $msg['body'] ?? '';
 
             if (! empty($text) && ! empty($from)) {
-                $bot->handle($from, $text);
+                try {
+                    $bot->handle($from, $text);
+                } catch (\Throwable $e) {
+                    Log::error('WA WEBHOOK BOT ERROR: ' . $e->getMessage(), [
+                        'from' => $from,
+                        'exception' => $e,
+                    ]);
+                }
             }
         }
 
