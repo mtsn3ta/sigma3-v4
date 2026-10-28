@@ -48,7 +48,7 @@ class LiveKbmService
         // Cek Agenda / Libur Umum Madrasah
         $agendaPusat = null;
         if (class_exists(AgendaMadrasah::class)) {
-            $agendaPusat = AgendaMadrasah::whereDate('tanggal', $tanggalStr)
+            $agendaPusat = AgendaMadrasah::aktifPada($tanggalStr)
                 ->whereIn('tipe_agenda', ['libur_nasional', 'kegiatan_bersama'])
                 ->first();
         }

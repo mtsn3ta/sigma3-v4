@@ -57,13 +57,13 @@ class AgendaMadrasahForm
                     ]),
 
                 // === SECTION 2: Periode Tanggal ===
-                Section::make('Periode')
-                    ->description('Isi tanggal mulai. Tanggal selesai opsional untuk agenda multi-hari.')
+                Section::make('Periode Agenda')
+                    ->description('Tentukan tanggal mulai dan selesai kegiatan.')
                     ->icon('heroicon-o-calendar-days')
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                DatePicker::make('tanggal')
+                                DatePicker::make('tanggal_mulai')
                                     ->label('Tanggal Mulai')
                                     ->required()
                                     ->native(false)
@@ -76,8 +76,8 @@ class AgendaMadrasahForm
                                     ->native(false)
                                     ->displayFormat('d F Y')
                                     ->prefixIcon('heroicon-o-calendar')
-                                    ->afterOrEqual('tanggal')
-                                    ->helperText('Isi jika acara berlangsung lebih dari 1 hari.'),
+                                    ->afterOrEqual('tanggal_mulai')
+                                    ->helperText('Biarkan kosong jika acara hanya berlangsung 1 hari.'),
                             ]),
                     ]),
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AgendaMadrasahs\Tables;
 
+use App\Models\AgendaMadrasah;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -14,14 +15,16 @@ class AgendaMadrasahsTable
     {
         return $table
             ->columns([
-                TextColumn::make('tanggal')
-                    ->label('Tanggal')
-                    ->date('d M Y')
+                TextColumn::make('tanggal_mulai')
+                    ->label('Periode Tanggal')
+                    ->formatStateUsing(fn($state, AgendaMadrasah $record): string => $record->periode_teks)
+                    ->description(fn(AgendaMadrasah $record): ?string => $record->durasi_hari > 1 ? "({$record->durasi_hari} Hari)" : null)
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('nama_agenda')
                     ->label('Nama Acara')
+                    ->weight('bold')
                     ->searchable(),
 
                 TextColumn::make('tipe_agenda')
@@ -42,12 +45,17 @@ class AgendaMadrasahsTable
 
                 TextColumn::make('kelas.nama_kelas')
                     ->label('Kelas')
-                    ->placeholder('-'), // Jika null (kegiatan bersama / libur) akan tampil tanda strip
+                    ->badge()
+                    ->color('info')
+                    ->placeholder('-'),
+
+                TextColumn::make('keterangan')
+                    ->label('Keterangan')
+                    ->limit(40)
+                    ->tooltip(fn(AgendaMadrasah $record): ?string => $record->keterangan)
+                    ->placeholder('-'),
             ])
-            ->defaultSort('tanggal', 'desc') // Mengurutkan dari tanggal paling baru
-            ->filters([
-                //
-            ])
+            ->defaultSort('tanggal_mulai', 'desc')
             ->recordActions([
                 EditAction::make(),
             ])

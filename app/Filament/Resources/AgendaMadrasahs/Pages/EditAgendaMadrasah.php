@@ -17,10 +17,15 @@ class EditAgendaMadrasah extends EditRecord
         ];
     }
 
-    // Mencegah error kolom tidak ditemukan saat Waka Kurikulum menyimpan hasil edit
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        unset($data['tanggal_selesai']);
+        if (empty($data['tanggal_selesai'])) {
+            $data['tanggal_selesai'] = $data['tanggal_mulai'] ?? $data['tanggal'];
+        }
+        if (!empty($data['tanggal_mulai'])) {
+            $data['tanggal'] = $data['tanggal_mulai'];
+        }
+
         return $data;
     }
 }

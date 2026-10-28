@@ -40,7 +40,7 @@ class MonitoringJurnalService
 
         if (class_exists(AgendaMadrasah::class)) {
             // Lapis 2: Libur Nasional / Kegiatan Bersama
-            $agendaPusat = AgendaMadrasah::whereDate('tanggal', $tanggal->toDateString())
+            $agendaPusat = AgendaMadrasah::aktifPada($tanggal->toDateString())
                 ->whereIn('tipe_agenda', ['libur_nasional', 'kegiatan_bersama'])
                 ->first();
 
@@ -57,7 +57,7 @@ class MonitoringJurnalService
             }
 
             // Lapis 3: Kondisi Parsial Kelas (Misal: Outbound Kelas 7)
-            $agendaKelas = AgendaMadrasah::whereDate('tanggal', $tanggal->toDateString())
+            $agendaKelas = AgendaMadrasah::aktifPada($tanggal->toDateString())
                 ->where('tipe_agenda', 'kondisi_kelas')
                 ->where('kelas_id', $kelasId)
                 ->first();

@@ -54,7 +54,7 @@ class GuruStatsWidget extends StatsOverviewWidget
                 $hariPenuhAgenda = true;
                 $pesanAgendaPusat = 'Libur Akhir Pekan';
             } else {
-                $agendaPusat = AgendaMadrasah::whereDate('tanggal', today('Asia/Jakarta'))
+                $agendaPusat = AgendaMadrasah::aktifPada(today('Asia/Jakarta'))
                     ->whereIn('tipe_agenda', ['libur_nasional', 'kegiatan_bersama'])
                     ->first();
 
@@ -93,7 +93,7 @@ class GuruStatsWidget extends StatsOverviewWidget
 
                 foreach ($jadwalHariIni as $j) {
                     // Cek Lapis 3: Apakah kelas pada jadwal ini sedang dikunci oleh agenda kondisi_kelas?
-                    $isKelasAdaAgenda = AgendaMadrasah::whereDate('tanggal', today('Asia/Jakarta'))
+                    $isKelasAdaAgenda = AgendaMadrasah::aktifPada(today('Asia/Jakarta'))
                         ->where('tipe_agenda', 'kondisi_kelas')
                         ->where('kelas_id', $j->kelas_id)
                         ->exists();

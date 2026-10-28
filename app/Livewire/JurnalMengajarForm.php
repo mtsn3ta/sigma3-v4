@@ -212,7 +212,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
 
         // LAPIS 2 & 3: Agenda Madrasah
         if (class_exists(AgendaMadrasah::class)) {
-            $agendaPusat = AgendaMadrasah::whereDate('tanggal', $tanggal)
+            $agendaPusat = AgendaMadrasah::aktifPada($tanggal)
                 ->whereIn('tipe_agenda', ['libur_nasional', 'kegiatan_bersama'])
                 ->first();
 
@@ -224,7 +224,7 @@ class JurnalMengajarForm extends Component implements HasActions, HasSchemas
             }
 
             if ($kelasId) {
-                $agendaKelas = AgendaMadrasah::whereDate('tanggal', $tanggal)
+                $agendaKelas = AgendaMadrasah::aktifPada($tanggal)
                     ->where('tipe_agenda', 'kondisi_kelas')
                     ->where('kelas_id', $kelasId)
                     ->first();
