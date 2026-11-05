@@ -125,7 +125,7 @@ export default function Landing() {
                 <div className={background.noise} />
                 <div className={background.grid} />
 
-                <Container className={spacing.heroTop}>
+                <Container className={cn("relative z-10", spacing.heroTop)}>
                     <div className="grid lg:grid-cols-12 gap-12 lg:gap-14 items-center">
                         {/* LEFT CONTENT */}
                         <motion.div
@@ -164,7 +164,7 @@ export default function Landing() {
                                 <Button
                                     href="/monitoring"
                                     variant="primary"
-                                    className="px-7 py-3.5 text-sm sm:text-base font-bold shadow-lg shadow-emerald-600/25 flex items-center gap-2 group"
+                                    className="px-7 py-3.5 text-sm sm:text-base font-bold shadow-lg shadow-emerald-600/25 flex items-center gap-2 group cursor-pointer"
                                 >
                                     <span>Pantau Presensi Live</span>
                                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -172,13 +172,13 @@ export default function Landing() {
                                 <Button
                                     href="/login"
                                     variant="secondary"
-                                    className="px-7 py-3.5 text-sm sm:text-base font-bold"
+                                    className="px-7 py-3.5 text-sm sm:text-base font-bold cursor-pointer"
                                 >
                                     Masuk ke Portal
                                 </Button>
                                 <a
                                     href="#fitur-modul"
-                                    className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-700 hover:text-emerald-800 transition-colors py-2 px-1"
+                                    className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-700 hover:text-emerald-800 transition-colors py-2 px-1 cursor-pointer"
                                 >
                                     Jelajahi Fitur
                                     <ChevronRight className="w-4 h-4" />

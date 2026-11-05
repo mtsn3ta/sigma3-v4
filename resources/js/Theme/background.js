@@ -71,6 +71,7 @@ glowLeft: `
     grid: `
     absolute
     inset-0
+    pointer-events-none
 
     bg-[linear-gradient(rgba(15,23,42,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,.03)_1px,transparent_1px)]
 
