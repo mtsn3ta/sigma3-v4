@@ -413,12 +413,30 @@ export default function Landing() {
                         {[
                             {
                                 icon: CreditCard,
-                                title: "eKartu Pelajar & RFID",
-                                desc: "Presensi gerbang madrasah cepat, monitoring ibadah harian, dan kartu identitas digital.",
+                                title: "Absensi Gerbang RFID",
+                                desc: "Presensi kedatangan & kepulangan siswa di gerbang madrasah secara otomatis via kartu RFID/NFC.",
                                 href: "/absensi",
                                 tag: "IoT Realtime",
                                 iconColor: "text-emerald-600",
                                 iconBg: "bg-emerald-50 border-emerald-100",
+                            },
+                            {
+                                icon: HeartHandshake,
+                                title: "Absensi Ibadah Digital",
+                                desc: "Pemantauan kepatuhan Shalat Dhuha & Shalat Dzuhur berjamaah siswa setiap hari secara terdata.",
+                                href: "/absensi/ibadah",
+                                tag: "Karakter Islami",
+                                iconColor: "text-pink-600",
+                                iconBg: "bg-pink-50 border-pink-100",
+                            },
+                            {
+                                icon: Trees,
+                                title: "Absensi Ekstrakurikuler",
+                                desc: "Pencatatan kehadiran anggota ekskul saat sesi latihan berlangsung via RFID & NFC madrasah.",
+                                href: "/absensi/ekskul",
+                                tag: "Minat & Bakat",
+                                iconColor: "text-lime-600",
+                                iconBg: "bg-lime-50 border-lime-100",
                             },
                             {
                                 icon: Activity,
