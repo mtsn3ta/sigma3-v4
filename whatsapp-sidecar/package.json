@@ -2,7 +2,7 @@
   "name": "sigma3-whatsapp-sidecar",
   "version": "1.0.0",
   "private": true,
-  "description": "WhatsApp Automation Sidecar for SIGMA-3 MTsN 3 Tulungagung",
+  "description": "WhatsApp Automation Sidecar for SIGMA-3 MTsN 3 Tulungagung (Baileys Engine)",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -11,8 +11,10 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@whiskeysockets/baileys": "^6.7.13",
     "express": "^4.19.2",
-    "qrcode": "^1.5.3",
-    "whatsapp-web.js": "^1.26.0"
+    "pino": "^9.6.0",
+    "qrcode": "^1.5.3"
   }
 }

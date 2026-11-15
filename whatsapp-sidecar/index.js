@@ -1,8 +1,8 @@
 /**
- * SIGMA-3 WhatsApp Automation Sidecar
+ * SIGMA-3 WhatsApp Automation Sidecar (Baileys Engine)
  * MTsN 3 Tulungagung
  *
- * Microservice wrapping whatsapp-web.js to handle:
+ * Microservice wrapping @whiskeysockets/baileys (pure WebSocket, 0% Chrome) to handle:
  * 1. 24/7 CS AI SIGMA-3 Matsanega Bot for Wali Murid
  * 2. Incoming message forwarding to Laravel Webhook (/api/whatsapp-webhook)
  * 3. Outbound messaging via REST API for Laravel notification services
@@ -15,7 +15,15 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
-const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
+const pino = require('pino');
+const {
+  default: makeWASocket,
+  useMultiFileAuthState,
+  DisconnectReason,
+  fetchLatestBaileysVersion,
+  makeCacheableSignalKeyStore,
+} = require('@whiskeysockets/baileys');
+const { Boom } = require('@hapi/boom');
 const { discoverPersistedSessions } = require('./session-store');
 
 // -----------------------------------------------------------------------------
@@ -78,7 +86,7 @@ if (!fs.existsSync(SESSION_DIR)) {
 }
 
 console.log('----------------------------------------------------');
-console.log('🤖 SIGMA-3 WhatsApp Sidecar starting...');
+console.log('⚡ SIGMA-3 WhatsApp Sidecar (Baileys Engine) starting...');
 console.log(`📡 Host/Port      : ${HOST}:${PORT}`);
 console.log(`🔗 Webhook URL    : ${WEBHOOK_URL}`);
 console.log(`🔐 Webhook Secret : ${WEBHOOK_SECRET ? 'Configured (Hidden)' : 'None'}`);
@@ -86,37 +94,11 @@ console.log(`🔑 Bearer Token   : ${TOKEN ? 'Configured (Hidden)' : 'None'}`);
 console.log(`📁 Session Dir    : ${SESSION_DIR}`);
 console.log('----------------------------------------------------');
 
-/**
- * Detect suitable Chromium executable path on Linux
- */
-function getChromiumExecutablePath() {
-  if (process.env.WHATSAPP_WEB_CHROME_PATH && fs.existsSync(process.env.WHATSAPP_WEB_CHROME_PATH)) {
-    return process.env.WHATSAPP_WEB_CHROME_PATH;
-  }
-  if (process.env.PUPPETEER_EXECUTABLE_PATH && fs.existsSync(process.env.PUPPETEER_EXECUTABLE_PATH)) {
-    return process.env.PUPPETEER_EXECUTABLE_PATH;
-  }
-
-  // Common Ubuntu/Debian paths
-  const linuxPaths = [
-    '/usr/bin/chromium-browser',
-    '/usr/bin/chromium',
-    '/usr/bin/google-chrome-stable',
-    '/usr/bin/google-chrome',
-    '/snap/bin/chromium',
-  ];
-
-  for (const p of linuxPaths) {
-    if (fs.existsSync(p)) {
-      return p;
-    }
-  }
-
-  return undefined; // Let Puppeteer use its bundled binary if available
-}
-
-/** sessionId → { client, status, qrDataUri, subscribers: Set<res> } */
+/** sessionId -> { id, sock, status, qrDataUri, subscribers: Set<res>, retryCount } */
 const sessions = new Map();
+
+// Pino silent logger to keep console clean and fast
+const logger = pino({ level: process.env.LOG_LEVEL || 'silent' });
 
 // -----------------------------------------------------------------------------
 // Helper functions
@@ -141,7 +123,7 @@ function getSession(sessionId) {
 }
 
 function requireReady(session) {
-  if (session.status !== 'ready') {
+  if (session.status !== 'ready' || !session.sock) {
     const err = new Error(`session not ready (current status: ${session.status})`);
     err.http = 409;
     throw err;
@@ -161,58 +143,85 @@ function broadcast(sessionId, event, data) {
   }
 }
 
-function serializeMessage(m) {
-  if (!m) return null;
-  return {
-    id: m.id?._serialized ?? null,
-    from: m.from,
-    to: m.to,
-    body: m.body,
-    type: m.type,
-    timestamp: m.timestamp,
-    hasMedia: m.hasMedia,
-    isForwarded: m.isForwarded,
-    isStatus: m.isStatus,
-    isStarred: m.isStarred,
-    fromMe: m.fromMe,
-    author: m.author,
-    deviceType: m.deviceType,
-  };
-}
-
 /**
- * Normalizes WhatsApp recipient ID:
- * 08123456789 -> 628123456789@c.us
- * +628123456789 -> 628123456789@c.us
- * 628123456789@c.us -> 628123456789@c.us
+ * Normalizes input phone to Baileys JID:
+ * 08123456789 -> 628123456789@s.whatsapp.net
+ * 628123456789@c.us -> 628123456789@s.whatsapp.net
  */
-function normalizeWaId(input) {
-  if (!input || typeof input !== 'string') return input;
-  if (input.includes('@')) return input;
-  let digits = input.replace(/\D+/g, '');
-  if (!digits) return input;
+function toBaileysJid(input) {
+  if (!input || typeof input !== 'string') return '';
+  if (input.endsWith('@g.us') || input.endsWith('@s.whatsapp.net')) {
+    return input;
+  }
+  let digits = input.split('@')[0].replace(/\D+/g, '');
+  if (!digits) return '';
   if (digits.startsWith('0')) {
     digits = '62' + digits.slice(1);
   }
+  return `${digits}@s.whatsapp.net`;
+}
+
+/**
+ * Normalizes Baileys JID to legacy WhatsApp Web format (e.g. 628xxx@c.us)
+ * to keep 100% backward compatibility with Laravel SIGMA-3
+ */
+function toLegacyWaId(jid) {
+  if (!jid || typeof jid !== 'string') return '';
+  const digits = jid.split('@')[0].split(':')[0].replace(/\D+/g, '');
   return `${digits}@c.us`;
+}
+
+/**
+ * Extract clean text message from Baileys message object
+ */
+function extractMessageBody(msg) {
+  if (!msg) return '';
+  return (
+    msg.conversation ||
+    msg.extendedTextMessage?.text ||
+    msg.imageMessage?.caption ||
+    msg.videoMessage?.caption ||
+    msg.documentMessage?.caption ||
+    msg.buttonsResponseMessage?.selectedDisplayText ||
+    msg.listResponseMessage?.title ||
+    ''
+  );
+}
+
+/**
+ * Fetch buffer from remote URL
+ */
+function fetchBuffer(url) {
+  return new Promise((resolve, reject) => {
+    const client = url.startsWith('https') ? https : http;
+    client.get(url, (res) => {
+      if (res.statusCode !== 200) {
+        return reject(new Error(`Failed to download media: HTTP ${res.statusCode}`));
+      }
+      const chunks = [];
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => resolve(Buffer.concat(chunks)));
+      res.on('error', reject);
+    }).on('error', reject);
+  });
 }
 
 /**
  * Forward message to Laravel Webhook via HTTP POST
  */
-async function forwardToWebhook(message) {
+async function forwardToWebhook(fromWaId, body, timestamp) {
   if (!WEBHOOK_URL) return;
 
   const payload = {
     event: 'message',
     data: {
       message: {
-        from: message.from,
-        body: message.body ?? '',
-        fromMe: message.fromMe ?? false,
-        isStatus: message.isStatus ?? false,
-        type: message.type,
-        timestamp: message.timestamp,
+        from: fromWaId,
+        body: body ?? '',
+        fromMe: false,
+        isStatus: false,
+        type: 'chat',
+        timestamp: timestamp || Math.floor(Date.now() / 1000),
       },
     },
   };
@@ -233,7 +242,7 @@ async function forwardToWebhook(message) {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payloadString),
         'Accept': 'application/json',
-        'User-Agent': 'SIGMA3-WhatsApp-Sidecar/1.0',
+        'User-Agent': 'SIGMA3-WhatsApp-Sidecar-Baileys/2.0',
       },
       timeout: 10000,
     };
@@ -247,7 +256,7 @@ async function forwardToWebhook(message) {
       res.on('data', (chunk) => (data += chunk));
       res.on('end', () => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          console.log(`[Webhook] Message from ${message.from} forwarded successfully (HTTP ${res.statusCode})`);
+          console.log(`[Webhook] Message from ${fromWaId} forwarded successfully (HTTP ${res.statusCode})`);
         } else {
           console.warn(`[Webhook] Webhook returned HTTP ${res.statusCode}: ${data}`);
         }
@@ -260,7 +269,7 @@ async function forwardToWebhook(message) {
 
     req.on('timeout', () => {
       req.destroy();
-      console.warn(`[Webhook] Request timeout forwarding message from ${message.from}`);
+      console.warn(`[Webhook] Request timeout forwarding message from ${fromWaId}`);
     });
 
     req.write(payloadString);
@@ -271,108 +280,169 @@ async function forwardToWebhook(message) {
 }
 
 // -----------------------------------------------------------------------------
-// Boot session
+// Boot Baileys Session
 // -----------------------------------------------------------------------------
-async function bootSession(sessionId) {
-  const existing = sessions.get(sessionId);
-  if (existing) return existing;
-
-  const executablePath = getChromiumExecutablePath();
-  if (executablePath) {
-    console.log(`[Session:${sessionId}] Using Chromium at: ${executablePath}`);
+async function bootSession(sessionId, isRetry = false) {
+  let session = sessions.get(sessionId);
+  if (session && session.status === 'ready' && !isRetry) {
+    return session;
   }
 
-  const client = new Client({
-    authStrategy: new LocalAuth({ clientId: sessionId, dataPath: SESSION_DIR }),
-    puppeteer: {
-      headless: true,
-      executablePath,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--disable-gpu',
-      ],
-    },
-  });
+  const sessionPath = path.join(SESSION_DIR, `session-${sessionId}`);
+  if (!fs.existsSync(sessionPath)) {
+    fs.mkdirSync(sessionPath, { recursive: true });
+  }
 
-  const session = {
-    client,
-    status: 'initializing',
-    qrDataUri: null,
-    subscribers: new Set(),
-  };
-  sessions.set(sessionId, session);
+  if (!session) {
+    session = {
+      id: sessionId,
+      sock: null,
+      status: 'initializing',
+      qrDataUri: null,
+      subscribers: new Set(),
+      retryCount: 0,
+    };
+    sessions.set(sessionId, session);
+  }
 
-  client.on('qr', async (qr) => {
-    session.qrDataUri = await qrcode.toDataURL(qr);
-    session.status = 'qr';
+  try {
+    const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
+    const { version } = await fetchLatestBaileysVersion().catch(() => ({
+      version: [2, 3000, 1015901307],
+    }));
 
-    console.log('\n======================================================');
-    console.log(`[Session:${sessionId}] 📲 QR CODE GENERATED!`);
-    console.log(`Scan in WhatsApp > Linked Devices or open /admin/whatsapp/qr`);
-    console.log('======================================================\n');
+    console.log(`[Session:${sessionId}] Initializing Baileys WA Socket (v${version.join('.')})...`);
 
-    try {
-      const terminalQr = await qrcode.toString(qr, { type: 'terminal', small: true });
-      console.log(terminalQr);
-    } catch (_) {}
+    const sock = makeWASocket({
+      version,
+      logger,
+      printQRInTerminal: false,
+      auth: {
+        creds: state.creds,
+        keys: makeCacheableSignalKeyStore(state.keys, logger),
+      },
+      generateHighQualityLinkPreview: false,
+      syncFullHistory: false,
+      markOnlineOnConnect: true,
+      defaultQueryTimeoutMs: 60000,
+    });
 
-    broadcast(sessionId, 'qr', { dataUri: session.qrDataUri });
-  });
+    session.sock = sock;
 
-  client.on('authenticated', () => {
-    session.status = 'authenticated';
-    console.log(`[Session:${sessionId}] ✅ Authenticated!`);
-    broadcast(sessionId, 'authenticated', {});
-  });
+    // Handle credential saves
+    sock.ev.on('creds.update', saveCreds);
 
-  client.on('auth_failure', (msg) => {
-    session.status = 'auth_failure';
-    console.error(`[Session:${sessionId}] ❌ Authentication failure:`, msg);
-    broadcast(sessionId, 'auth_failure', { message: msg });
-  });
+    // Handle connection updates (QR, connection open, close, reconnect)
+    sock.ev.on('connection.update', async (update) => {
+      const { connection, lastDisconnect, qr } = update;
 
-  client.on('ready', () => {
-    session.status = 'ready';
-    session.qrDataUri = null;
-    console.log(`[Session:${sessionId}] 🚀 WhatsApp Client is READY & Connected!`);
-    broadcast(sessionId, 'ready', {});
-  });
+      if (qr) {
+        session.qrDataUri = await qrcode.toDataURL(qr);
+        session.status = 'qr';
 
-  client.on('disconnected', (reason) => {
-    session.status = 'disconnected';
-    console.warn(`[Session:${sessionId}] ⚠️ Disconnected:`, reason);
-    broadcast(sessionId, 'disconnected', { reason });
-  });
+        console.log('\n======================================================');
+        console.log(`[Session:${sessionId}] 📲 QR CODE GENERATED (Baileys Engine)!`);
+        console.log(`Scan in WhatsApp > Linked Devices or open /admin/whatsapp/qr`);
+        console.log('======================================================\n');
 
-  client.on('message', async (m) => {
-    // Ignore outbound messages, status broadcasts, and group chats for CS bot
-    if (m.fromMe || m.isStatus || m.from?.endsWith('@g.us')) {
-      return;
-    }
+        try {
+          const terminalQr = await qrcode.toString(qr, { type: 'terminal', small: true });
+          console.log(terminalQr);
+        } catch (_) {}
 
-    console.log(`[Session:${sessionId}] 📩 Incoming message from ${m.from}: "${m.body}"`);
+        broadcast(sessionId, 'qr', { dataUri: session.qrDataUri });
+      }
 
-    // 1. Broadcast to SSE subscribers
-    broadcast(sessionId, 'message', { message: serializeMessage(m) });
+      if (connection === 'open') {
+        session.status = 'ready';
+        session.qrDataUri = null;
+        session.retryCount = 0;
 
-    // 2. Forward to Laravel Webhook
-    await forwardToWebhook(m);
-  });
+        const userJid = sock.user?.id || 'Connected';
+        console.log(`[Session:${sessionId}] 🚀 WhatsApp is READY & Connected as: ${userJid}`);
 
-  client.on('message_ack', (m, ack) => {
-    broadcast(sessionId, 'message_ack', { id: m.id?._serialized, ack });
-  });
+        broadcast(sessionId, 'authenticated', {});
+        broadcast(sessionId, 'ready', {});
+      }
 
-  client.initialize().catch((e) => {
+      if (connection === 'close') {
+        const statusCode = lastDisconnect?.error instanceof Boom
+          ? lastDisconnect.error.output?.statusCode
+          : null;
+
+        const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+
+        console.warn(
+          `[Session:${sessionId}] ⚠️ Connection closed. Code: ${statusCode}, Reconnect: ${shouldReconnect}`
+        );
+
+        broadcast(sessionId, 'disconnected', { reason: lastDisconnect?.error?.message, statusCode });
+
+        if (shouldReconnect) {
+          session.status = 'reconnecting';
+          session.retryCount = (session.retryCount || 0) + 1;
+          const delay = Math.min(3000 * session.retryCount, 15000);
+          console.log(`[Session:${sessionId}] Reconnecting in ${delay / 1000}s...`);
+          setTimeout(() => {
+            bootSession(sessionId, true).catch((e) => {
+              console.error(`[Session:${sessionId}] Reconnect failed: ${e.message}`);
+            });
+          }, delay);
+        } else {
+          session.status = 'disconnected';
+          console.log(`[Session:${sessionId}] Logged out. Scan QR again to authenticate.`);
+        }
+      }
+    });
+
+    // Handle incoming messages
+    sock.ev.on('messages.upsert', async ({ messages: newMessages, type }) => {
+      if (type !== 'notify') return;
+
+      for (const m of newMessages) {
+        // Skip outbound messages, status broadcasts, and reactions
+        if (m.key.fromMe || !m.message) continue;
+
+        const remoteJid = m.key.remoteJid || '';
+        if (
+          remoteJid === 'status@broadcast' ||
+          remoteJid.endsWith('@broadcast') ||
+          remoteJid.endsWith('@g.us')
+        ) {
+          continue;
+        }
+
+        const body = extractMessageBody(m.message);
+        const fromWaId = toLegacyWaId(remoteJid);
+        const timestamp = m.messageTimestamp
+          ? Number(m.messageTimestamp)
+          : Math.floor(Date.now() / 1000);
+
+        console.log(`[Session:${sessionId}] 📩 Incoming message from ${fromWaId}: "${body}"`);
+
+        // 1. Broadcast to SSE subscribers
+        broadcast(sessionId, 'message', {
+          message: {
+            id: m.key.id,
+            from: fromWaId,
+            to: sock.user?.id ? toLegacyWaId(sock.user.id) : null,
+            body,
+            type: 'chat',
+            timestamp,
+            fromMe: false,
+          },
+        });
+
+        // 2. Forward to Laravel Webhook
+        await forwardToWebhook(fromWaId, body, timestamp);
+      }
+    });
+
+  } catch (err) {
     session.status = 'error';
-    console.error(`[Session:${sessionId}] Initialization error:`, e.message);
-    broadcast(sessionId, 'error', { message: e.message });
-  });
+    console.error(`[Session:${sessionId}] Initialization error:`, err.message);
+    broadcast(sessionId, 'error', { message: err.message });
+  }
 
   return session;
 }
@@ -393,7 +463,6 @@ async function autoStartSessions() {
     }
   }
 
-  // Ensure default session is booted if not already
   if (AUTO_START_DEFAULT && !sessions.has('default')) {
     try {
       console.log(`[Sidecar] Auto-starting 'default' session...`);
@@ -409,11 +478,13 @@ async function autoStartSessions() {
 // -----------------------------------------------------------------------------
 const app = express();
 app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(auth);
 
 app.get('/health', (_, res) => {
   res.json({
     ok: true,
+    engine: 'baileys',
     sessions: sessions.size,
     uptime: process.uptime(),
     webhookUrl: WEBHOOK_URL,
@@ -446,9 +517,12 @@ app.post('/sessions/:id/start', async (req, res, next) => {
 app.post('/sessions/:id/stop', async (req, res, next) => {
   try {
     const s = getSession(req.params.id);
-    try {
-      await s.client.destroy();
-    } catch (_) {}
+    if (s.sock) {
+      try {
+        s.sock.end(undefined);
+      } catch (_) {}
+    }
+    s.status = 'disconnected';
     sessions.delete(req.params.id);
     res.json({ ok: true });
   } catch (e) {
@@ -459,9 +533,9 @@ app.post('/sessions/:id/stop', async (req, res, next) => {
 app.delete('/sessions/:id', async (req, res, next) => {
   try {
     const s = sessions.get(req.params.id);
-    if (s) {
+    if (s && s.sock) {
       try {
-        await s.client.destroy();
+        s.sock.logout();
       } catch (_) {}
       sessions.delete(req.params.id);
     }
@@ -502,19 +576,29 @@ app.post('/sessions/:id/messages', async (req, res, next) => {
     requireReady(s);
 
     const b = req.body || {};
-    const to = normalizeWaId(b.to);
+    const recipientJid = toBaileysJid(b.to);
 
-    console.log(`[Send] To: ${to} | Type: ${b.type || 'text'}`);
+    if (!recipientJid) {
+      return res.status(400).json({ error: 'invalid recipient (to)' });
+    }
+
+    console.log(`[Send] To: ${recipientJid} | Type: ${b.type || 'text'}`);
+
+    let sendOptions = {};
+    if (b.quotedMessageId) {
+      sendOptions.quoted = { key: { id: b.quotedMessageId } };
+    }
 
     let result;
+    const msgType = b.type || 'text';
 
-    switch (b.type) {
+    switch (msgType) {
       case 'text':
       default:
-        result = await s.client.sendMessage(
-          to,
-          b.body ?? '',
-          b.quotedMessageId ? { quotedMessageId: b.quotedMessageId } : {}
+        result = await s.sock.sendMessage(
+          recipientJid,
+          { text: b.body ?? '' },
+          sendOptions
         );
         break;
 
@@ -522,23 +606,50 @@ app.post('/sessions/:id/messages', async (req, res, next) => {
       case 'video':
       case 'audio':
       case 'document': {
-        let media;
+        let buffer;
         if (b.url) {
-          media = await MessageMedia.fromUrl(b.url, { unsafeMime: true });
+          buffer = await fetchBuffer(b.url);
         } else if (b.base64) {
-          media = new MessageMedia(b.mimeType || 'application/octet-stream', b.base64, b.filename);
+          buffer = Buffer.from(b.base64, 'base64');
         } else {
           return res.status(400).json({ error: 'media requires url or base64' });
         }
-        result = await s.client.sendMessage(to, media, {
-          caption: b.caption,
-          sendAudioAsVoice: b.sendAudioAsVoice === true,
-        });
+
+        let mediaPayload;
+        if (msgType === 'image') {
+          mediaPayload = { image: buffer, caption: b.caption };
+        } else if (msgType === 'video') {
+          mediaPayload = { video: buffer, caption: b.caption };
+        } else if (msgType === 'audio') {
+          mediaPayload = {
+            audio: buffer,
+            mimetype: b.mimeType || 'audio/mp4',
+            ptt: b.sendAudioAsVoice === true,
+          };
+        } else if (msgType === 'document') {
+          mediaPayload = {
+            document: buffer,
+            mimetype: b.mimeType || 'application/octet-stream',
+            fileName: b.filename || 'file',
+            caption: b.caption,
+          };
+        }
+
+        result = await s.sock.sendMessage(recipientJid, mediaPayload, sendOptions);
         break;
       }
     }
 
-    res.json(serializeMessage(result) || { ok: true });
+    res.json({
+      id: result?.key?.id ?? null,
+      from: s.sock.user?.id ? toLegacyWaId(s.sock.user.id) : null,
+      to: b.to,
+      body: b.body ?? null,
+      type: msgType,
+      timestamp: Math.floor(Date.now() / 1000),
+      fromMe: true,
+      ok: true,
+    });
   } catch (e) {
     console.error('[Send Error]', e);
     next(e);
@@ -577,9 +688,27 @@ app.use((err, req, res, next) => {
 });
 
 // -----------------------------------------------------------------------------
+// Graceful Shutdown
+// -----------------------------------------------------------------------------
+function cleanupAndExit(signal) {
+  console.log(`\n[SIGMA-3 WA] Received ${signal}. Stopping Baileys sessions gracefully...`);
+  for (const [id, s] of sessions.entries()) {
+    try {
+      if (s.sock) {
+        s.sock.end(undefined);
+      }
+    } catch (_) {}
+  }
+  process.exit(0);
+}
+
+process.on('SIGINT', () => cleanupAndExit('SIGINT'));
+process.on('SIGTERM', () => cleanupAndExit('SIGTERM'));
+
+// -----------------------------------------------------------------------------
 // Start Express Server
 // -----------------------------------------------------------------------------
 app.listen(PORT, HOST, async () => {
-  console.log(`🚀 SIGMA-3 WhatsApp Sidecar listening at http://${HOST}:${PORT}`);
+  console.log(`🚀 SIGMA-3 WhatsApp Sidecar (Baileys) listening at http://${HOST}:${PORT}`);
   await autoStartSessions();
 });

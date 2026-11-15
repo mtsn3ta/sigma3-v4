@@ -1,6 +1,8 @@
 node_modules/
 sessions/
+sessions_puppeteer_bak_*
 .wwebjs_auth/
 .wwebjs_cache/
 *.log
+*.bak.js
 .env
