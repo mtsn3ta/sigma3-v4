@@ -45,18 +45,28 @@ class WhatsAppBotService
         |--------------------------------------------------------------------------
         */
 
-        $pureSalamPattern = '/^(assalamu[\s\'`]*alaikum|askum|aslkm|assalamualaikum|salam|halo+|hallo+|hello+|helo+|hai+|hi+|tes+|test+|ping+|p+|selamat\s+(pagi|siang|sore|malam)|kulonuwun|sampurasun)[\s.!,?]*$/i';
+        $pureSalamPattern = '/^(assalamu[\s\'`]*alaikum|askum|aslkm|assalamualaikum|salam|salim)[\s.!,?]*$/i';
+        $pureGreetingPattern = '/^(halo+|hallo+|hello+|helo+|hai+|hi+|tes+|test+|ping+|p+|selamat\s+(pagi|siang|sore|malam)|kulonuwun|sampurasun|permisi)[\s.!,?]*$/i';
 
         if (preg_match($pureSalamPattern, $message)) {
-
             $this->conversation->reset($phone);
+            $parent = $this->getParentGreeting($phone);
+            $salam = $parent 
+                ? "Wa'alaikumussalam Warahmatullahi Wabarakatuh, Bapak/Ibu {$parent} 🙏\nSelamat datang di Layanan Informasi MTsN 3 Tulungagung (MATSANEGA).\n\n"
+                : "Wa'alaikumussalam Warahmatullahi Wabarakatuh, Bapak/Ibu 🙏\nSelamat datang di Layanan Informasi MTsN 3 Tulungagung (MATSANEGA).\n\n";
 
-            $this->reply(
-                $phone,
-                "Waalaikumsalam Warahmatullahi Wabarakatuh 🙏\n\n"
-                    . $this->mainMenu()
-            );
+            $this->reply($phone, $salam . $this->mainMenu());
+            return;
+        }
 
+        if (preg_match($pureGreetingPattern, $message)) {
+            $this->conversation->reset($phone);
+            $parent = $this->getParentGreeting($phone);
+            $sapaan = $parent 
+                ? "Halo, selamat datang Bapak/Ibu {$parent} di Layanan Informasi MTsN 3 Tulungagung (MATSANEGA) 🙏\n\n"
+                : "Halo, selamat datang Bapak/Ibu di Layanan Informasi MTsN 3 Tulungagung (MATSANEGA) 🙏\n\n";
+
+            $this->reply($phone, $sapaan . $this->mainMenu());
             return;
         }
 
@@ -352,37 +362,66 @@ class WhatsAppBotService
             ->sendText($phone, $text);
     }
 
+    /**
+     * Dapatkan sapaan nama siswa jika nomor telepon terdaftar sebagai wali murid
+     */
+    protected function getParentGreeting(string $phone): ?string
+    {
+        try {
+            $cleaned = preg_replace('/\D+/', '', $phone);
+            $local = preg_replace('/^62/', '0', $cleaned);
+
+            $siswa = \App\Models\Siswa::query()
+                ->where('telpon_ortu', 'LIKE', "%{$local}%")
+                ->orWhere('telpon_wali', 'LIKE', "%{$local}%")
+                ->orWhere('telpon_ortu', 'LIKE', "%{$cleaned}%")
+                ->orWhere('telpon_wali', 'LIKE', "%{$cleaned}%")
+                ->first();
+
+            if ($siswa) {
+                $namaSiswa = $siswa->nama_siswa ?? $siswa->nama ?? 'Siswa';
+                $kelas = $siswa->nama_kelas_aktif ?? '-';
+                return "wali dari ananda *{$namaSiswa}* (Kelas {$kelas})";
+            }
+        } catch (\Throwable $e) {
+            // Abaikan jika tidak cocok
+        }
+
+        return null;
+    }
+
     private function footer(): string
     {
-        return "\n\n_Ketik *menu* untuk kembali ke menu utama._";
+        return "\n\n_Ketik *menu* untuk melihat daftar layanan madrasah._";
     }
 
     private function mainMenu(): string
     {
         return <<<TEXT
-🏫 *SIGMA-3 Assistant*
-_Layanan Informasi Siswa MTsN 3 Tulungagung_
+🏫 *Layanan Informasi MTsN 3 Tulungagung (MATSANEGA)*
+_Bismillah, ada yang bisa kami bantu Bapak/Ibu?_
 
-Silakan pilih layanan yang Bapak/Ibu butuhkan dengan membalas angka:
+Berikut pilihan layanan cepat yang dapat kami berikan:
 
-1️⃣ Profil Siswa
-2️⃣ Absensi Hari Ini
-3️⃣ Prestasi Siswa
-4️⃣ Portal Wali Murid
-5️⃣ Hubungi Komite Sekolah
-6️⃣ Hubungi Guru BK
+1️⃣ *Profil Ananda* (Biodata & status kelas)
+2️⃣ *Presensi Hari Ini* (Kehadiran & shalat berjamaah)
+3️⃣ *Prestasi Ananda* (Catatan lomba & kejuaraan)
+4️⃣ *Portal Wali Murid* (Pengajuan izin sakit & catatan BK)
+5️⃣ *Hubungi Komite Madrasah* (Ibu Binti)
+6️⃣ *Konsultasi Guru BK*
 
-Balas angka *1-6* untuk melanjutkan 🙏
+Silakan balas dengan angka *1* sampai *6*, atau Bapak/Ibu bisa langsung menanyakan informasi madrasah yang ingin diketahui nggih. Kami siap membantu 🙏
 TEXT;
     }
 
     private function askNisn(): string
     {
         return <<<TEXT
-Baik, mohon masukkan *NISN (10 digit)* atau *Nama Lengkap Siswa*.
+Nggih Bapak/Ibu, mohon sebutkan *Nama Lengkap/Nama Panggilan Ananda* atau *10 digit NISN* ya.
 
-Contoh: *3106123456* atau *Ahmad Fauzi*
+Contoh: *Ahmad Fauzi* atau *3106123456*
 
+Biar kami bantu carikan datanya di sistem madrasah 🙏
 _Ketik *menu* jika ingin kembali ke menu utama._
 TEXT;
     }
@@ -392,47 +431,46 @@ TEXT;
         $url = rtrim(config('app.url'), '/') . '/wali_murid/' . $data['nisn'];
 
         return <<<TEXT
-🌐 *PORTAL WALI MURID*
+🌐 *PORTAL WALI MURID MADRASAH*
 
-Assalamualaikum, Bapak/Ibu wali dari:
+Bapak/Ibu wali dari ananda *{$data['nama']}* (Kelas {$data['kelas']}), 
 
-👤 Nama : {$data['nama']}
-🏫 Kelas : {$data['kelas']}
-
-Silakan buka Portal Wali Murid melalui tautan berikut:
+Untuk memantau perkembangan ananda atau mengajukan surat izin secara online mandiri, silakan kunjungi portal kami di:
 {$url}
 
-Di dalam portal, Bapak/Ibu dapat:
-📄 Mengajukan Surat Izin
-📋 Melihat Riwayat Surat Izin
-👨‍🏫 Memantau Perkembangan BK Siswa
+Di dalam portal ini, Bapak/Ibu dapat:
+📄 Mengajukan Surat Izin Sakit / Keperluan Keluarga
+📋 Memeriksa Riwayat Izin
+👨‍🏫 Memantau Catatan Bimbingan Konseling (BK)
 TEXT . $this->footer();
     }
 
     private function profil(array $d): string
     {
         return <<<TEXT
-👤 *PROFIL SISWA*
+👤 *BIODATA ANANDA*
 
-Nama : {$d['nama']}
-NISN : {$d['nisn']}
-Kelas : {$d['kelas']}
-Status : {$d['status']}
+• *Nama:* {$d['nama']}
+• *NISN:* {$d['nisn']}
+• *Kelas:* {$d['kelas']}
+• *Status Siswa:* {$d['status']}
+
+Alhamdulillah, ananda tercatat aktif belajar di MTsN 3 Tulungagung.
 TEXT . $this->footer();
     }
 
     private function absensi(array $d): string
     {
-        $hasil = "📅 *ABSENSI HARI INI*\n\n";
-        $hasil .= "{$d['nama']} — {$d['kelas']}\n\n";
+        $hasil = "📅 *LAPORAN PRESENSI HARI INI*\n";
+        $hasil .= "Ananda *{$d['nama']}* — Kelas {$d['kelas']}\n\n";
 
         if (count($d['absensi'])) {
+            $hasil .= "Catatan kehadiran & ibadah ananda:\n";
             foreach ($d['absensi'] as $a) {
-                // Hapus tulisan ({$a['status']}) di ujungnya
-                $hasil .= "• {$a['jenis']} : {$a['jam']}\n"; 
+                $hasil .= "• {$a['jenis']} : *{$a['jam']}*\n"; 
             }
         } else {
-            $hasil .= "Belum ada catatan absensi untuk hari ini.";
+            $hasil .= "Belum ada catatan presensi tap kartu atau ibadah ananda untuk hari ini.";
         }
 
         return $hasil . $this->footer();
@@ -440,37 +478,37 @@ TEXT . $this->footer();
 
     private function prestasi(array $d): string
     {
-        $hasil = "🏆 *PRESTASI SISWA*\n\n";
-        $hasil .= "{$d['nama']}\n\n";
+        $hasil = "🏆 *CATATAN PRESTASI ANANDA*\n";
+        $hasil .= "*{$d['nama']}*\n\n";
 
         if (count($d['prestasi'])) {
-
+            $hasil .= "Alhamdulillah, berikut torehan prestasi membanggakan ananda:\n\n";
             foreach ($d['prestasi'] as $p) {
-                $hasil .= "• {$p['nama_lomba']}\n";
-                $hasil .= "  {$p['tingkat']} • {$p['tahun']}\n\n";
+                $hasil .= "🏅 *{$p['nama_lomba']}*\n";
+                $hasil .= "   {$p['tingkat']} • Tahun {$p['tahun']}\n\n";
             }
         } else {
-
-            $hasil .= "Belum ada catatan prestasi yang tercatat.";
+            $hasil .= "Belum ada catatan prestasi resmi yang tercatat di sistem madrasah.";
         }
 
         return $hasil . $this->footer();
     }
+
     private function komite(): string
     {
-        // Teks otomatis: "Assalamualaikum Warahmatullahi Wabarakatuh"
         return <<<TEXT
-📞 *HUBUNGI KOMITE SEKOLAH*
+📞 *HUBUNGI KOMITE MADRASAH*
 
-Untuk keperluan atau informasi terkait Komite MTsN 3 Tulungagung, Bapak/Ibu dapat langsung menghubungi:
+Untuk keperluan koordinasi, aspirasi, atau informasi terkait Komite MTsN 3 Tulungagung, Bapak/Ibu dapat langsung menghubungi pengurus komite kami:
 
-👤 *Bu Binti (Komite)*
-📱 WA: 0857-3664-9582
+👤 *Ibu Binti (Pengurus Komite)*
+📱 Kontak WA: 0857-3664-9582
 
 Silakan klik tautan di bawah ini untuk memulai chat WhatsApp dengan beliau:
 👉 https://wa.me/6285736649582?text=Assalamualaikum%20Warahmatullahi%20Wabarakatuh%2C%20Ibu%20Binti.%20Mohon%20maaf%20mengganggu%20waktunya%2C%20saya%20wali%20murid%20ingin...
 TEXT . $this->footer();
     }
+
     private function guruBk(array $data): string
     {
         $kelas = $data['kelas'] ?? '-';
@@ -478,36 +516,35 @@ TEXT . $this->footer();
 
         // Deteksi tingkat kelas berdasarkan isi string kelas (7, 8, atau 9)
         if (str_contains($kelas, '7')) {
-            $namaGuru = "Bu Laela";
+            $namaGuru = "Ibu Laela";
             $waNumber = "6282231846743";
             $tingkat = "7";
         } elseif (str_contains($kelas, '8')) {
-            $namaGuru = "Bu Ardila";
+            $namaGuru = "Ibu Ardila";
             $waNumber = "6281220301140";
             $tingkat = "8";
         } elseif (str_contains($kelas, '9')) {
-            $namaGuru = "Bu Ulum";
+            $namaGuru = "Ibu Ulum";
             $waNumber = "6282232260065";
             $tingkat = "9";
         } else {
-            return "Mohon maaf, data kelas siswa tidak dikenali ({$kelas}) sehingga sistem tidak dapat menentukan Guru BK yang bertugas. Silakan ketik *menu* untuk mengulang.";
+            return "Mohon maaf nggih Bapak/Ibu, data kelas ananda belum teridentifikasi ({$kelas}) sehingga kami belum dapat mengarahkan ke Guru BK terkait. Silakan ketik *menu* untuk mencoba kembali.";
         }
 
-        // Menyusun draf pesan otomatis: "Assalamualaikum Warahmatullahi Wabarakatuh, Bu [Nama]. Mohon maaf mengganggu waktunya, saya wali murid dari [Nama Siswa] kelas [Kelas] ingin..."
-        $templatePesan = "Assalamualaikum Warahmatullahi Wabarakatuh, {$namaGuru}. Mohon maaf mengganggu waktunya, saya wali murid dari {$namaSiswa} kelas {$kelas} ingin...";
+        $templatePesan = "Assalamualaikum Warahmatullahi Wabarakatuh, {$namaGuru}. Mohon maaf mengganggu waktunya, saya wali murid dari ananda {$namaSiswa} kelas {$kelas} ingin berkonsultasi mengenai...";
         $encodedText = rawurlencode($templatePesan);
 
         $url = "https://wa.me/{$waNumber}?text={$encodedText}";
 
         return <<<TEXT
-👨‍🏫 *HUBUNGI GURU BK*
+👨‍🏫 *KONSULTASI GURU BIMBINGAN KONSELING (BK)*
 
-Berdasarkan data kelas dari *{$namaSiswa}*, berikut adalah Guru BK yang bertugas:
+Berdasarkan kelas ananda *{$namaSiswa}*, berikut adalah Guru BK yang mendampingi ananda:
 
 👤 *{$namaGuru} (Guru BK Kelas {$tingkat})*
-📱 WA: {$waNumber}
+📱 Kontak WA: {$waNumber}
 
-Silakan klik tautan di bawah ini untuk langsung memulai chat dengan beliau:
+Silakan klik tautan di bawah ini untuk langsung terhubung dan berkonsultasi dengan beliau:
 👉 {$url}
 TEXT . $this->footer();
     }
