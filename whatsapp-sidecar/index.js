@@ -279,6 +279,25 @@ async function forwardToWebhook(fromWaId, body, timestamp) {
   }
 }
 
+/**
+ * Helper: wait up to timeoutMs until QR is generated or session is ready
+ */
+function waitForQrOrReady(session, timeoutMs = 8000) {
+  return new Promise((resolve) => {
+    if (session.status === 'ready' || session.qrDataUri) {
+      return resolve(session);
+    }
+    const timer = setTimeout(() => resolve(session), timeoutMs);
+    const interval = setInterval(() => {
+      if (session.status === 'ready' || session.qrDataUri || session.status === 'disconnected') {
+        clearTimeout(timer);
+        clearInterval(interval);
+        resolve(session);
+      }
+    }, 250);
+  });
+}
+
 // -----------------------------------------------------------------------------
 // Boot Baileys Session
 // -----------------------------------------------------------------------------
@@ -293,6 +312,14 @@ async function bootSession(sessionId, isRetry = false) {
     fs.mkdirSync(sessionPath, { recursive: true });
   }
 
+  // Clean old socket if re-booting
+  if (session && session.sock) {
+    try {
+      session.sock.ev.removeAllListeners();
+      session.sock.end(undefined);
+    } catch (_) {}
+  }
+
   if (!session) {
     session = {
       id: sessionId,
@@ -303,6 +330,9 @@ async function bootSession(sessionId, isRetry = false) {
       retryCount: 0,
     };
     sessions.set(sessionId, session);
+  } else {
+    session.status = 'initializing';
+    session.qrDataUri = null;
   }
 
   try {
@@ -325,6 +355,7 @@ async function bootSession(sessionId, isRetry = false) {
       syncFullHistory: false,
       markOnlineOnConnect: true,
       defaultQueryTimeoutMs: 60000,
+      browser: ['Ubuntu', 'Chrome', '22.04.4'],
     });
 
     session.sock = sock;
@@ -390,7 +421,13 @@ async function bootSession(sessionId, isRetry = false) {
           }, delay);
         } else {
           session.status = 'disconnected';
-          console.log(`[Session:${sessionId}] Logged out. Scan QR again to authenticate.`);
+          session.qrDataUri = null;
+          console.log(`[Session:${sessionId}] Logged out / QR expired. Purging stale auth state...`);
+          try {
+            if (fs.existsSync(sessionPath)) {
+              fs.rmSync(sessionPath, { recursive: true, force: true });
+            }
+          } catch (_) {}
         }
       }
     });
@@ -503,7 +540,12 @@ app.get('/sessions', (_, res) => {
 
 app.post('/sessions/:id/start', async (req, res, next) => {
   try {
-    const s = await bootSession(req.params.id);
+    let s = sessions.get(req.params.id);
+    if (!s || s.status === 'disconnected' || s.status === 'error') {
+      s = await bootSession(req.params.id, true);
+    }
+    // Wait for fresh QR code or ready state so Laravel gets the image immediately
+    await waitForQrOrReady(s, 10000);
     res.json({
       id: req.params.id,
       status: s.status,
@@ -549,9 +591,15 @@ app.delete('/sessions/:id', async (req, res, next) => {
   }
 });
 
-app.get('/sessions/:id/qr', (req, res, next) => {
+app.get('/sessions/:id/qr', async (req, res, next) => {
   try {
-    const s = getSession(req.params.id);
+    let s = sessions.get(req.params.id);
+    if (!s || s.status === 'disconnected') {
+      s = await bootSession(req.params.id, true);
+    }
+    if (!s.qrDataUri && s.status !== 'ready') {
+      await waitForQrOrReady(s, 8000);
+    }
     res.json({ status: s.status, qr: s.qrDataUri });
   } catch (e) {
     next(e);
