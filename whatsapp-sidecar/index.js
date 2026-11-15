@@ -143,17 +143,31 @@ function broadcast(sessionId, event, data) {
   }
 }
 
+// Mapping from legacy WA ID / clean digits to original Baileys JID (e.g. LID or s.whatsapp.net)
+const jidMap = new Map();
+
 /**
  * Normalizes input phone to Baileys JID:
  * 08123456789 -> 628123456789@s.whatsapp.net
  * 628123456789@c.us -> 628123456789@s.whatsapp.net
+ * Resolves LID (102624082817141@lid) accurately
  */
 function toBaileysJid(input) {
   if (!input || typeof input !== 'string') return '';
-  if (input.endsWith('@g.us') || input.endsWith('@s.whatsapp.net')) {
+  if (input.endsWith('@g.us') || input.endsWith('@s.whatsapp.net') || input.endsWith('@lid')) {
     return input;
   }
-  let digits = input.split('@')[0].replace(/\D+/g, '');
+  if (jidMap.has(input)) {
+    return jidMap.get(input);
+  }
+  const clean = input.split('@')[0];
+  if (jidMap.has(clean)) {
+    return jidMap.get(clean);
+  }
+  if (clean.length >= 14 && !clean.startsWith('62') && !clean.startsWith('0')) {
+    return `${clean}@lid`;
+  }
+  let digits = clean.replace(/\D+/g, '');
   if (!digits) return '';
   if (digits.startsWith('0')) {
     digits = '62' + digits.slice(1);
@@ -244,7 +258,7 @@ async function forwardToWebhook(fromWaId, body, timestamp) {
         'Accept': 'application/json',
         'User-Agent': 'SIGMA3-WhatsApp-Sidecar-Baileys/2.0',
       },
-      timeout: 10000,
+      timeout: 30000,
     };
 
     if (WEBHOOK_SECRET) {
@@ -450,12 +464,22 @@ async function bootSession(sessionId, isRetry = false) {
         }
 
         const body = extractMessageBody(m.message);
+        if (!body) continue;
+
         const fromWaId = toLegacyWaId(remoteJid);
+        
+        // Save mapping so replies can be correctly routed even for @lid accounts!
+        jidMap.set(fromWaId, remoteJid);
+        jidMap.set(fromWaId.replace('@c.us', ''), remoteJid);
+        if (remoteJid.endsWith('@lid')) {
+          jidMap.set(remoteJid, remoteJid);
+        }
+
         const timestamp = m.messageTimestamp
           ? Number(m.messageTimestamp)
           : Math.floor(Date.now() / 1000);
 
-        console.log(`[Session:${sessionId}] 📩 Incoming message from ${fromWaId}: "${body}"`);
+        console.log(`[Session:${sessionId}] 📩 Incoming message from ${fromWaId} (JID: ${remoteJid}): "${body}"`);
 
         // 1. Broadcast to SSE subscribers
         broadcast(sessionId, 'message', {
