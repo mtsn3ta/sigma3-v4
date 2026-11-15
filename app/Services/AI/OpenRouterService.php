@@ -16,7 +16,7 @@ class OpenRouterService
     public function __construct()
     {
         $this->geminiApiKey = config('services.gemini.api_key');
-        $this->geminiModel = (string) config('services.gemini.model', 'gemini-3.5-flash-lite');
+        $this->geminiModel = (string) config('services.gemini.model', 'gemini-flash-lite-latest');
         $this->openRouterApiKey = config('services.openrouter.api_key');
         $this->openRouterModel = (string) config('services.openrouter.model', 'minimax/minimax-m3.1-flash:free');
     }
@@ -41,8 +41,8 @@ class OpenRouterService
             if (! empty($this->geminiApiKey)) {
                 $geminiCandidateModels = array_unique(array_filter([
                     $this->geminiModel,
-                    'gemini-3.5-flash-lite',
-                    'gemini-3.5-flash',
+                    'gemini-flash-lite-latest',
+                    'gemini-flash-latest',
                 ]));
 
                 foreach ($geminiCandidateModels as $model) {
