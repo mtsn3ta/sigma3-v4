@@ -141,6 +141,13 @@ class SettingForm
                                                     ->default(true)
                                                     ->inline(false),
 
+                                                TextInput::make('rfid_registration_pin')
+                                                    ->label('PIN Petugas (/registrasi-rfid)')
+                                                    ->password()
+                                                    ->revealable()
+                                                    ->maxLength(32)
+                                                    ->helperText('PIN untuk membuka halaman public /registrasi-rfid. Jika kosong, menggunakan default sistem (123456).'),
+
                                                 Grid::make(2)
                                                     ->schema([
 

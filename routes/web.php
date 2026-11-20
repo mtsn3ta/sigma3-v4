@@ -62,6 +62,26 @@ Route::prefix('absensi')
             ->name('kelas');
     });
 
+Route::prefix('registrasi-rfid')
+    ->name('rfid.registrasi.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\RfidRegistrationController::class, 'show'])
+            ->name('show');
+        Route::post('/unlock', [\App\Http\Controllers\RfidRegistrationController::class, 'unlock'])
+            ->middleware('throttle:10,1')
+            ->name('unlock');
+        Route::post('/lock', [\App\Http\Controllers\RfidRegistrationController::class, 'lock'])
+            ->name('lock');
+        Route::get('/students', [\App\Http\Controllers\RfidRegistrationController::class, 'students'])
+            ->name('students');
+        Route::post('/assign', [\App\Http\Controllers\RfidRegistrationController::class, 'assign'])
+            ->middleware('throttle:120,1')
+            ->name('assign');
+        Route::post('/check', [\App\Http\Controllers\RfidRegistrationController::class, 'check'])
+            ->middleware('throttle:120,1')
+            ->name('check');
+    });
+
 Route::get('/scan-kelas', [\App\Http\Controllers\ScanKelasController::class, 'show'])->name('scan-kelas');
 Route::post('/api/kelas/checkin-qr', [\App\Http\Controllers\ScanKelasController::class, 'checkinApi'])->name('scan-kelas.api');
 Route::get('/intelligence', [IntelligenceController::class, 'index'])->name('intelligence');

@@ -37,6 +37,8 @@ class Setting extends Model
 
         'rfid_school_enabled',
 
+        'rfid_registration_pin',
+
         'rfid_school_checkin_start',
 
         'rfid_school_checkin_end',
